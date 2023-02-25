@@ -1,0 +1,10 @@
+*.pyc
+*.sqlite3
+*.db
+*.egg-info
+*test.ipynb
+.DS_Store
+.idea
+.env
+__pycache__/
+requirements.txt
