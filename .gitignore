@@ -7,4 +7,5 @@
 .idea
 .env
 __pycache__/
+dist
 requirements.txt
