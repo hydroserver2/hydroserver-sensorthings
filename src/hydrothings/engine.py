@@ -8,6 +8,8 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
     scheme: str
     host: str
     path: str
+    version: str
+    component_path: str
 
     def get_ref(self, entity_id: Union[str, None] = None, related_component: Union[str, None] = None) -> str:
         """

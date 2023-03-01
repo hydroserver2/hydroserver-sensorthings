@@ -3,11 +3,13 @@ from hydrothings import SensorThingsAPI
 
 
 hydrothings_api_1_1 = SensorThingsAPI(
-    version='1.1'
+    version='1.1',
+    backend='frostserver'
 )
 
 hydrothings_api_1_0 = SensorThingsAPI(
-    version='1.0'
+    version='1.0',
+    backend='frostserver'
 )
 
 urlpatterns = [

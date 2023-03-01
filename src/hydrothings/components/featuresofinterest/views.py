@@ -2,7 +2,7 @@ from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, list_response_codes, get_response_codes
+from hydrothings.utils import entity_or_404, entities_or_404, list_response_codes, get_response_codes
 from .schemas import FeatureOfInterestPostBody, FeatureOfInterestPatchBody, FeatureOfInterestListResponse, \
     FeatureOfInterestGetResponse
 
@@ -27,7 +27,7 @@ def get_features_of_interest(request: SensorThingsRequest, filters: Filters = Qu
 
     response = request.engine.list(**filters.dict())
 
-    return 200, response
+    return entities_or_404(response)
 
 
 @router.get(

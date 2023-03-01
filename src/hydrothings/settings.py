@@ -57,3 +57,5 @@ ST_CAPABILITIES = getattr(settings, 'ST_CAPABILITIES', [
         'VIEW': 'list_feature_of_interest'
     },
 ])
+
+FROST_BASE_URL = getattr(settings, 'FROST_BASE_URL', None)

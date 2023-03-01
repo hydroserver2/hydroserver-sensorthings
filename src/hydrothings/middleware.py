@@ -124,6 +124,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
 
             previous_component = component
 
+        request.component_path = '/'.join(path_components)
         if endpoint:
             request.path_info = endpoint
         if primary_component in [c['SINGULAR_NAME'] for c in settings.ST_CAPABILITIES]:
@@ -150,9 +151,13 @@ class SensorThingsMiddleware(MiddlewareMixin):
             if isinstance(st_api, hydrothings.SensorThingsAPI):
                 if not hasattr(request, 'component'):
                     request.component = None
+                if not hasattr(request, 'component_path'):
+                    request.component_path = request.path_info.split('/')[-1]
                 request.engine = st_api.engine(
                     host=request.get_host(),
                     scheme=request.scheme,
                     path=request.path_info,
-                    component=request.component
+                    version=st_api.version,
+                    component=request.component,
+                    component_path=request.component_path
                 )

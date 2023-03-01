@@ -1,6 +1,7 @@
 import re
 import hydrothings.schemas as core_schemas
-from typing import Literal
+from typing import Literal, Union
+from requests import Response
 from hydrothings import settings
 
 
@@ -34,7 +35,7 @@ def list_response_codes(response_schema):
     """"""
 
     return {
-        200: response_schema
+        200: Union[response_schema, str]
     }
 
 
@@ -42,15 +43,26 @@ def get_response_codes(response_schema):
     """"""
 
     return {
-        200: response_schema,
+        200: Union[response_schema, str],
         404: core_schemas.EntityNotFound
     }
+
+
+def entities_or_404(response):
+    """"""
+
+    if isinstance(response, Response):
+        return response.status_code, response.content
+    else:
+        return 200, response
 
 
 def entity_or_404(response, entity_id):
     """"""
 
-    if response:
+    if isinstance(response, Response):
+        return response.status_code, response.content
+    elif response:
         return 200, response
     else:
         return 404, {'message': f'Record with ID {entity_id} does not exist.'}

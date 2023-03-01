@@ -1,4 +1,5 @@
 from pydantic import Field, Extra, HttpUrl, validator
+from typing import Union
 from ninja import Schema
 from hydrothings.validators import nested_entities_check, whitespace_to_none
 
@@ -43,9 +44,9 @@ class BasePatchBody(Schema):
 
 
 class BaseListResponse(Schema):
-    count: int | None = Field(None, alias='@iot.count')
+    count: Union[int, None] = Field(None, alias='@iot.count')
     value: list = []
-    next_link: HttpUrl | None = Field(None, alias='@iot.nextLink')
+    next_link: Union[HttpUrl, None] = Field(None, alias='@iot.nextLink')
 
     class Config:
         allow_population_by_field_name = True
