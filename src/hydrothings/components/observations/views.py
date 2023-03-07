@@ -28,9 +28,12 @@ def list_observations(request: SensorThingsRequest, filters: ObservationFilters 
       Observation Relations</a>
     """
 
-    response = request.engine.list(**filters.dict())
+    request_filters = filters.dict()
+    result_format = request_filters.pop('result_format', None)
 
-    if getattr(filters, 'result_format', None) == 'dataArray':
+    response = request.engine.list(**request_filters)
+
+    if result_format == 'dataArray':
         response = convert_to_data_array(response)
 
     return entities_or_404(response)
