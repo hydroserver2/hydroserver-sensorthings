@@ -2,7 +2,7 @@ from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, entities_or_404, list_response_codes, get_response_codes
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
 from .schemas import LocationPostBody, LocationPatchBody, LocationListResponse, LocationGetResponse
 
 
@@ -11,11 +11,11 @@ router = Router(tags=['Locations'])
 
 @router.get(
     '/Locations',
-    response=list_response_codes(LocationListResponse),
+    response=generate_response_codes('list', LocationListResponse),
     by_alias=True,
     url_name='list_location'
 )
-def get_locations(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_locations(request: SensorThingsRequest, filters: Filters = Query(...)):
     """
     Get a collection of Location entities.
 
@@ -32,7 +32,7 @@ def get_locations(request: SensorThingsRequest, filters: Filters = Query(...)):
 
 @router.get(
     '/Locations({location_id})',
-    response=get_response_codes(LocationGetResponse),
+    response=generate_response_codes('get', LocationGetResponse),
     by_alias=True
 )
 def get_location(request: SensorThingsRequest, location_id: str):
@@ -52,7 +52,7 @@ def get_location(request: SensorThingsRequest, location_id: str):
 
 @router.post(
     '/Locations',
-    response={201: None}
+    response=generate_response_codes('create')
 )
 def create_location(request: SensorThingsRequest, response: HttpResponse, location: LocationPostBody):
     """
@@ -80,7 +80,7 @@ def create_location(request: SensorThingsRequest, response: HttpResponse, locati
 
 @router.patch(
     '/Locations({location_id})',
-    response={204: None}
+    response=generate_response_codes('update')
 )
 def update_location(request: SensorThingsRequest, location_id: str, location: LocationPatchBody):
     """
@@ -105,7 +105,7 @@ def update_location(request: SensorThingsRequest, location_id: str, location: Lo
 
 @router.delete(
     '/Locations({location_id})',
-    response={204: None}
+    response=generate_response_codes('delete')
 )
 def delete_location(request: SensorThingsRequest, location_id: str):
     """

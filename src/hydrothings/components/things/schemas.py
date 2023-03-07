@@ -15,6 +15,9 @@ class ThingFields(Schema):
     description: str
     properties: Union[dict, None] = None
 
+    class Config:
+        allow_population_by_field_name = True
+
 
 class ThingRelations(Schema):
     locations: List['Location'] = []

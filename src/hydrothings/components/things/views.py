@@ -2,7 +2,7 @@ from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, entities_or_404, list_response_codes, get_response_codes
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
 from .schemas import ThingPostBody, ThingPatchBody, ThingListResponse, ThingGetResponse
 
 
@@ -11,12 +11,12 @@ router = Router(tags=['Things'])
 
 @router.get(
     '/Things',
-    response=list_response_codes(ThingListResponse),
+    response=generate_response_codes('list', ThingListResponse),
     by_alias=True,
     url_name='list_thing',
     exclude_none=True
 )
-def get_things(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_things(request: SensorThingsRequest, filters: Filters = Query(...)):
     """
     Get a collection of Thing entities.
 
@@ -33,7 +33,7 @@ def get_things(request: SensorThingsRequest, filters: Filters = Query(...)):
 
 @router.get(
     '/Things({thing_id})',
-    response=get_response_codes(ThingGetResponse),
+    response=generate_response_codes('get', ThingGetResponse),
     by_alias=True
 )
 def get_thing(request: SensorThingsRequest, thing_id: str):
@@ -53,7 +53,7 @@ def get_thing(request: SensorThingsRequest, thing_id: str):
 
 @router.post(
     '/Things',
-    response={201: None}
+    response=generate_response_codes('create')
 )
 def create_thing(request: SensorThingsRequest, response: HttpResponse, thing: ThingPostBody):
     """
@@ -81,7 +81,7 @@ def create_thing(request: SensorThingsRequest, response: HttpResponse, thing: Th
 
 @router.patch(
     '/Things({thing_id})',
-    response={204: None}
+    response=generate_response_codes('update')
 )
 def update_thing(request: SensorThingsRequest, thing_id: str, thing: ThingPatchBody):
     """
@@ -106,7 +106,7 @@ def update_thing(request: SensorThingsRequest, thing_id: str, thing: ThingPatchB
 
 @router.delete(
     '/Things({thing_id})',
-    response={204: None}
+    response=generate_response_codes('delete')
 )
 def delete_thing(request: SensorThingsRequest, thing_id: str):
     """

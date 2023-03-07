@@ -2,7 +2,7 @@ from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, entities_or_404, list_response_codes, get_response_codes
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
 from .schemas import ObservedPropertyPostBody, ObservedPropertyPatchBody, ObservedPropertyListResponse, \
     ObservedPropertyGetResponse
 
@@ -12,12 +12,12 @@ router = Router(tags=['Observed Properties'])
 
 @router.get(
     '/ObservedProperties',
-    response=list_response_codes(ObservedPropertyListResponse),
+    response=generate_response_codes('list', ObservedPropertyListResponse),
     by_alias=True,
     url_name='list_observed_property',
     exclude_none=True
 )
-def get_observed_properties(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_observed_properties(request: SensorThingsRequest, filters: Filters = Query(...)):
     """
     Get a collection of Observed Property entities.
 
@@ -34,7 +34,7 @@ def get_observed_properties(request: SensorThingsRequest, filters: Filters = Que
 
 @router.get(
     '/ObservedProperties({observed_property_id})',
-    response=get_response_codes(ObservedPropertyGetResponse),
+    response=generate_response_codes('get', ObservedPropertyGetResponse),
     by_alias=True
 )
 def get_observed_property(request, observed_property_id: str):
@@ -54,7 +54,7 @@ def get_observed_property(request, observed_property_id: str):
 
 @router.post(
     '/ObservedProperties',
-    response={201: None}
+    response=generate_response_codes('create')
 )
 def create_observed_property(
         request: SensorThingsRequest,
@@ -86,7 +86,7 @@ def create_observed_property(
 
 @router.patch(
     '/ObservedProperties({observed_property_id})',
-    response={204: None}
+    response=generate_response_codes('update')
 )
 def update_observed_property(
         request: SensorThingsRequest,
@@ -115,7 +115,7 @@ def update_observed_property(
 
 @router.delete(
     '/ObservedProperties({observed_property_id})',
-    response={204: None}
+    response=generate_response_codes('delete')
 )
 def delete_observed_property(request: SensorThingsRequest, observed_property_id: str):
     """

@@ -150,7 +150,11 @@ class SensorThingsMiddleware(MiddlewareMixin):
             st_api = view_func.__self__.api
             if isinstance(st_api, hydrothings.SensorThingsAPI):
                 if not hasattr(request, 'component'):
-                    request.component = None
+                    request.component = lookup_component(
+                        input_value=request.path_info.split('/')[-1].split('(')[0],
+                        input_type='camel_plural',
+                        output_type='camel_singular'
+                    )
                 if not hasattr(request, 'component_path'):
                     request.component_path = request.path_info.split('/')[-1]
                 request.engine = st_api.engine(

@@ -1,6 +1,6 @@
 import re
 import hydrothings.schemas as core_schemas
-from typing import Literal, Union
+from typing import Literal
 from requests import Response
 from hydrothings import settings
 
@@ -31,21 +31,36 @@ def lookup_component(
     return next((c[output_type] for c in st_components if c[input_type] == input_value))
 
 
-def list_response_codes(response_schema):
+def generate_response_codes(method, response_schema=None):
     """"""
 
-    return {
-        200: Union[response_schema, str]
-    }
+    if method == 'list':
+        response_codes = {
+            200: response_schema
+        }
+    elif method == 'get':
+        response_codes = {
+            200: response_schema,
+            404: core_schemas.EntityNotFound
+        }
+    elif method == 'create':
+        response_codes = {
+            201: None
+        }
+    elif method == 'update':
+        response_codes = {
+            204: None,
+            404: core_schemas.EntityNotFound
+        }
+    elif method == 'delete':
+        response_codes = {
+            204: None,
+            404: core_schemas.EntityNotFound
+        }
+    else:
+        response_codes = {}
 
-
-def get_response_codes(response_schema):
-    """"""
-
-    return {
-        200: Union[response_schema, str],
-        404: core_schemas.EntityNotFound
-    }
+    return response_codes
 
 
 def entities_or_404(response):

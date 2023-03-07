@@ -2,7 +2,7 @@ from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, entities_or_404, list_response_codes, get_response_codes
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
 from .schemas import HistoricalLocationPostBody, HistoricalLocationPatchBody, HistoricalLocationListResponse, \
     HistoricalLocationGetResponse
 
@@ -12,11 +12,11 @@ router = Router(tags=['Historical Locations'])
 
 @router.get(
     '/HistoricalLocations',
-    response=list_response_codes(HistoricalLocationListResponse),
+    response=generate_response_codes('list', HistoricalLocationListResponse),
     by_alias=True,
     url_name='list_historical_location'
 )
-def get_historical_locations(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_historical_locations(request: SensorThingsRequest, filters: Filters = Query(...)):
     """
     Get a collection of Historical Location entities.
 
@@ -33,7 +33,7 @@ def get_historical_locations(request: SensorThingsRequest, filters: Filters = Qu
 
 @router.get(
     '/HistoricalLocations({historical_location_id})',
-    response=get_response_codes(HistoricalLocationGetResponse),
+    response=generate_response_codes('get', HistoricalLocationGetResponse),
     by_alias=True
 )
 def get_historical_location(request: SensorThingsRequest, historical_location_id: str):
@@ -53,7 +53,7 @@ def get_historical_location(request: SensorThingsRequest, historical_location_id
 
 @router.post(
     '/HistoricalLocations',
-    response={201: None}
+    response=generate_response_codes('create')
 )
 def create_historical_location(
         request: SensorThingsRequest,
@@ -85,7 +85,7 @@ def create_historical_location(
 
 @router.patch(
     '/HistoricalLocations({historical_location_id})',
-    response={204: None}
+    response=generate_response_codes('update')
 )
 def update_historical_location(
         request: SensorThingsRequest,
@@ -114,7 +114,7 @@ def update_historical_location(
 
 @router.delete(
     '/HistoricalLocations({historical_location_id})',
-    response={204: None}
+    response=generate_response_codes('delete')
 )
 def delete_historical_location(request: SensorThingsRequest, historical_location_id: str):
     """

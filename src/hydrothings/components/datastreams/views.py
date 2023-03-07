@@ -2,7 +2,7 @@ from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import Filters
-from hydrothings.utils import entities_or_404, entity_or_404, list_response_codes, get_response_codes
+from hydrothings.utils import entities_or_404, entity_or_404, generate_response_codes
 from .schemas import DatastreamPostBody, DatastreamPatchBody, DatastreamListResponse, DatastreamGetResponse
 
 
@@ -11,11 +11,11 @@ router = Router(tags=['Datastreams'])
 
 @router.get(
     '/Datastreams',
-    response=list_response_codes(DatastreamListResponse),
+    response=generate_response_codes('list', DatastreamListResponse),
     by_alias=True,
     url_name='list_datastream'
 )
-def get_datastreams(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_datastreams(request: SensorThingsRequest, filters: Filters = Query(...)):
     """
     Get a collection of Datastream entities.
 
@@ -32,7 +32,7 @@ def get_datastreams(request: SensorThingsRequest, filters: Filters = Query(...))
 
 @router.get(
     '/Datastreams({datastream_id})',
-    response=get_response_codes(DatastreamGetResponse),
+    response=generate_response_codes('get', DatastreamGetResponse),
     by_alias=True
 )
 def get_datastream(request: SensorThingsRequest, datastream_id: str):
@@ -52,7 +52,7 @@ def get_datastream(request: SensorThingsRequest, datastream_id: str):
 
 @router.post(
     '/Datastreams',
-    response={201: None}
+    response=generate_response_codes('create')
 )
 def create_datastream(request: SensorThingsRequest, response: HttpResponse, datastream: DatastreamPostBody):
     """
@@ -80,7 +80,7 @@ def create_datastream(request: SensorThingsRequest, response: HttpResponse, data
 
 @router.patch(
     '/Datastreams({datastream_id})',
-    response={204: None}
+    response=generate_response_codes('update')
 )
 def update_datastream(request: SensorThingsRequest, datastream_id: str, datastream: DatastreamPatchBody):
     """
@@ -105,7 +105,7 @@ def update_datastream(request: SensorThingsRequest, datastream_id: str, datastre
 
 @router.delete(
     '/Datastreams({datastream_id})',
-    response={204: None}
+    response=generate_response_codes('delete')
 )
 def delete_datastream(request: SensorThingsRequest, datastream_id: str):
     """

@@ -45,6 +45,10 @@ class FrostServerEngine(SensorThingsAbstractEngine):
             entity_body,
             component=None
     ) -> str:
+        # print('HELLO!!!')
+        # response = requests.post(self.frost_url, data=entity_body)
+        # print(response)
+
         return '0'
 
     def update(

@@ -63,6 +63,12 @@ class ObservationGetResponse(ObservationFields, BaseGetResponse):
     datastream_link: HttpUrl = Field(..., alias='Datastream@iot.navigationLink')
     feature_of_interest_link: HttpUrl = Field(..., alias='FeatureOfInterest@iot.navigationLink')
 
+    class Config:
+        allow_population_by_field_name = True
+
 
 class ObservationListResponse(BaseListResponse):
     value: List[ObservationGetResponse]
+
+    class Config:
+        allow_population_by_field_name = True

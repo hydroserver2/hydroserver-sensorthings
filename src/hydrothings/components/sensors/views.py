@@ -2,7 +2,7 @@ from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, entities_or_404, list_response_codes, get_response_codes
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
 from .schemas import SensorPostBody, SensorPatchBody, SensorListResponse, SensorGetResponse
 
 
@@ -11,12 +11,12 @@ router = Router(tags=['Sensors'])
 
 @router.get(
     '/Sensors',
-    response=list_response_codes(SensorListResponse),
+    response=generate_response_codes('list', SensorListResponse),
     by_alias=True,
     url_name='list_sensor',
     exclude_none=True
 )
-def get_sensors(request, filters: Filters = Query(...)):
+def list_sensors(request, filters: Filters = Query(...)):
     """
     Get a collection of Sensor entities.
 
@@ -33,7 +33,7 @@ def get_sensors(request, filters: Filters = Query(...)):
 
 @router.get(
     '/Sensors({sensor_id})',
-    response=get_response_codes(SensorGetResponse),
+    response=generate_response_codes('get', SensorGetResponse),
     by_alias=True
 )
 def get_sensor(request, sensor_id: str):
@@ -53,7 +53,7 @@ def get_sensor(request, sensor_id: str):
 
 @router.post(
     '/Sensors',
-    response={201: None}
+    response=generate_response_codes('create')
 )
 def create_sensor(request: SensorThingsRequest, response: HttpResponse, sensor: SensorPostBody):
     """
@@ -81,7 +81,7 @@ def create_sensor(request: SensorThingsRequest, response: HttpResponse, sensor: 
 
 @router.patch(
     '/Sensors({sensor_id})',
-    response={204: None}
+    response=generate_response_codes('update')
 )
 def update_sensor(request: SensorThingsRequest, sensor_id: str, sensor: SensorPatchBody):
     """
@@ -106,7 +106,7 @@ def update_sensor(request: SensorThingsRequest, sensor_id: str, sensor: SensorPa
 
 @router.delete(
     '/Sensors({sensor_id})',
-    response={204: None}
+    response=generate_response_codes('delete')
 )
 def delete_sensor(request, sensor_id: str):
     """

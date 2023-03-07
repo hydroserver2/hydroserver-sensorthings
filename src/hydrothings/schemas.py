@@ -1,3 +1,4 @@
+from uuid import UUID
 from pydantic import Field, Extra, HttpUrl, validator
 from typing import Union
 from ninja import Schema
@@ -5,7 +6,7 @@ from hydrothings.validators import nested_entities_check, whitespace_to_none
 
 
 class EntityId(Schema):
-    id: int = Field(..., alias='@iot.id')
+    id: UUID = Field(..., alias='@iot.id')
 
 
 class NestedEntity(Schema):
@@ -28,6 +29,7 @@ class BasePostBody(Schema):
 
     class Config:
         extra = Extra.forbid
+        allow_population_by_field_name = True
 
 
 class BasePatchBody(Schema):
@@ -41,6 +43,7 @@ class BasePatchBody(Schema):
 
     class Config:
         extra = Extra.forbid
+        allow_population_by_field_name = True
 
 
 class BaseListResponse(Schema):
@@ -53,7 +56,7 @@ class BaseListResponse(Schema):
 
 
 class BaseGetResponse(Schema):
-    id: int = Field(..., alias='@iot.id')
+    id: UUID = Field(..., alias='@iot.id')
     self_link: HttpUrl = Field(..., alias='@iot.selfLink')
 
     class Config:

@@ -2,7 +2,7 @@ from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, entities_or_404, list_response_codes, get_response_codes
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
 from .schemas import ObservationPostBody, ObservationPatchBody, ObservationListResponse, ObservationGetResponse
 
 
@@ -11,12 +11,12 @@ router = Router(tags=['Observations'])
 
 @router.get(
     '/Observations',
-    response=list_response_codes(ObservationListResponse),
+    response=generate_response_codes('list', ObservationListResponse),
     by_alias=True,
     url_name='list_observation',
     exclude_none=True
 )
-def get_observations(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_observations(request: SensorThingsRequest, filters: Filters = Query(...)):
     """
     Get a collection of Observation entities.
 
@@ -33,7 +33,7 @@ def get_observations(request: SensorThingsRequest, filters: Filters = Query(...)
 
 @router.get(
     '/Observations({observation_id})',
-    response=get_response_codes(ObservationGetResponse),
+    response=generate_response_codes('get', ObservationGetResponse),
     by_alias=True
 )
 def get_observation(request: SensorThingsRequest, observation_id: str):
@@ -53,7 +53,7 @@ def get_observation(request: SensorThingsRequest, observation_id: str):
 
 @router.post(
     '/Observations',
-    response={201: None}
+    response=generate_response_codes('create')
 )
 def create_observation(request: SensorThingsRequest, response: HttpResponse, observation: ObservationPostBody):
     """
@@ -81,7 +81,7 @@ def create_observation(request: SensorThingsRequest, response: HttpResponse, obs
 
 @router.patch(
     '/Observations({observation_id})',
-    response={204: None}
+    response=generate_response_codes('update')
 )
 def update_observation(request: SensorThingsRequest, observation_id: str, observation: ObservationPatchBody):
     """
@@ -106,7 +106,7 @@ def update_observation(request: SensorThingsRequest, observation_id: str, observ
 
 @router.delete(
     '/Observations({observation_id})',
-    response={204: None}
+    response=generate_response_codes('delete')
 )
 def delete_observation(request: SensorThingsRequest, observation_id: str):
     """

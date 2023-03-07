@@ -2,7 +2,7 @@ from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, entities_or_404, list_response_codes, get_response_codes
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
 from .schemas import FeatureOfInterestPostBody, FeatureOfInterestPatchBody, FeatureOfInterestListResponse, \
     FeatureOfInterestGetResponse
 
@@ -12,10 +12,10 @@ router = Router(tags=['Features Of Interest'])
 
 @router.get(
     '/FeaturesOfInterest',
-    response=list_response_codes(FeatureOfInterestListResponse),
+    response=generate_response_codes('list', FeatureOfInterestListResponse),
     url_name='list_feature_of_interest'
 )
-def get_features_of_interest(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_features_of_interest(request: SensorThingsRequest, filters: Filters = Query(...)):
     """
     Get a collection of Feature of Interest entities.
 
@@ -32,7 +32,7 @@ def get_features_of_interest(request: SensorThingsRequest, filters: Filters = Qu
 
 @router.get(
     '/FeaturesOfInterest({feature_of_interest_id})',
-    response=get_response_codes(FeatureOfInterestGetResponse),
+    response=generate_response_codes('get', FeatureOfInterestGetResponse),
     by_alias=True
 )
 def get_feature_of_interest(request, feature_of_interest_id: str):
@@ -52,7 +52,7 @@ def get_feature_of_interest(request, feature_of_interest_id: str):
 
 @router.post(
     '/FeaturesOfInterest',
-    response={201: None}
+    response=generate_response_codes('create')
 )
 def create_feature_of_interest(
         request: SensorThingsRequest,
@@ -84,7 +84,7 @@ def create_feature_of_interest(
 
 @router.patch(
     '/FeaturesOfInterest({feature_of_interest_id})',
-    response={204: None}
+    response=generate_response_codes('update')
 )
 def update_feature_of_interest(
         request: SensorThingsRequest,
@@ -113,7 +113,7 @@ def update_feature_of_interest(
 
 @router.delete(
     '/FeaturesOfInterest({feature_of_interest_id})',
-    response={204: None}
+    response=generate_response_codes('delete')
 )
 def delete_feature_of_interest(request: SensorThingsRequest, feature_of_interest_id: str):
     """
