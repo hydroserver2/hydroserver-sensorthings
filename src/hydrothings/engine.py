@@ -83,8 +83,7 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
             skip,
             top,
             select,
-            expand,
-            result_format
+            expand
     ) -> dict:
         """"""
 
@@ -102,7 +101,7 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
     @abstractmethod
     def create(
             self,
-            entity_body
+            entity_body,
     ) -> str:
         """"""
 

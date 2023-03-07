@@ -1,6 +1,7 @@
 import re
 import hydrothings.schemas as core_schemas
-from typing import Literal
+from pydantic import HttpUrl
+from typing import Literal, Union, List
 from requests import Response
 from hydrothings import settings
 
@@ -45,7 +46,7 @@ def generate_response_codes(method, response_schema=None):
         }
     elif method == 'create':
         response_codes = {
-            201: None
+            201: Union[None, List[HttpUrl]]
         }
     elif method == 'update':
         response_codes = {

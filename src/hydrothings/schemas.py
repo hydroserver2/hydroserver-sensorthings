@@ -8,6 +8,9 @@ from hydrothings.validators import nested_entities_check, whitespace_to_none
 class EntityId(Schema):
     id: UUID = Field(..., alias='@iot.id')
 
+    class Config:
+        allow_population_by_field_name = True
+
 
 class NestedEntity(Schema):
 
@@ -71,4 +74,3 @@ class Filters(Schema):
     top: int = Field(None, alias='$top')
     select: str = Field(None, alias='$select')
     expand: str = Field(None, alias='$expand')
-    result_format: str = Field(None, alias='$resultFormat')

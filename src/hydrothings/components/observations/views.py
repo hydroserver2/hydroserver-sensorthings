@@ -1,9 +1,11 @@
 from ninja import Router, Query
+from typing import Union, List
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
-from hydrothings.schemas import Filters
 from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
-from .schemas import ObservationPostBody, ObservationPatchBody, ObservationListResponse, ObservationGetResponse
+from .schemas import ObservationPostBody, ObservationPatchBody, ObservationListResponse, ObservationGetResponse, \
+    ObservationFilters, ObservationDataArrayResponse, ObservationDataArrayBody
+from .utils import convert_to_data_array, parse_data_array
 
 
 router = Router(tags=['Observations'])
@@ -11,12 +13,12 @@ router = Router(tags=['Observations'])
 
 @router.get(
     '/Observations',
-    response=generate_response_codes('list', ObservationListResponse),
+    response=generate_response_codes('list', Union[ObservationListResponse, ObservationDataArrayResponse]),
     by_alias=True,
     url_name='list_observation',
     exclude_none=True
 )
-def list_observations(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_observations(request: SensorThingsRequest, filters: ObservationFilters = Query(...)):
     """
     Get a collection of Observation entities.
 
@@ -27,6 +29,9 @@ def list_observations(request: SensorThingsRequest, filters: Filters = Query(...
     """
 
     response = request.engine.list(**filters.dict())
+
+    if getattr(filters, 'result_format', None) == 'dataArray':
+        response = convert_to_data_array(response)
 
     return entities_or_404(response)
 
@@ -55,7 +60,11 @@ def get_observation(request: SensorThingsRequest, observation_id: str):
     '/Observations',
     response=generate_response_codes('create')
 )
-def create_observation(request: SensorThingsRequest, response: HttpResponse, observation: ObservationPostBody):
+def create_observation(
+        request: SensorThingsRequest,
+        response: HttpResponse,
+        observation: Union[ObservationPostBody, List[ObservationDataArrayBody]]
+):
     """
     Create a new Observation entity.
 
@@ -68,15 +77,42 @@ def create_observation(request: SensorThingsRequest, response: HttpResponse, obs
       Create Entity</a>
     """
 
-    observation_id = request.engine.create(
-        entity_body=observation
-    )
+    if isinstance(observation, list):
+        observations = parse_data_array(observation)
 
-    response['location'] = request.engine.get_ref(
-        entity_id=observation_id
-    )
+        if hasattr(request.engine, 'bulk_create'):
+            observation_ids = request.engine.bulk_create(
+                entity_bodies=observations
+            )
+            response_body = [
+                request.engine.get_ref(
+                    entity_id=observation_id
+                ) for observation_id in observation_ids
+            ]
+        else:
+            response_body = []
+            for observation in observations:
+                observation_id = request.engine.create(
+                    entity_body=observation
+                )
+                response_body.extend(
+                    request.engine.get_ref(
+                        entity_id=observation_id
+                    )
+                )
 
-    return 201, None
+    else:
+        observation_id = request.engine.create(
+            entity_body=observation
+        )
+
+        response['location'] = request.engine.get_ref(
+            entity_id=observation_id
+        )
+
+        response_body = None
+
+    return 201, response_body
 
 
 @router.patch(
