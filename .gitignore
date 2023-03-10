@@ -8,4 +8,5 @@
 .env
 __pycache__/
 dist
+build
 requirements.txt

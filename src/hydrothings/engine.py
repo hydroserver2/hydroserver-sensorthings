@@ -47,32 +47,28 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
             for name, field in getattr(component_schemas, f'{self.component}Relations').__fields__.items()
         }
 
-    def build_related_links(self, response, is_collection=False):
+    def build_related_links(self, entity, is_collection=False):
         """"""
 
-        return [
-            dict(
-                entity,
-                **{
-                    f'{name}_link': self.get_ref(
-                        entity['id'] if is_collection is True else None,
-                        related_component
-                    ) for name, related_component in self.get_related_components().items()
-                }
-            ) for entity in response
-        ]
+        return dict(
+            entity,
+            **{
+                f'{name}_link': self.get_ref(
+                    entity['id'] if is_collection is True else None,
+                    related_component
+                ) for name, related_component in self.get_related_components().items()
+            }
+        )
 
-    def build_self_links(self, response, is_collection=False):
+    def build_self_links(self, entity, is_collection=False):
         """"""
 
-        return [
-            dict(
-                entity,
-                **{
-                    'self_link': self.get_ref(entity['id'] if is_collection is True else None)
-                }
-            ) for entity in response
-        ]
+        return dict(
+            entity,
+            **{
+                'self_link': self.get_ref(entity['id'] if is_collection is True else None)
+            }
+        )
 
     @abstractmethod
     def list(
