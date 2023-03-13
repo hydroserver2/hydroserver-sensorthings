@@ -40,6 +40,7 @@ class DatastreamRelations(Schema):
     thing: 'Thing'
     sensor: 'Sensor'
     observed_property: 'ObservedProperty'
+    observations: List['Observation'] = []
 
 
 class Datastream(DatastreamFields, DatastreamRelations):

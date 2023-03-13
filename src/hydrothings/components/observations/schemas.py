@@ -1,8 +1,9 @@
+from uuid import UUID
 from typing import TYPE_CHECKING, Literal, Union, List
 from pydantic import Field, HttpUrl
 from ninja import Schema
 from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, \
-    NestedEntity, Filters
+    NestedEntity, QueryParams
 from hydrothings.extras.iso_types import ISOTime, ISOInterval
 from hydrothings.validators import allow_partial
 
@@ -52,6 +53,7 @@ class Observation(ObservationFields, ObservationRelations):
 
 
 class ObservationDataArray(Schema):
+    datastream: HttpUrl = Field(..., alias='Datastream@iot.navigationLink')
     components: List[observationComponents]
     data_array: List[list] = Field(..., alias='dataArray')
 
@@ -102,5 +104,5 @@ class ObservationDataArrayResponse(BaseListResponse):
         allow_population_by_field_name = True
 
 
-class ObservationFilters(Filters):
+class ObservationParams(QueryParams):
     result_format: Union[observationResultFormats, None] = Field(None, alias='$resultFormat')

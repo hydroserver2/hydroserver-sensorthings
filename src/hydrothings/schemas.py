@@ -66,7 +66,7 @@ class BaseGetResponse(Schema):
         allow_population_by_field_name = True
 
 
-class Filters(Schema):
+class QueryParams(Schema):
     filters: str = Field(None, alias='$filter')
     count: bool = Field(None, alias='$count')
     order_by: str = Field(None, alias='$orderby')

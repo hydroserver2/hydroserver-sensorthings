@@ -1,5 +1,6 @@
 import re
 import hydrothings.schemas as core_schemas
+from odata_query.grammar import ODataParser, ODataLexer
 from pydantic import HttpUrl
 from typing import Literal, Union, List
 from requests import Response
@@ -82,3 +83,35 @@ def entity_or_404(response, entity_id):
         return 200, response
     else:
         return 404, {'message': f'Record with ID {entity_id} does not exist.'}
+
+
+def parse_query_params(query_params: dict, entity_chain=None, sort_datastream: bool = False) -> dict:
+    """"""
+
+    lexer = ODataLexer()
+    parser = ODataParser()
+
+    if entity_chain:
+        if query_params.get('filters'):
+            query_params['filters'] += f' and {entity_chain[-1][0]}/id eq {entity_chain[-1][1]}'
+        else:
+            query_params['filters'] = f'{entity_chain[-1][0]}/id eq {entity_chain[-1][1]}'
+
+    if query_params.get('filters'):
+        query_params['filters'] = parser.parse(lexer.tokenize(query_params['filters']))
+
+    if sort_datastream is True:
+        if query_params.get('order_by'):
+            query_params['order_by'] += ', Datastreams/id'
+        else:
+            query_params['order_by'] = 'Datastreams/id'
+
+    if query_params.get('order_by'):
+        query_params['order_by'] = [
+            {
+                'field': order_field.strip().split(' ')[0],
+                'direction': 'desc' if order_field.strip().endswith('desc') else 'asc'
+            } for order_field in query_params['order_by'].split(',')
+        ]
+
+    return query_params

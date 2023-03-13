@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
+from uuid import UUID
 from pydantic.fields import SHAPE_LIST
-from typing import Union
+from typing import Union, Tuple
 from django.http import HttpRequest
 from hydrothings import components as component_schemas
 from hydrothings import settings
@@ -71,6 +72,12 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
         )
 
     @abstractmethod
+    def resolve_entity_id_chain(self, entity_chain: Tuple[str, Union[UUID, int, str]]) -> bool:
+        """"""
+
+        pass
+
+    @abstractmethod
     def list(
             self,
             filters,
@@ -125,3 +132,4 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
 
 class SensorThingsRequest(HttpRequest):
     engine: SensorThingsAbstractEngine
+    entity_chain: Tuple[str, Union[UUID, int, str]]

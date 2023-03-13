@@ -1,8 +1,8 @@
 from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
-from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
+from hydrothings.schemas import QueryParams
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import FeatureOfInterestPostBody, FeatureOfInterestPatchBody, FeatureOfInterestListResponse, \
     FeatureOfInterestGetResponse
 
@@ -15,7 +15,7 @@ router = Router(tags=['Features Of Interest'])
     response=generate_response_codes('list', FeatureOfInterestListResponse),
     url_name='list_feature_of_interest'
 )
-def list_features_of_interest(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_features_of_interest(request: SensorThingsRequest, params: QueryParams = Query(...)):
     """
     Get a collection of Feature of Interest entities.
 
@@ -25,7 +25,12 @@ def list_features_of_interest(request: SensorThingsRequest, filters: Filters = Q
       Feature of Interest Relations</a>
     """
 
-    response = request.engine.list(**filters.dict())
+    response = request.engine.list(
+        **parse_query_params(
+            query_params=params.dict(),
+            entity_chain=request.entity_chain
+        )
+    )
 
     return entities_or_404(response)
 

@@ -1,8 +1,8 @@
 from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
-from hydrothings.schemas import Filters
-from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
+from hydrothings.schemas import QueryParams
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import HistoricalLocationPostBody, HistoricalLocationPatchBody, HistoricalLocationListResponse, \
     HistoricalLocationGetResponse
 
@@ -16,7 +16,7 @@ router = Router(tags=['Historical Locations'])
     by_alias=True,
     url_name='list_historical_location'
 )
-def list_historical_locations(request: SensorThingsRequest, filters: Filters = Query(...)):
+def list_historical_locations(request: SensorThingsRequest, params: QueryParams = Query(...)):
     """
     Get a collection of Historical Location entities.
 
@@ -26,7 +26,12 @@ def list_historical_locations(request: SensorThingsRequest, filters: Filters = Q
       Historical Location Relations</a>
     """
 
-    response = request.engine.list(**filters.dict())
+    response = request.engine.list(
+        **parse_query_params(
+            query_params=params.dict(),
+            entity_chain=request.entity_chain
+        )
+    )
 
     return entities_or_404(response)
 

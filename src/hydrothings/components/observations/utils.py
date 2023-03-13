@@ -1,3 +1,4 @@
+from itertools import groupby
 from typing import Union
 from hydrothings.schemas import EntityId
 from .schemas import ObservationPostBody
@@ -14,7 +15,7 @@ fields = [
 ]
 
 
-def convert_to_data_array(response, select: Union[list, None] = None):
+def convert_to_data_array(request, response, select: Union[list, None] = None):
     """"""
 
     if select:
@@ -23,19 +24,24 @@ def convert_to_data_array(response, select: Union[list, None] = None):
         ]
     else:
         selected_fields = [
-            field for field in fields if field[0] in ['id', 'result_time', 'result']
+            field for field in fields if field[0] in ['result_time', 'result']
         ]
 
-    response['value'] = [{
-        'components': [
-            field[1] for field in selected_fields
-        ],
-        'data_array': [
-            [
-                entity[field[0]] for field in selected_fields
-            ] for entity in response['value']
-        ]
-    }]
+    datastream_url_template = f'{request.scheme}://{request.get_host()}{request.path[:-12]}Datastreams'
+
+    response['value'] = [
+        {
+            'datastream': f'{datastream_url_template}({datastream_id})',
+            'components': [
+                field[1] for field in selected_fields
+            ],
+            'data_array': [
+                [
+                    observation[field[0]] for field in selected_fields
+                ] for observation in observations
+            ]
+        } for datastream_id, observations in groupby(response['value'], key=lambda x: x['datastream_id'])
+    ]
 
     return response
 

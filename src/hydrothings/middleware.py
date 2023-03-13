@@ -41,6 +41,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
         path_components = request.path_info.split('/')[route_length:]
         path_prefix = '/'.join(request.path_info.split('/')[:route_length])
         component = None
+        entity_chain = []
         primary_component = None
         previous_component = None
         endpoint = None
@@ -58,7 +59,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     # This sub-path represents a collection of entities.
                     component = lookup_component(
                         input_value=resolved_path.url_name.replace('list_', ''),
-                        input_type='snake_singular',
+                        input_type='snake_plural',
                         output_type='camel_singular'
                     )
                     field_name = lookup_component(
@@ -82,6 +83,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     )
                     primary_component = component
                     endpoint = f'{path_prefix}/{raw_component}'
+                    entity_chain.append((component, resolved_path.kwargs.get(f'{field_name}_id')))
             except Http404:
                 try:
                     # This sub-path may be an implicit relation and needs to be converted to an explicit path.
@@ -125,6 +127,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
             previous_component = component
 
         request.component_path = '/'.join(path_components)
+        request.entity_chain = entity_chain
         if endpoint:
             request.path_info = endpoint
         if primary_component in [c['SINGULAR_NAME'] for c in settings.ST_CAPABILITIES]:
@@ -157,6 +160,8 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     )
                 if not hasattr(request, 'component_path'):
                     request.component_path = request.path_info.split('/')[-1]
+                if not hasattr(request, 'entity_chain'):
+                    request.entity_chain = []
                 request.engine = st_api.engine(
                     host=request.get_host(),
                     scheme=request.scheme,
@@ -165,3 +170,5 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     component=request.component,
                     component_path=request.component_path
                 )
+                if request.engine.resolve_entity_id_chain(request.entity_chain) is False:
+                    raise Http404

@@ -2,9 +2,9 @@ from ninja import Router, Query
 from typing import Union, List
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
-from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes
+from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import ObservationPostBody, ObservationPatchBody, ObservationListResponse, ObservationGetResponse, \
-    ObservationFilters, ObservationDataArrayResponse, ObservationDataArrayBody
+    ObservationParams, ObservationDataArrayResponse, ObservationDataArrayBody
 from .utils import convert_to_data_array, parse_data_array
 
 
@@ -18,7 +18,7 @@ router = Router(tags=['Observations'])
     url_name='list_observation',
     exclude_none=True
 )
-def list_observations(request: SensorThingsRequest, filters: ObservationFilters = Query(...)):
+def list_observations(request: SensorThingsRequest, params: ObservationParams = Query(...)):
     """
     Get a collection of Observation entities.
 
@@ -28,13 +28,19 @@ def list_observations(request: SensorThingsRequest, filters: ObservationFilters 
       Observation Relations</a>
     """
 
-    request_filters = filters.dict()
-    result_format = request_filters.pop('result_format', None)
+    query_params = params.dict()
+    result_format = query_params.pop('result_format', None)
 
-    response = request.engine.list(**request_filters)
+    response = request.engine.list(
+        **parse_query_params(
+            query_params=query_params,
+            entity_chain=request.entity_chain,
+            sort_datastream=True
+        )
+    )
 
     if result_format == 'dataArray':
-        response = convert_to_data_array(response)
+        response = convert_to_data_array(request, response)
 
     return entities_or_404(response)
 
