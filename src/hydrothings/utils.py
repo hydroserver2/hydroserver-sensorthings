@@ -13,12 +13,21 @@ def lookup_component(
         output_type: Literal['snake_singular', 'snake_plural', 'camel_singular', 'camel_plural']
 ) -> str:
     """
-    Accepts a component value and type and attempts to return an alternate form of the component name.
+    Accepts a component name and type and returns an alternate form of the component name.
 
-    :param input_value: The name of the component to lookup.
-    :param input_type: The type of the component to lookup.
-    :param output_type: The type of the component to return.
-    :return output_value: The matching component name.
+    Parameters
+    ----------
+    input_value : str
+        The name of the component to look up.
+    input_type: str
+        The type of the component to lookup.
+    output_type : str
+        The type of the component to return.
+
+    Returns
+    -------
+    str
+        The matching component name.
     """
 
     st_components = [
@@ -33,8 +42,22 @@ def lookup_component(
     return next((c[output_type] for c in st_components if c[input_type] == input_value))
 
 
-def generate_response_codes(method, response_schema=None):
-    """"""
+def generate_response_codes(method: str, response_schema=None) -> dict:
+    """
+    Generates a dictionary of response codes for various request types.
+
+    Parameters
+    ----------
+    method : str
+        The SensorThings method the response is for.
+    response_schema : class
+        An alternate response schema to attach to the API.
+
+    Returns
+    -------
+    dict
+        A dictionary of response codes that can be returned for the given method.
+    """
 
     if method == 'list':
         response_codes = {
@@ -85,8 +108,31 @@ def entity_or_404(response, entity_id):
         return 404, {'message': f'Record with ID {entity_id} does not exist.'}
 
 
-def parse_query_params(query_params: dict, entity_chain=None, sort_datastream: bool = False) -> dict:
-    """"""
+def parse_query_params(
+        query_params: dict,
+        entity_chain: Union[List[tuple], None] = None,
+        sort_datastream: bool = False
+) -> dict:
+    """
+    Parses OData query parameters.
+
+    This function converts OData query parameters in their string format to a dictionary of parameter objects that can
+    be used to generate appropriate database queries.
+
+    Parameters
+    ----------
+    query_params : dict
+        A dictionary containing the raw string values of all query parameters passed with an API request.
+    entity_chain : list
+        A list of component/entity_id pairs representing a nested SensorThings request.
+    sort_datastream : bool
+        Adds a sort by datastream ID parameter if True (used in Observations requests to group by datastreams).
+
+    Returns
+    -------
+    dict
+        A dictionary containing all parsed query parameters.
+    """
 
     lexer = ODataLexer()
     parser = ODataParser()

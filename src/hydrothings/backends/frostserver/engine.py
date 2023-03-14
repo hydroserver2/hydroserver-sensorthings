@@ -1,4 +1,6 @@
 import requests
+from uuid import UUID
+from typing import List, Union, Tuple
 from hydrothings.engine import SensorThingsAbstractEngine
 from hydrothings.settings import FROST_BASE_URL
 
@@ -14,6 +16,9 @@ class FrostServerEngine(SensorThingsAbstractEngine):
         self.component_path = component_path
         self.frost_url = '/'.join((FROST_BASE_URL, f'v{self.version}', self.component_path,))
 
+    def resolve_entity_id_chain(self, entity_chain: List[Tuple[str, Union[UUID, int, str]]]) -> bool:
+        return True
+
     def list(
             self,
             filters,
@@ -22,8 +27,7 @@ class FrostServerEngine(SensorThingsAbstractEngine):
             skip,
             top,
             select,
-            expand,
-            result_format
+            expand
     ) -> requests.Response:
 
         response = requests.get(self.frost_url)

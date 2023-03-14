@@ -20,6 +20,12 @@ from hydrothings.utils import generate_response_codes
 
 
 class SensorThingsAPI(NinjaAPI):
+    """
+    The main SensorThings API class.
+
+    Extends the NinjaAPI class to automatically build the core SensorThings API, hook up to a backend
+    datastore, and modify certain components of the SensorThings API as needed.
+    """
 
     def __init__(
             self,
@@ -78,7 +84,6 @@ class SensorThingsAPI(NinjaAPI):
         return urls
 
     def _build_sensorthings_router(self, component, router):
-        """"""
 
         component_settings = next(iter([
             c for c in self.components if c.name == component
@@ -122,10 +127,22 @@ class SensorThingsAPI(NinjaAPI):
 
 
 class SensorThingsEndpoint(BaseModel):
+    """
+    The SensorThings endpoint settings class.
+
+    This class should be used to apply endpoint level settings to a SensorThings API given the name of the endpoint.
+    """
+
     name: str
     enabled: bool = True
 
 
 class SensorThingsComponent(BaseModel):
+    """
+    The SensorThings component settings class.
+
+    This class should be used to apply component level settings to a SensorThings API given the name of the component.
+    """
+
     name: str
     component_schema: Union[Type[Schema], None] = None

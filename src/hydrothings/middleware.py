@@ -4,6 +4,7 @@ from django.utils.deprecation import MiddlewareMixin
 from django.urls import resolve
 from django.urls.exceptions import Http404
 from django.http import HttpRequest
+from hydrothings.engine import SensorThingsRequest
 from hydrothings.utils import lookup_component
 from hydrothings import settings
 
@@ -20,8 +21,14 @@ class SensorThingsMiddleware(MiddlewareMixin):
         for these special cases, extracts any extra parameters from these URLs and attaches them to the request, and
         links the request to the correct view function by updating the request's path_info attribute.
 
-        :param request: Django HttpRequest object.
-        :return: None
+        Parameters
+        ----------
+        request : HttpRequest
+            A Django HttpRequest object.
+
+        Returns
+        -------
+        None
         """
 
         try:
@@ -134,7 +141,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
             request.component = primary_component
 
     @staticmethod
-    def process_view(request, view_func, view_args, view_kwargs) -> None:
+    def process_view(request: SensorThingsRequest, view_func, view_args, view_kwargs) -> None:
         """
         Middleware for initializing a datastore engine for the request.
 
@@ -142,11 +149,20 @@ class SensorThingsMiddleware(MiddlewareMixin):
         should include a connection to the associated database and methods for performing basic CRUD operations on that
         database and information model.
 
-        :param request: Django HttpRequest object.
-        :param view_func: The view function associated with this request.
-        :param view_args: The arguments that will be passed to the view function.
-        :param view_kwargs: The keyword arguments that will be passed to the view function.
-        :return: None
+        Parameters
+        ----------
+        request : SensorThingsRequest
+            A SensorThingsRequest object.
+        view_func : Callable
+            The view function associated with this request.
+        view_args : list
+            The arguments that will be passed to the view function.
+        view_kwargs : dict
+            The keyword arguments that will be passed to the view function.
+
+        Returns
+        -------
+        None
         """
 
         if hasattr(getattr(view_func, '__self__', None), 'api'):
