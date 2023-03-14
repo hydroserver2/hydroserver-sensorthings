@@ -1,4 +1,4 @@
-hydrothings package
+Django HydroThings Package
 ===================
 
 Subpackages
