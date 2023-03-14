@@ -1,4 +1,3 @@
-from uuid import UUID
 from typing import TYPE_CHECKING, Literal, Union, List
 from pydantic import Field, HttpUrl
 from ninja import Schema

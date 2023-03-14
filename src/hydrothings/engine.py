@@ -5,11 +5,15 @@ from typing import Union, Tuple, List
 from django.http import HttpRequest
 from hydrothings import components as component_schemas
 from hydrothings import settings
+from hydrothings.schemas import BasePostBody, BasePatchBody
 
 
 class SensorThingsAbstractEngine(metaclass=ABCMeta):
     """
+    Abstract base class for a SensorThings engine.
 
+    A SensorThings API must be linked to a SensorThings engine to perform database operations. This class defines all
+    required methods for an engine class and should be inherited by any SensorThings engine used by an API.
     """
 
     scheme: str
@@ -187,28 +191,73 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
     @abstractmethod
     def get(
             self,
-            entity_id
+            entity_id: str
     ) -> dict:
-        """"""
+        """
+        Abstract method for handling GET entity requests.
+
+        This method should return a dictionary representing an entity with the given entity ID.
+
+        Parameters
+        ----------
+        entity_id : str
+            The ID of the entity to be returned.
+
+        Returns
+        -------
+        dict
+            A dictionary object representing the SensorThings GET entity response.
+        """
 
         pass
 
     @abstractmethod
     def create(
             self,
-            entity_body,
+            entity_body: BasePostBody,
     ) -> str:
-        """"""
+        """
+        Abstract method for handling POST entity requests.
+
+        This method should create a new entity and return the ID of the created entity.
+
+        Parameters
+        ----------
+        entity_body : BasePostBody
+            A dictionary object containing the attributes of the entity that will be created.
+
+        Returns
+        -------
+        str
+            The ID of the newly created entity.
+        """
 
         pass
 
     @abstractmethod
     def update(
             self,
-            entity_id,
-            entity_body
+            entity_id: str,
+            entity_body: BasePatchBody
     ) -> str:
-        """"""
+        """
+        Abstract method for handling PATCH entity requests.
+
+        This method should update an existing entity with the attributes included in the entity_body and return the ID
+        of the updated entity.
+
+        Parameters
+        ----------
+        entity_id : str
+            The ID of the entity to be updated.
+        entity_body : BasePatchBody
+            A dictionary object containing the attributes of the entity that will be updated.
+
+        Returns
+        -------
+        str
+            The ID of the updated entity.
+        """
 
         pass
 
@@ -217,11 +266,34 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
             self,
             entity_id
     ) -> None:
-        """"""
+        """
+        Abstract method for handling DELETE entity requests.
+
+        This method should delete an existing entity with the given entity_id.
+
+        Parameters
+        ----------
+        entity_id : str
+            The ID of the entity t obe deleted.
+
+        Returns
+        -------
+        None
+        """
 
         pass
 
 
 class SensorThingsRequest(HttpRequest):
+    """
+    The SensorThings request class.
+
+    This class extends Django's HttpRequest class to include an engine class, component name, component path, and an
+    entity_chain tuple. These attributes should be added to the request in the SensorThings middleware before calling a
+    view function.
+    """
+
     engine: SensorThingsAbstractEngine
-    entity_chain: Tuple[str, Union[UUID, int, str]]
+    component: str
+    component_path: List[str]
+    entity_chain: List[Tuple[str, Union[UUID, int, str]]]

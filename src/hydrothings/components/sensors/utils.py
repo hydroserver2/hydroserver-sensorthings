@@ -1,16 +1,25 @@
+from typing import Any
 from pydantic import HttpUrl, parse_obj_as
 
 
-def metadata_validator(value, values):
+def metadata_validator(value: Any, values: dict) -> Any:
     """
     Validation for sensor metadata field.
 
     Runs a check on the sensor metadata field comparing it to the encoding_type field if present. This check ensures
     that the metadata value is consistent with the encoding type.
 
-    :param value: The metadata value passed to the request.
-    :param values: The set of values included in the body of the request.
-    :return: The output value.
+    Parameters
+    ----------
+    value : Any
+        The metadata value passed to the request.
+    values : dict
+        The set of values included in the body of the request.
+
+    Returns
+    -------
+    Any
+        The output value.
     """
 
     if values.get('encoding_type') == 'application/pdf':

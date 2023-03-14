@@ -1,7 +1,8 @@
 from itertools import groupby
-from typing import Union
+from typing import Union, List
+from hydrothings.engine import SensorThingsRequest
 from hydrothings.schemas import EntityId
-from .schemas import ObservationPostBody
+from .schemas import ObservationPostBody, ObservationDataArray
 
 fields = [
     ('id', 'id',),
@@ -15,8 +16,28 @@ fields = [
 ]
 
 
-def convert_to_data_array(request, response, select: Union[list, None] = None):
-    """"""
+def convert_to_data_array(
+        request: SensorThingsRequest,
+        response: dict,
+        select: Union[list, None] = None
+) -> dict:
+    """
+    Converts an Observations response dictionary to the dataArray format.
+
+    Parameters
+    ----------
+    request : SensorThingsRequest
+        The SensorThingsRequest object associated with the response.
+    response : dict
+        A SensorThings response dictionary.
+    select
+        A list of fields that should be included in the response.
+
+    Returns
+    -------
+    dict
+        A SensorThings response dictionary formatted as a dataArray.
+    """
 
     if select:
         selected_fields = [
@@ -46,8 +67,25 @@ def convert_to_data_array(request, response, select: Union[list, None] = None):
     return response
 
 
-def parse_data_array(observation):
-    """"""
+def parse_data_array(
+        observation: List[ObservationDataArray]
+) -> List[ObservationPostBody]:
+    """
+    Parses an ObservationDataArray object.
+
+    Converts an ObservationDataArray object to a list of ObservationPostBody objects that can be loaded by the
+    SensorThings engine.
+
+    Parameters
+    ----------
+    observation: ObservationDataArray
+        An ObservationDataArray object.
+
+    Returns
+    -------
+    List[ObservationPostBody]
+        A list of ObservationPostBody objects.
+    """
 
     observations = []
 

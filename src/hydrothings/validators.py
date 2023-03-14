@@ -1,18 +1,27 @@
 import inspect
 import hydrothings.components as core_components
 import hydrothings.schemas as core_schemas
-from pydantic import BaseModel
+from typing import Any, Callable
+from pydantic import BaseModel, Field
 
 
-def nested_entities_check(value, field):
+def nested_entities_check(value: Any, field: Field) -> Any:
     """
     Validation for nested components.
 
     Runs validation on nested components in request bodies to avoid circular relationships in the API documentation.
 
-    :param value: The input value.
-    :param field: The field being validated.
-    :return value: The output value.
+    Parameters
+    ----------
+    value : Any
+        The input value.
+    field : Field
+        The field being validated.
+
+    Returns
+    -------
+    Any
+        The output value.
     """
 
     nested_class_name = field.field_info.extra.get('nested_class')
@@ -32,14 +41,21 @@ def nested_entities_check(value, field):
     return value
 
 
-def whitespace_to_none(value):
+def whitespace_to_none(value: Any) -> Any:
     """
     Validation for whitespace values.
 
     Checks if string values are blank or only whitespace and converts them to NoneType.
 
-    :param value: The input value.
-    :return value: The output value.
+    Parameters
+    ----------
+    value : Any
+        The input value
+
+    Returns
+    -------
+    Any
+        The output value.
     """
 
     if isinstance(value, str) and (value == '' or value.isspace()):
@@ -48,7 +64,7 @@ def whitespace_to_none(value):
     return value
 
 
-def allow_partial(*fields):
+def allow_partial(*fields) -> Callable:
     """
     Declares fields of a Pydantic model as optional.
 
@@ -58,6 +74,16 @@ def allow_partial(*fields):
 
     :param fields: All fields which should be made optional. If none are passed, all fields will be made optional.
     :return dec: The optional class decorator.
+
+    Parameters
+    ----------
+    fields : List[Field]
+        All fields which should be made optional. If none are passed, all fields will be made optional.
+
+    Returns
+    -------
+    Callable
+        A class decorator that updates the required flag of selected fields to False.
     """
 
     def dec(_cls):

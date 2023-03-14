@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from hydrothings.components.things.schemas import Thing
     from hydrothings.components.sensors.schemas import Sensor
     from hydrothings.components.observedproperties.schemas import ObservedProperty
+    from hydrothings.components.observations.schemas import Observation
 
 observationTypes = Literal[
     'http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation',
