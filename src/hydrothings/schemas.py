@@ -30,6 +30,13 @@ class BasePostBody(Schema):
         check_fields=False
     )(nested_entities_check)
 
+    _whitespace_validator = validator(
+        '*',
+        allow_reuse=True,
+        check_fields=False,
+        pre=True
+    )(whitespace_to_none)
+
     class Config:
         extra = Extra.forbid
         allow_population_by_field_name = True

@@ -58,8 +58,11 @@ def whitespace_to_none(value: Any) -> Any:
         The output value.
     """
 
-    if isinstance(value, str) and (value == '' or value.isspace()):
-        return None
+    if isinstance(value, str):
+        if value == '' or value.isspace():
+            value = None
+        else:
+            value = value.strip()
 
     return value
 

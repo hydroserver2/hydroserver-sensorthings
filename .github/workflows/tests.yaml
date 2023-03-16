@@ -1,0 +1,33 @@
+name: Django HydroThings Tests
+run-name: ${{ github.actor }} is running Django HydroThings Tests on ${{ github.ref }}
+
+on: [push, pull_request]
+
+jobs:
+  run_tests:
+    runs_on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10']
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Switch to Current Branch
+        run: git checkout ${{ env.BRANCH }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          
+      - name: Run unit tests
+        run: |
+          python -m pytest --import-mode=append tests/

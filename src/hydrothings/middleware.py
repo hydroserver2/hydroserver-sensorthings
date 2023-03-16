@@ -34,7 +34,15 @@ class SensorThingsMiddleware(MiddlewareMixin):
         try:
             resolved_path = resolve(request.path_info)
             if resolved_path.url_name != 'st_complex_handler':
-                # Path is not part of the SensorThings app. Proceed normally.
+                # Check if path is part of a SensorThings API and determine the component.
+                st_api = getattr(getattr(resolved_path.func, '__self__', None), 'api', None)
+                if isinstance(st_api, hydrothings.SensorThingsAPI):
+                    request.component = lookup_component(
+                        input_value=request.path_info.split('/')[-1].split('(')[0],
+                        input_type='camel_plural',
+                        output_type='camel_singular'
+                    )
+                    request.entity_chain = []
                 return None
         except StopIteration:
             # Path is not part of the SensorThings app. Proceed normally.
@@ -59,7 +67,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
 
             try:
                 resolved_path = resolve(path_info)
-                if resolved_path.url_name is None:
+                if resolved_path.url_name == 'st_complex_handler':
                     # Sub-path may contain field names, or implicit links to related entities.
                     raise Http404
                 if resolved_path.url_name.startswith('list'):
@@ -108,12 +116,9 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     endpoint = f'{path_prefix}/{component_plural}(1)'  # TODO Need to lookup the associated id.
                 except StopIteration:
                     # This sub-path may be a field name, $value, or $ref.
+                    entity_chain = entity_chain[:-1]
                     component = raw_component
-                    field_name = lookup_component(
-                        input_value=raw_component,
-                        input_type='camel_singular',
-                        output_type='snake_singular'
-                    )
+                    field_name = raw_component
 
             if previous_component in [c['SINGULAR_NAME'] for c in settings.ST_CAPABILITIES]:
                 # Check that this component is a valid child of the previous part of the path.
@@ -133,7 +138,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
 
             previous_component = component
 
-        request.component_path = '/'.join(path_components)
+        # request.component_path = '/'.join(path_components)
         request.entity_chain = entity_chain
         if endpoint:
             request.path_info = endpoint
@@ -168,16 +173,6 @@ class SensorThingsMiddleware(MiddlewareMixin):
         if hasattr(getattr(view_func, '__self__', None), 'api'):
             st_api = view_func.__self__.api
             if isinstance(st_api, hydrothings.SensorThingsAPI):
-                if not hasattr(request, 'component'):
-                    request.component = lookup_component(
-                        input_value=request.path_info.split('/')[-1].split('(')[0],
-                        input_type='camel_plural',
-                        output_type='camel_singular'
-                    )
-                if not hasattr(request, 'component_path'):
-                    request.component_path = request.path_info.split('/')[-1]
-                if not hasattr(request, 'entity_chain'):
-                    request.entity_chain = []
                 request.engine = st_api.engine(
                     host=request.get_host(),
                     scheme=request.scheme,
