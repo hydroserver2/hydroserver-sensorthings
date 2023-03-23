@@ -138,7 +138,6 @@ class SensorThingsMiddleware(MiddlewareMixin):
 
             previous_component = component
 
-        # request.component_path = '/'.join(path_components)
         request.entity_chain = entity_chain
         if endpoint:
             request.path_info = endpoint
@@ -179,7 +178,6 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     path=request.path_info,
                     version=st_api.version,
                     component=request.component,
-                    component_path=request.component_path
                 )
                 if request.engine.resolve_entity_id_chain(request.entity_chain) is False:
                     raise Http404

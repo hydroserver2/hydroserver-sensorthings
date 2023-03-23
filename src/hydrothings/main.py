@@ -2,7 +2,7 @@ from ninja import NinjaAPI, Schema, Router
 from copy import deepcopy
 from django.urls import re_path
 from pydantic import BaseModel
-from typing import Union, Literal, Type, NewType, List
+from typing import Union, Literal, Type, NewType, List, Sequence, Optional, Callable
 from hydrothings.backends.sensorthings.engine import SensorThingsEngine
 from hydrothings.backends.odm2.engine import SensorThingsEngineODM2
 from hydrothings.backends.frostserver.engine import FrostServerEngine
@@ -89,11 +89,11 @@ class SensorThingsAPI(NinjaAPI):
             c for c in self.components if c.name == component
         ]), None)
 
-        # endpoint_settings = {
-        #     endpoint.name.split('_')[0]: endpoint
-        #     for endpoint in self.endpoints
-        #     if '_'.join(endpoint.name.split('_')[1:]) == component
-        # } if self.endpoints else {}
+        endpoint_settings = {
+            endpoint.name.split('_')[0]: endpoint
+            for endpoint in self.endpoints
+            if '_'.join(endpoint.name.split('_')[1:]) == component
+        } if self.endpoints else {}
 
         st_router = Router(tags=router.tags)
 
@@ -120,7 +120,12 @@ class SensorThingsAPI(NinjaAPI):
                 getattr(st_router, operation.methods[0].lower())(
                     path.replace('(', f'({self.id_qualifier}').replace(')', f'{self.id_qualifier})'),
                     response=generate_response_codes(operation_method, response_schema),
-                    by_alias=True
+                    deprecated=getattr(endpoint_settings.get(operation_method), 'deprecated', False),
+                    by_alias=True,
+                    **{
+                        'auth': endpoint_settings[operation_method].authentication
+                        for _ in range(1) if getattr(endpoint_settings.get(operation_method), 'authentication', None)
+                    }
                 )(view_func)
 
         return st_router
@@ -134,7 +139,9 @@ class SensorThingsEndpoint(BaseModel):
     """
 
     name: str
-    enabled: bool = True
+    deprecated: bool = False
+    authentication: Optional[Union[Sequence[Callable], Callable]] = None
+    authorization: Optional[Union[Sequence[Callable], Callable]] = None
 
 
 class SensorThingsComponent(BaseModel):
