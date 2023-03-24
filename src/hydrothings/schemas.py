@@ -22,6 +22,10 @@ class EntityNotFound(Schema):
     message: str
 
 
+class PermissionDenied(Schema):
+    detail: str
+
+
 class BasePostBody(Schema):
 
     _nested_entity_validator = validator(

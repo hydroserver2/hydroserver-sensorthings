@@ -1,3 +1,4 @@
+import functools
 from ninja import NinjaAPI, Schema, Router
 from copy import deepcopy
 from django.urls import re_path
@@ -83,6 +84,16 @@ class SensorThingsAPI(NinjaAPI):
 
         return urls
 
+    @staticmethod
+    def _apply_authorization(view_func, auth_callbacks):
+        @functools.wraps(view_func)
+        def auth_wrapper(*args, **kwargs):
+            for auth_callback in auth_callbacks:
+                if auth_callback(*args, **kwargs) is not True:
+                    return 403, {'detail': 'Forbidden'}
+            return view_func(*args, **kwargs)
+        return auth_wrapper
+
     def _build_sensorthings_router(self, component, router):
 
         component_settings = next(iter([
@@ -117,7 +128,14 @@ class SensorThingsAPI(NinjaAPI):
                             for field, schema in component_settings.component_schema.__fields__.items():
                                 response_schema.__fields__[field] = schema
 
-                getattr(st_router, operation.methods[0].lower())(
+                authorization_callbacks = getattr(endpoint_settings.get(operation_method), 'authorization', [])
+
+                if isinstance(authorization_callbacks, Callable):
+                    authorization_callbacks = [authorization_callbacks]
+                else:
+                    authorization_callbacks = []
+
+                (getattr(st_router, operation.methods[0].lower())(
                     path.replace('(', f'({self.id_qualifier}').replace(')', f'{self.id_qualifier})'),
                     response=generate_response_codes(operation_method, response_schema),
                     deprecated=getattr(endpoint_settings.get(operation_method), 'deprecated', False),
@@ -126,7 +144,7 @@ class SensorThingsAPI(NinjaAPI):
                         'auth': endpoint_settings[operation_method].authentication
                         for _ in range(1) if getattr(endpoint_settings.get(operation_method), 'authentication', None)
                     }
-                )(view_func)
+                ))(self._apply_authorization(view_func, authorization_callbacks))
 
         return st_router
 

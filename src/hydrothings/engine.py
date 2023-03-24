@@ -294,6 +294,7 @@ class SensorThingsRequest(HttpRequest):
     """
 
     engine: SensorThingsAbstractEngine
+    auth: str
     component: str
     component_path: List[str]
     entity_chain: List[Tuple[str, Union[UUID, int, str]]]

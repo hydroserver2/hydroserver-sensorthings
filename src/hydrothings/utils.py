@@ -66,20 +66,24 @@ def generate_response_codes(method: str, response_schema=None) -> dict:
     elif method == 'get':
         response_codes = {
             200: response_schema,
+            403: core_schemas.PermissionDenied,
             404: core_schemas.EntityNotFound
         }
     elif method == 'create':
         response_codes = {
-            201: Union[None, List[HttpUrl]]
+            201: Union[None, List[HttpUrl]],
+            403: core_schemas.PermissionDenied
         }
     elif method == 'update':
         response_codes = {
             204: None,
+            403: core_schemas.PermissionDenied,
             404: core_schemas.EntityNotFound
         }
     elif method == 'delete':
         response_codes = {
             204: None,
+            403: core_schemas.PermissionDenied,
             404: core_schemas.EntityNotFound
         }
     else:
