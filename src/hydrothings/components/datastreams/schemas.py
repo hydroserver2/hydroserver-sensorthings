@@ -3,6 +3,7 @@ from pydantic import Field, HttpUrl
 from ninja import Schema
 from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, NestedEntity
 from hydrothings.validators import allow_partial
+from hydrothings.extras.iso_types import ISOTime, ISOInterval
 
 if TYPE_CHECKING:
     from hydrothings.components.things.schemas import Thing
@@ -32,8 +33,8 @@ class DatastreamFields(Schema):
     unit_of_measurement: UnitOfMeasurement = Field(..., alias='unitOfMeasurement')
     observation_type: observationTypes = Field(..., alias='observationType')
     observed_area: dict = Field({}, alias='observedArea')
-    phenomenon_time: Union[str, None] = Field(None, alias='phenomenonTime')
-    result_time: Union[str, None] = Field(None, alias='resultTime')
+    phenomenon_time: Union[ISOTime, ISOInterval, None] = Field(None, alias='phenomenonTime')
+    result_time: Union[ISOTime, ISOInterval, None] = Field(None, alias='resultTime')
     properties: dict = {}
 
 
