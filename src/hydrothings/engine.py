@@ -121,6 +121,25 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
             }
         )
 
+    def build_next_link(self, top: int, skip: int) -> str:
+        """
+        Creates SensorThings next link for paginated responses.
+
+        Parameters
+        ----------
+        top : int
+            An integer representing how many records are returned in the response.
+        skip : int
+            An integer representing how many records are skipped in the response.
+
+        Returns
+        -------
+        str
+            A URL that links to the next dataset following the subset of data in the current response.
+        """
+
+        return f'{self.get_ref()}?$top={top}&$skip={top+skip}'
+
     @abstractmethod
     def resolve_entity_id_chain(self, entity_chain: List[Tuple[str, Union[UUID, int, str]]]) -> bool:
         """
