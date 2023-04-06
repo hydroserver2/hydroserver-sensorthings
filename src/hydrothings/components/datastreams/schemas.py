@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List, Union
-from pydantic import Field, HttpUrl
+from pydantic import Field, AnyHttpUrl
 from ninja import Schema
 from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, NestedEntity
 from hydrothings.validators import allow_partial
@@ -23,7 +23,7 @@ observationTypes = Literal[
 class UnitOfMeasurement(Schema):
     name: str
     symbol: str
-    definition: HttpUrl
+    definition: AnyHttpUrl
 
 
 # TODO Add validation for temporal duration types.
@@ -69,9 +69,9 @@ class DatastreamPatchBody(BasePatchBody, DatastreamFields):
 
 
 class DatastreamGetResponse(BaseGetResponse, DatastreamFields):
-    thing_link: HttpUrl = Field(..., alias='Thing@iot.navigationLink')
-    sensor_link: HttpUrl = Field(..., alias='Sensor@iot.navigationLink')
-    observed_property_link: HttpUrl = Field(..., alias='ObservedProperty@iot.navigationLink')
+    thing_link: AnyHttpUrl = Field(..., alias='Thing@iot.navigationLink')
+    sensor_link: AnyHttpUrl = Field(..., alias='Sensor@iot.navigationLink')
+    observed_property_link: AnyHttpUrl = Field(..., alias='ObservedProperty@iot.navigationLink')
 
 
 class DatastreamListResponse(BaseListResponse):

@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List, Union
-from pydantic import Field, HttpUrl
+from pydantic import Field, AnyHttpUrl
 from geojson_pydantic import Feature
 from ninja import Schema
 from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, NestedEntity
@@ -46,8 +46,8 @@ class LocationPatchBody(LocationFields, BasePatchBody):
 
 
 class LocationGetResponse(BaseGetResponse, LocationFields):
-    things_link: HttpUrl = Field(..., alias='Things@iot.navigationLink')
-    historical_locations_link: HttpUrl = Field(..., alias='HistoricalLocations@iot.navigationLink')
+    things_link: AnyHttpUrl = Field(..., alias='Things@iot.navigationLink')
+    historical_locations_link: AnyHttpUrl = Field(..., alias='HistoricalLocations@iot.navigationLink')
 
 
 class LocationListResponse(BaseListResponse):

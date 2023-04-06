@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from uuid import UUID
 from pydantic.fields import SHAPE_LIST
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Optional
 from django.http import HttpRequest
 from hydrothings import components as component_schemas
 from hydrothings import settings
@@ -211,7 +211,7 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
     def get(
             self,
             entity_id: str
-    ) -> dict:
+    ) -> Optional[dict]:
         """
         Abstract method for handling GET entity requests.
 

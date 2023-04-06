@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List
-from pydantic import Field, HttpUrl
+from pydantic import Field, AnyHttpUrl
 from geojson_pydantic import Feature
 from ninja import Schema
 from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, NestedEntity
@@ -40,7 +40,7 @@ class FeatureOfInterestPatchBody(FeatureOfInterestFields, BasePatchBody):
 
 
 class FeatureOfInterestGetResponse(BaseGetResponse, FeatureOfInterestFields):
-    observations_link: HttpUrl = Field(..., alias='Observations@iot.navigationLink')
+    observations_link: AnyHttpUrl = Field(..., alias='Observations@iot.navigationLink')
 
 
 class FeatureOfInterestListResponse(BaseListResponse):

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, List, Union
 from datetime import datetime
-from pydantic import Field, HttpUrl
+from pydantic import Field, AnyHttpUrl
 from ninja import Schema
 from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, NestedEntity
 from hydrothings.validators import allow_partial
@@ -39,8 +39,8 @@ class HistoricalLocationPatchBody(HistoricalLocationFields, BasePatchBody):
 
 
 class HistoricalLocationGetResponse(BaseGetResponse, HistoricalLocationFields):
-    thing_link: HttpUrl = Field(..., alias='Thing@iot.navigationLink')
-    historical_locations_link: HttpUrl = Field(..., alias='Locations@iot.navigationLink')
+    thing_link: AnyHttpUrl = Field(..., alias='Thing@iot.navigationLink')
+    historical_locations_link: AnyHttpUrl = Field(..., alias='Locations@iot.navigationLink')
 
 
 class HistoricalLocationListResponse(BaseListResponse):

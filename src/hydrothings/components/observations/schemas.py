@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, Union, List
-from pydantic import Field, HttpUrl
+from pydantic import Field, AnyHttpUrl
 from ninja import Schema
 from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, \
     NestedEntity, QueryParams
@@ -30,7 +30,7 @@ observationResultFormats = Literal['dataArray']
 class UnitOfMeasurement(Schema):
     name: str
     symbol: str
-    definition: HttpUrl
+    definition: AnyHttpUrl
 
 
 class ObservationFields(Schema):
@@ -52,7 +52,7 @@ class Observation(ObservationFields, ObservationRelations):
 
 
 class ObservationDataArray(Schema):
-    datastream: HttpUrl = Field(..., alias='Datastream@iot.navigationLink')
+    datastream: AnyHttpUrl = Field(..., alias='Datastream@iot.navigationLink')
     components: List[observationComponents]
     data_array: List[list] = Field(..., alias='dataArray')
 
@@ -82,8 +82,8 @@ class ObservationPatchBody(BasePatchBody, ObservationFields):
 
 
 class ObservationGetResponse(ObservationFields, BaseGetResponse):
-    datastream_link: HttpUrl = Field(..., alias='Datastream@iot.navigationLink')
-    feature_of_interest_link: HttpUrl = Field(..., alias='FeatureOfInterest@iot.navigationLink')
+    datastream_link: AnyHttpUrl = Field(..., alias='Datastream@iot.navigationLink')
+    feature_of_interest_link: AnyHttpUrl = Field(..., alias='FeatureOfInterest@iot.navigationLink')
 
     class Config:
         allow_population_by_field_name = True

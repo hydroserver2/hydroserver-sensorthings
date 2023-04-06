@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, List
-from pydantic import Field, HttpUrl
+from pydantic import Field, AnyHttpUrl
 from ninja import Schema
 from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, NestedEntity
 from hydrothings.validators import allow_partial
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 class ObservedPropertyFields(Schema):
     name: str
-    definition: HttpUrl
+    definition: AnyHttpUrl
     description: str
     properties: dict = {}
 
@@ -35,7 +35,7 @@ class ObservedPropertyPatchBody(BasePatchBody, ObservedPropertyFields):
 
 
 class ObservedPropertyGetResponse(ObservedPropertyFields, BaseGetResponse):
-    datastreams_link: HttpUrl = Field(..., alias='Datastreams@iot.navigationLink')
+    datastreams_link: AnyHttpUrl = Field(..., alias='Datastreams@iot.navigationLink')
 
 
 class ObservedPropertyListResponse(BaseListResponse):
