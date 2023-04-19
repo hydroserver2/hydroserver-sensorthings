@@ -1,4 +1,5 @@
-from datetime import datetime
+import pytz
+from dateutil.parser import isoparse
 
 
 class ISOTime(str):
@@ -13,11 +14,15 @@ class ISOTime(str):
             raise TypeError('string required')
 
         try:
-            datetime.fromisoformat(v)
+            value = isoparse(v)
+            if value.tzinfo is None:
+                value = value.replace(tzinfo=pytz.UTC)
+            else:
+                value = value.astimezone(pytz.UTC)
         except TypeError:
             raise ValueError('invalid ISO time format')
 
-        return cls(v)
+        return cls(value.isoformat(sep='T', timespec='milliseconds').replace('+00:00', 'Z'))
 
 
 class ISOInterval(str):
@@ -31,12 +36,14 @@ class ISOInterval(str):
         if not isinstance(v, str):
             raise TypeError('string required')
 
-        split_v = v.split('/')
+        split_v = [
+            ISOTime.validate(dt_value) for dt_value in v.split('/')
+        ]
 
         try:
-            if len(split_v) != 2 or datetime.fromisoformat(split_v[0]) > datetime.fromisoformat(split_v[1]):
+            if len(split_v) != 2 or isoparse(split_v[0]) >= isoparse(split_v[1]):
                 raise TypeError
         except TypeError:
             raise ValueError('invalid ISO interval format')
 
-        return cls(v)
+        return cls('/'.join(split_v))
