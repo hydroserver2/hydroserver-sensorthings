@@ -33,7 +33,7 @@ def list_things(request: SensorThingsRequest, params: QueryParams = Query(...)):
         )
     )
 
-    return entities_or_404(response)
+    return entities_or_404(response, ThingListResponse)
 
 
 @router.get(
@@ -53,7 +53,7 @@ def get_thing(request: SensorThingsRequest, thing_id: str):
 
     response = request.engine.get(entity_id=thing_id)
 
-    return entity_or_404(response, thing_id)
+    return entity_or_404(response, thing_id, ThingGetResponse)
 
 
 @router.post(

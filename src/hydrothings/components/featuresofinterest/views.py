@@ -32,7 +32,7 @@ def list_features_of_interest(request: SensorThingsRequest, params: QueryParams 
         )
     )
 
-    return entities_or_404(response)
+    return entities_or_404(response, FeatureOfInterestListResponse)
 
 
 @router.get(
@@ -52,7 +52,7 @@ def get_feature_of_interest(request, feature_of_interest_id: str):
 
     response = request.engine.get(entity_id=feature_of_interest_id)
 
-    return entity_or_404(response, feature_of_interest_id)
+    return entity_or_404(response, feature_of_interest_id, FeatureOfInterestGetResponse)
 
 
 @router.post(

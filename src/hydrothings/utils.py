@@ -1,6 +1,9 @@
 import re
+import inspect
 import hydrothings.schemas as core_schemas
+from ninja import Schema
 from odata_query.grammar import ODataParser, ODataLexer
+from django.http import HttpResponse
 from pydantic import HttpUrl
 from typing import Literal, Union, List
 from requests import Response
@@ -92,22 +95,59 @@ def generate_response_codes(method: str, response_schema=None) -> dict:
     return response_codes
 
 
-def entities_or_404(response):
+def serialize_response(response, response_model):
+    """"""
+
+    if not inspect.isclass(response_model):
+        return response
+    if not issubclass(response_model, Schema):
+        return response
+
+    new_model = response_model.__new__(response_model)
+
+    fields_values = {}
+
+    for name, field in response_model.__fields__.items():
+        if name in response.keys():
+            if isinstance(response[name], list):
+                fields_values[name] = [
+                    serialize_response(fv, field.type_)
+                    for fv in response[name]
+                ]
+            elif inspect.isclass(field.type_) and issubclass(field.type_, Schema):
+                fields_values[name] = serialize_response(response[name], field.type_)
+            else:
+                fields_values[name] = response[name]
+        elif not field.required:
+            fields_values[name] = field.get_default()
+
+    object.__setattr__(new_model, '__dict__', fields_values)
+    _fields_set = set(response.keys())
+    object.__setattr__(new_model, '__fields_set__', _fields_set)
+
+    new_model._init_private_attributes()
+
+    return new_model
+
+
+def entities_or_404(response, response_model):
     """"""
 
     if isinstance(response, Response):
         return response.status_code, response.content
     else:
-        return 200, response
+        serialized_response = serialize_response(response, response_model).json(by_alias=True)
+        return HttpResponse(content=serialized_response, status=200, content_type='application/json')
 
 
-def entity_or_404(response, entity_id):
+def entity_or_404(response, entity_id, response_model):
     """"""
 
     if isinstance(response, Response):
         return response.status_code, response.content
     elif response:
-        return 200, response
+        serialized_response = serialize_response(response, response_model).json(by_alias=True)
+        return HttpResponse(content=serialized_response, status=200, content_type='application/json')
     else:
         return 404, {'message': f'Record with ID {entity_id} does not exist.'}
 

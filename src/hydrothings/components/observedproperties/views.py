@@ -34,7 +34,7 @@ def list_observed_properties(request: SensorThingsRequest, params: QueryParams =
         )
     )
 
-    return entities_or_404(response)
+    return entities_or_404(response, ObservedPropertyListResponse)
 
 
 @router.get(
@@ -54,7 +54,7 @@ def get_observed_property(request, observed_property_id: str):
 
     response = request.engine.get(entity_id=observed_property_id)
 
-    return entity_or_404(response, observed_property_id)
+    return entity_or_404(response, observed_property_id, ObservedPropertyGetResponse)
 
 
 @router.post(

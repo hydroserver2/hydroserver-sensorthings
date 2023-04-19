@@ -32,7 +32,7 @@ def list_sensors(request, params: QueryParams = Query(...)):
             entity_chain=request.entity_chain
         )
     )
-    return entities_or_404(response)
+    return entities_or_404(response, SensorListResponse)
 
 
 @router.get(
@@ -52,7 +52,7 @@ def get_sensor(request, sensor_id: str):
 
     response = request.engine.get(entity_id=sensor_id)
 
-    return entity_or_404(response, sensor_id)
+    return entity_or_404(response, sensor_id, SensorGetResponse)
 
 
 @router.post(

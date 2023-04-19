@@ -41,8 +41,9 @@ def list_observations(request: SensorThingsRequest, params: ObservationParams = 
 
     if result_format == 'dataArray':
         response = convert_to_data_array(request, response)
-
-    return entities_or_404(response)
+        return entities_or_404(response, ObservationDataArrayResponse)
+    else:
+        return entities_or_404(response, ObservationListResponse)
 
 
 @router.get(
@@ -62,7 +63,7 @@ def get_observation(request: SensorThingsRequest, observation_id: str):
 
     response = request.engine.get(entity_id=observation_id)
 
-    return entity_or_404(response, observation_id)
+    return entity_or_404(response, observation_id, ObservationGetResponse)
 
 
 @router.post(

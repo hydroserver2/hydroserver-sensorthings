@@ -33,7 +33,7 @@ def list_historical_locations(request: SensorThingsRequest, params: QueryParams 
         )
     )
 
-    return entities_or_404(response)
+    return entities_or_404(response, HistoricalLocationListResponse)
 
 
 @router.get(
@@ -53,7 +53,7 @@ def get_historical_location(request: SensorThingsRequest, historical_location_id
 
     response = request.engine.get(entity_id=historical_location_id)
 
-    return entity_or_404(response, historical_location_id)
+    return entity_or_404(response, historical_location_id, HistoricalLocationGetResponse)
 
 
 @router.post(

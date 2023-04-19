@@ -32,7 +32,7 @@ def list_datastreams(request: SensorThingsRequest, params: QueryParams = Query(.
         )
     )
 
-    return entities_or_404(response)
+    return entities_or_404(response, DatastreamListResponse)
 
 
 @router.get(
@@ -52,7 +52,7 @@ def get_datastream(request: SensorThingsRequest, datastream_id: str):
 
     response = request.engine.get(entity_id=datastream_id)
 
-    return entity_or_404(response, datastream_id)
+    return entity_or_404(response, datastream_id, DatastreamGetResponse)
 
 
 @router.post(

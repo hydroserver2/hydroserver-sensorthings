@@ -32,7 +32,7 @@ def list_locations(request: SensorThingsRequest, params: QueryParams = Query(...
         )
     )
 
-    return entities_or_404(response)
+    return entities_or_404(response, LocationListResponse)
 
 
 @router.get(
@@ -52,7 +52,7 @@ def get_location(request: SensorThingsRequest, location_id: str):
 
     response = request.engine.get(entity_id=location_id)
 
-    return entity_or_404(response, location_id)
+    return entity_or_404(response, location_id, LocationGetResponse)
 
 
 @router.post(

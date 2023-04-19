@@ -34,7 +34,7 @@ class ISOInterval(str):
         split_v = v.split('/')
 
         try:
-            if len(split_v) != 2 or datetime.fromisoformat(split_v[0]) >= datetime.fromisoformat(split_v[1]):
+            if len(split_v) != 2 or datetime.fromisoformat(split_v[0]) > datetime.fromisoformat(split_v[1]):
                 raise TypeError
         except TypeError:
             raise ValueError('invalid ISO interval format')
