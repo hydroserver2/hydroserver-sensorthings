@@ -13,6 +13,7 @@ router = Router(tags=['Datastreams'])
     '/Datastreams',
     response=generate_response_codes('list', DatastreamListResponse),
     by_alias=True,
+    exclude_unset=True,
     url_name='list_datastream'
 )
 def list_datastreams(request: SensorThingsRequest, params: QueryParams = Query(...)):
@@ -38,7 +39,8 @@ def list_datastreams(request: SensorThingsRequest, params: QueryParams = Query(.
 @router.get(
     '/Datastreams({datastream_id})',
     response=generate_response_codes('get', DatastreamGetResponse),
-    by_alias=True
+    by_alias=True,
+    exclude_unset=True
 )
 def get_datastream(request: SensorThingsRequest, datastream_id: str):
     """

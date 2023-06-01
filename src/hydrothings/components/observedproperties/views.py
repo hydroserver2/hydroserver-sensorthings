@@ -15,7 +15,7 @@ router = Router(tags=['Observed Properties'])
     response=generate_response_codes('list', ObservedPropertyListResponse),
     by_alias=True,
     url_name='list_observed_property',
-    exclude_none=True
+    exclude_unset=True
 )
 def list_observed_properties(request: SensorThingsRequest, params: QueryParams = Query(...)):
     """
@@ -40,7 +40,8 @@ def list_observed_properties(request: SensorThingsRequest, params: QueryParams =
 @router.get(
     '/ObservedProperties({observed_property_id})',
     response=generate_response_codes('get', ObservedPropertyGetResponse),
-    by_alias=True
+    by_alias=True,
+    exclude_unset=True
 )
 def get_observed_property(request, observed_property_id: str):
     """

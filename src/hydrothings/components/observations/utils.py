@@ -50,7 +50,7 @@ def convert_to_data_array(
 
     datastream_url_template = f'{request.scheme}://{request.get_host()}{request.path[:-12]}Datastreams'
 
-    response['value'] = [
+    response['values'] = [
         {
             'datastream': f'{datastream_url_template}({datastream_id})',
             'components': [
@@ -61,7 +61,7 @@ def convert_to_data_array(
                     observation[field[0]] for field in selected_fields
                 ] for observation in observations
             ]
-        } for datastream_id, observations in groupby(response['value'], key=lambda x: x['datastream_id'])
+        } for datastream_id, observations in groupby(response['values'], key=lambda x: x['datastream_id'])
     ]
 
     return response

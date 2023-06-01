@@ -6,6 +6,7 @@ from django.http import HttpRequest
 from hydrothings import components as component_schemas
 from hydrothings import settings
 from hydrothings.schemas import BasePostBody, BasePatchBody
+from hydrothings.utils import lookup_component
 
 
 class SensorThingsAbstractEngine(metaclass=ABCMeta):
@@ -23,7 +24,12 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
     component: str
     component_path: str
 
-    def get_ref(self, entity_id: Union[str, None] = None, related_component: Union[str, None] = None) -> str:
+    def get_ref(
+            self,
+            entity_id: Union[str, None] = None,
+            related_component: Union[str, None] = None,
+            override_component: Union[str, None] = None
+    ) -> str:
         """
         Builds a reference URL for a given entity.
 
@@ -33,6 +39,8 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
             The ID of the entity.
         related_component : str
             The related component to be appended to the ref URL.
+        override_component : str
+            A value used to override the base component in the URL.
 
         Returns
         -------
@@ -40,7 +48,10 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
             The entity's reference URL.
         """
 
-        ref_url = f'{self.scheme}://{self.host}{self.path}'
+        if override_component is not None:
+            override_component = '/' + lookup_component(override_component, 'camel_singular', 'camel_plural')
+
+        ref_url = f'{self.scheme}://{self.host}{override_component if override_component is not None else self.path}'
 
         if entity_id is not None:
             ref_url = f'{ref_url}({entity_id})'

@@ -62,7 +62,7 @@ class BasePatchBody(Schema):
 
 class BaseListResponse(Schema):
     count: Union[int, None] = Field(None, alias='@iot.count')
-    value: list = []
+    values: list = []
     next_link: Union[AnyHttpUrl, None] = Field(None, alias='@iot.nextLink')
 
     class Config:

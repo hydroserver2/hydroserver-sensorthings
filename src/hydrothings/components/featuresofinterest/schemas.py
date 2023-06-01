@@ -40,8 +40,9 @@ class FeatureOfInterestPatchBody(FeatureOfInterestFields, BasePatchBody):
 
 
 class FeatureOfInterestGetResponse(BaseGetResponse, FeatureOfInterestFields):
-    observations_link: AnyHttpUrl = Field(..., alias='Observations@iot.navigationLink')
+    observations_link: AnyHttpUrl = Field(None, alias='Observations@iot.navigationLink')
+    observations_rel: List[NestedEntity] = Field(None, alias='Observations', nested_class='ObservationGetResponse')
 
 
 class FeatureOfInterestListResponse(BaseListResponse):
-    value: List[FeatureOfInterestGetResponse]
+    values: List[FeatureOfInterestGetResponse]

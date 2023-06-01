@@ -39,9 +39,15 @@ class HistoricalLocationPatchBody(HistoricalLocationFields, BasePatchBody):
 
 
 class HistoricalLocationGetResponse(BaseGetResponse, HistoricalLocationFields):
-    thing_link: AnyHttpUrl = Field(..., alias='Thing@iot.navigationLink')
-    historical_locations_link: AnyHttpUrl = Field(..., alias='Locations@iot.navigationLink')
+    thing_link: AnyHttpUrl = Field(None, alias='Thing@iot.navigationLink')
+    thing_rel: NestedEntity = Field(None, alias='Thing', nested_class='ThingGetResponse')
+    historical_locations_link: AnyHttpUrl = Field(None, alias='HistoricalLocations@iot.navigationLink')
+    historical_locations_rel: List[NestedEntity] = Field(
+        None,
+        alias='HistoricalLocations',
+        nested_class='HistoricalLocationsGetResponse'
+    )
 
 
 class HistoricalLocationListResponse(BaseListResponse):
-    value: List[HistoricalLocationGetResponse]
+    values: List[HistoricalLocationGetResponse]

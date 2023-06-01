@@ -14,6 +14,7 @@ router = Router(tags=['Historical Locations'])
     '/HistoricalLocations',
     response=generate_response_codes('list', HistoricalLocationListResponse),
     by_alias=True,
+    exclude_unset=True,
     url_name='list_historical_location'
 )
 def list_historical_locations(request: SensorThingsRequest, params: QueryParams = Query(...)):
@@ -39,7 +40,8 @@ def list_historical_locations(request: SensorThingsRequest, params: QueryParams 
 @router.get(
     '/HistoricalLocations({historical_location_id})',
     response=generate_response_codes('get', HistoricalLocationGetResponse),
-    by_alias=True
+    by_alias=True,
+    exclude_unset=True
 )
 def get_historical_location(request: SensorThingsRequest, historical_location_id: str):
     """

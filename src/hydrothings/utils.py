@@ -1,5 +1,6 @@
 import re
 import inspect
+import hydrothings.components as core_components
 import hydrothings.schemas as core_schemas
 from ninja import Schema
 from odata_query.grammar import ODataParser, ODataLexer
@@ -108,7 +109,18 @@ def serialize_response(response, response_model):
     fields_values = {}
 
     for name, field in response_model.__fields__.items():
-        if name in response.keys():
+        if name.endswith('_rel') and name in response.keys():
+            if isinstance(response[name], list):
+                fields_values[name] = [
+                    serialize_response(
+                        entity, getattr(core_components, field.field_info.extra.get('nested_class'))
+                    ) for entity in response[name]
+                ]
+            else:
+                fields_values[name] = serialize_response(
+                    response[name], getattr(core_components, field.field_info.extra.get('nested_class'))
+                )
+        elif name in response.keys():
             if isinstance(response[name], list):
                 fields_values[name] = [
                     serialize_response(fv, field.type_)
@@ -118,8 +130,6 @@ def serialize_response(response, response_model):
                 fields_values[name] = serialize_response(response[name], field.type_)
             else:
                 fields_values[name] = response[name]
-        elif not field.required:
-            fields_values[name] = field.get_default()
 
     object.__setattr__(new_model, '__dict__', fields_values)
     _fields_set = set(response.keys())
@@ -178,9 +188,6 @@ def parse_query_params(
         A dictionary containing all parsed query parameters.
     """
 
-    lexer = ODataLexer()
-    parser = ODataParser()
-
     if entity_chain:
         if query_params.get('filters'):
             query_params['filters'] += f' and {entity_chain[-1][0]}/id eq {entity_chain[-1][1]}'
@@ -188,7 +195,7 @@ def parse_query_params(
             query_params['filters'] = f'{entity_chain[-1][0]}/id eq {entity_chain[-1][1]}'
 
     if query_params.get('filters'):
-        query_params['filters'] = parser.parse(lexer.tokenize(query_params['filters']))
+        query_params['filters'] = tokenize_filters(query_params['filters'])
 
     if sort_datastream is True:
         if query_params.get('order_by'):
@@ -204,4 +211,64 @@ def parse_query_params(
             } for order_field in query_params['order_by'].split(',')
         ]
 
+    if query_params.get('expand'):
+        expanded_entities = [
+            tokenize_expansion(entity)
+            for entity in query_params['expand'].split(',')
+        ]
+
+        query_params['expand'] = expanded_entities
+
     return query_params
+
+
+def tokenize_filters(filter_string):
+    """"""
+
+    lexer = ODataLexer()
+    parser = ODataParser()
+
+    return parser.parse(lexer.tokenize(filter_string))
+
+
+def tokenize_expansion(entity):
+    """"""
+
+    nav_props = entity.split('/')
+
+    if len(nav_props) == 0:
+        return None
+
+    nav_prop = nav_props[0]
+    filter_search = re.findall(r'\(.*?\)', nav_prop)
+
+    if filter_search and '$filter=' in filter_search[0]:
+        nav_prop = nav_prop.split('(')[0]
+        filters = tokenize_filters(filter_search[0][1:-1].replace('$filter=', ''))
+    else:
+        filters = None
+
+    if len(nav_props) > 1:
+        child_props = [tokenize_expansion('/'.join(nav_props[1:]))]
+    else:
+        child_props = []
+
+    try:
+        nav_prop = lookup_component(
+            input_value=nav_prop,
+            input_type='camel_plural',
+            output_type='camel_singular'
+        )
+        array = True
+    except:
+        array = False
+
+    return {
+        'component': nav_prop,
+        'array': array,
+        'select': None,
+        'filters': filters,
+        'order_by': None,
+        'pagination': None,
+        'children': child_props
+    }

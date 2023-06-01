@@ -82,8 +82,14 @@ class ObservationPatchBody(BasePatchBody, ObservationFields):
 
 
 class ObservationGetResponse(ObservationFields, BaseGetResponse):
-    datastream_link: AnyHttpUrl = Field(..., alias='Datastream@iot.navigationLink')
-    feature_of_interest_link: AnyHttpUrl = Field(..., alias='FeatureOfInterest@iot.navigationLink')
+    datastream_link: AnyHttpUrl = Field(None, alias='Datastream@iot.navigationLink')
+    datastream_rel: NestedEntity = Field(None, alias='Datastream', nested_class='DatastreamGetResponse')
+    feature_of_interest_link: AnyHttpUrl = Field(None, alias='FeatureOfInterest@iot.navigationLink')
+    feature_of_interest_rel: NestedEntity = Field(
+        None,
+        alias='FeatureOfInterest',
+        nested_class='FeatureOfInterestGetResponse'
+    )
 
     class Config:
         allow_population_by_field_name = True
@@ -97,7 +103,7 @@ class ObservationListResponse(BaseListResponse):
 
 
 class ObservationDataArrayResponse(BaseListResponse):
-    value: List[ObservationDataArray]
+    values: List[ObservationDataArray]
 
     class Config:
         allow_population_by_field_name = True

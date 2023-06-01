@@ -13,6 +13,8 @@ router = Router(tags=['Features Of Interest'])
 @router.get(
     '/FeaturesOfInterest',
     response=generate_response_codes('list', FeatureOfInterestListResponse),
+    by_alias=True,
+    exclude_unset=True,
     url_name='list_feature_of_interest'
 )
 def list_features_of_interest(request: SensorThingsRequest, params: QueryParams = Query(...)):
@@ -38,7 +40,8 @@ def list_features_of_interest(request: SensorThingsRequest, params: QueryParams 
 @router.get(
     '/FeaturesOfInterest({feature_of_interest_id})',
     response=generate_response_codes('get', FeatureOfInterestGetResponse),
-    by_alias=True
+    by_alias=True,
+    exclude_unset=True
 )
 def get_feature_of_interest(request, feature_of_interest_id: str):
     """

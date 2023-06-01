@@ -13,6 +13,7 @@ router = Router(tags=['Locations'])
     '/Locations',
     response=generate_response_codes('list', LocationListResponse),
     by_alias=True,
+    exclude_unset=True,
     url_name='list_location'
 )
 def list_locations(request: SensorThingsRequest, params: QueryParams = Query(...)):
@@ -38,7 +39,8 @@ def list_locations(request: SensorThingsRequest, params: QueryParams = Query(...
 @router.get(
     '/Locations({location_id})',
     response=generate_response_codes('get', LocationGetResponse),
-    by_alias=True
+    by_alias=True,
+    exclude_unset=True
 )
 def get_location(request: SensorThingsRequest, location_id: str):
     """

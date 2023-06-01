@@ -14,7 +14,7 @@ router = Router(tags=['Sensors'])
     response=generate_response_codes('list', SensorListResponse),
     by_alias=True,
     url_name='list_sensor',
-    exclude_none=True
+    exclude_unset=True
 )
 def list_sensors(request, params: QueryParams = Query(...)):
     """
@@ -38,7 +38,8 @@ def list_sensors(request, params: QueryParams = Query(...)):
 @router.get(
     '/Sensors({sensor_id})',
     response=generate_response_codes('get', SensorGetResponse),
-    by_alias=True
+    by_alias=True,
+    exclude_unset=True
 )
 def get_sensor(request, sensor_id: str):
     """

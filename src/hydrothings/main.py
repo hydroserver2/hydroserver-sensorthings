@@ -122,7 +122,7 @@ class SensorThingsAPI(NinjaAPI):
                     if response_schema:
                         if operation_method == 'list':
                             for field, schema in component_settings.component_schema.__fields__.items():
-                                response_schema.__fields__['value'].type_.__fields__[field] = schema
+                                response_schema.__fields__['values'].type_.__fields__[field] = schema
 
                         elif operation_method == 'get':
                             for field, schema in component_settings.component_schema.__fields__.items():
@@ -139,6 +139,7 @@ class SensorThingsAPI(NinjaAPI):
                     path.replace('(', f'({self.id_qualifier}').replace(')', f'{self.id_qualifier})'),
                     response=generate_response_codes(operation_method, response_schema),
                     deprecated=getattr(endpoint_settings.get(operation_method), 'deprecated', False),
+                    exclude_unset=True,
                     by_alias=True,
                     **{
                         'auth': endpoint_settings[operation_method].authentication

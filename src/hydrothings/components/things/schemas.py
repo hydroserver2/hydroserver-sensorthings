@@ -47,13 +47,20 @@ class ThingPatchBody(BasePatchBody, ThingFields):
 
 
 class ThingGetResponse(ThingFields, BaseGetResponse):
-    locations_link: AnyHttpUrl = Field(..., alias='Locations@iot.navigationLink')
-    historical_locations_link: AnyHttpUrl = Field(..., alias='HistoricalLocations@iot.navigationLink')
-    datastreams_link: AnyHttpUrl = Field(..., alias='Datastreams@iot.navigationLink')
+    locations_link: AnyHttpUrl = Field(None, alias='Locations@iot.navigationLink')
+    locations_rel: List[NestedEntity] = Field(None, alias='Locations', nested_class='LocationGetResponse')
+    historical_locations_link: AnyHttpUrl = Field(None, alias='HistoricalLocations@iot.navigationLink')
+    historical_locations_rel: List[NestedEntity] = Field(
+        None,
+        alias='HistoricalLocations',
+        nested_class='HistoricalLocationGetResponse'
+    )
+    datastreams_link: AnyHttpUrl = Field(None, alias='Datastreams@iot.navigationLink')
+    datastreams_rel: List[NestedEntity] = Field(None, alias='Datastreams', nested_class='DatastreamGetResponse')
 
 
 class ThingListResponse(BaseListResponse):
-    value: List[ThingGetResponse]
+    values: List[ThingGetResponse]
 
 
 class ThingGetResponseODM(ThingGetResponse):

@@ -46,9 +46,15 @@ class LocationPatchBody(LocationFields, BasePatchBody):
 
 
 class LocationGetResponse(BaseGetResponse, LocationFields):
-    things_link: AnyHttpUrl = Field(..., alias='Things@iot.navigationLink')
-    historical_locations_link: AnyHttpUrl = Field(..., alias='HistoricalLocations@iot.navigationLink')
+    things_link: AnyHttpUrl = Field(None, alias='Things@iot.navigationLink')
+    things_rel: List[NestedEntity] = Field(None, alias='Things', nested_class='ThingGetResponse')
+    historical_locations_link: AnyHttpUrl = Field(None, alias='HistoricalLocations@iot.navigationLink')
+    historical_locations_rel: List[NestedEntity] = Field(
+        None,
+        alias='HistoricalLocations',
+        nested_class='HistoricalLocationGetResponse'
+    )
 
 
 class LocationListResponse(BaseListResponse):
-    value: List[LocationGetResponse]
+    values: List[LocationGetResponse]

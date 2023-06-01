@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING, Literal, List, Union
 from pydantic import Field, AnyHttpUrl
 from ninja import Schema
-from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, NestedEntity
+from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, \
+    NestedEntity
 from hydrothings.validators import allow_partial
 from hydrothings.extras.iso_types import ISOTime, ISOInterval
 
@@ -69,10 +70,18 @@ class DatastreamPatchBody(BasePatchBody, DatastreamFields):
 
 
 class DatastreamGetResponse(BaseGetResponse, DatastreamFields):
-    thing_link: AnyHttpUrl = Field(..., alias='Thing@iot.navigationLink')
-    sensor_link: AnyHttpUrl = Field(..., alias='Sensor@iot.navigationLink')
-    observed_property_link: AnyHttpUrl = Field(..., alias='ObservedProperty@iot.navigationLink')
+    thing_link: AnyHttpUrl = Field(None, alias='Thing@iot.navigationLink')
+    thing_rel: NestedEntity = Field(None, alias='Thing', nested_class='ThingGetResponse')
+    sensor_link: AnyHttpUrl = Field(None, alias='Sensor@iot.navigationLink')
+    sensor_rel: NestedEntity = Field(None, alias='Sensor', nested_class='SensorGetResponse')
+    observed_property_link: AnyHttpUrl = Field(None, alias='ObservedProperty@iot.navigationLink')
+    observed_property_rel: NestedEntity = Field(
+        None, alias='ObservedProperty',
+        nested_class='ObservedPropertyGetResponse'
+    )
+    observations_link: AnyHttpUrl = Field(None, alias='Observations@iot.navigationLink')
+    observations_rel: List[NestedEntity] = Field(None, alias='Observations', nested_class='ObservationGetResponse')
 
 
 class DatastreamListResponse(BaseListResponse):
-    value: List[DatastreamGetResponse]
+    values: List[DatastreamGetResponse]

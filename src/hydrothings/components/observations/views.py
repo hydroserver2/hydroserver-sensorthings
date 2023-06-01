@@ -16,7 +16,7 @@ router = Router(tags=['Observations'])
     response=generate_response_codes('list', Union[ObservationListResponse, ObservationDataArrayResponse]),
     by_alias=True,
     url_name='list_observation',
-    exclude_none=True
+    exclude_unset=True
 )
 def list_observations(request: SensorThingsRequest, params: ObservationParams = Query(...)):
     """
@@ -49,7 +49,8 @@ def list_observations(request: SensorThingsRequest, params: ObservationParams = 
 @router.get(
     '/Observations({observation_id})',
     response=generate_response_codes('get', ObservationGetResponse),
-    by_alias=True
+    by_alias=True,
+    exclude_unset=True
 )
 def get_observation(request: SensorThingsRequest, observation_id: str):
     """
