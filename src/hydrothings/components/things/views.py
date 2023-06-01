@@ -1,7 +1,7 @@
 from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
-from hydrothings.schemas import QueryParams
+from hydrothings.schemas import ListQueryParams, GetQueryParams
 from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import ThingPostBody, ThingPatchBody, ThingListResponse, ThingGetResponse
 
@@ -16,7 +16,7 @@ router = Router(tags=['Things'])
     url_name='list_thing',
     exclude_unset=True
 )
-def list_things(request: SensorThingsRequest, params: QueryParams = Query(...)):
+def list_things(request: SensorThingsRequest, params: ListQueryParams = Query(...)):
     """
     Get a collection of Thing entities.
 
@@ -42,7 +42,7 @@ def list_things(request: SensorThingsRequest, params: QueryParams = Query(...)):
     by_alias=True,
     exclude_unset=True
 )
-def get_thing(request: SensorThingsRequest, thing_id: str):
+def get_thing(request: SensorThingsRequest, thing_id: str, params: GetQueryParams = Query(...)):
     """
     Get a Thing entity.
 
@@ -52,8 +52,12 @@ def get_thing(request: SensorThingsRequest, thing_id: str):
       Thing Relations</a>
     """
 
-    response = request.engine.get(entity_id=thing_id)
-
+    response = request.engine.get(
+        entity_id=thing_id,
+        **parse_query_params(
+            query_params=params.dict()
+        )
+    )
     return entity_or_404(response, thing_id, ThingGetResponse)
 
 

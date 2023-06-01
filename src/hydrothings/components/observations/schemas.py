@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Literal, Union, List
 from pydantic import Field, AnyHttpUrl
 from ninja import Schema
 from hydrothings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, \
-    NestedEntity, QueryParams
+    NestedEntity, ListQueryParams
 from hydrothings.extras.iso_types import ISOTime, ISOInterval
 from hydrothings.validators import allow_partial
 
@@ -109,5 +109,5 @@ class ObservationDataArrayResponse(BaseListResponse):
         allow_population_by_field_name = True
 
 
-class ObservationParams(QueryParams):
+class ObservationParams(ListQueryParams):
     result_format: Union[observationResultFormats, None] = Field(None, alias='$resultFormat')

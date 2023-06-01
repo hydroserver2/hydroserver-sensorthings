@@ -1,7 +1,7 @@
 from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
-from hydrothings.schemas import QueryParams
+from hydrothings.schemas import ListQueryParams, GetQueryParams
 from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import SensorPostBody, SensorPatchBody, SensorListResponse, SensorGetResponse
 
@@ -16,7 +16,7 @@ router = Router(tags=['Sensors'])
     url_name='list_sensor',
     exclude_unset=True
 )
-def list_sensors(request, params: QueryParams = Query(...)):
+def list_sensors(request, params: ListQueryParams = Query(...)):
     """
     Get a collection of Sensor entities.
 
@@ -41,7 +41,7 @@ def list_sensors(request, params: QueryParams = Query(...)):
     by_alias=True,
     exclude_unset=True
 )
-def get_sensor(request, sensor_id: str):
+def get_sensor(request, sensor_id: str, params: GetQueryParams = Query(...)):
     """
     Get a Sensor entity.
 
@@ -51,7 +51,12 @@ def get_sensor(request, sensor_id: str):
       Sensor Relations</a>
     """
 
-    response = request.engine.get(entity_id=sensor_id)
+    response = request.engine.get(
+        entity_id=sensor_id,
+        **parse_query_params(
+            query_params=params.dict()
+        )
+    )
 
     return entity_or_404(response, sensor_id, SensorGetResponse)
 

@@ -221,7 +221,8 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
     @abstractmethod
     def get(
             self,
-            entity_id: str
+            entity_id: str,
+            expand
     ) -> Optional[dict]:
         """
         Abstract method for handling GET entity requests.
@@ -232,6 +233,8 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
         ----------
         entity_id : str
             The ID of the entity to be returned.
+        expand
+            Represents related components whose fields should be included in the response.
 
         Returns
         -------

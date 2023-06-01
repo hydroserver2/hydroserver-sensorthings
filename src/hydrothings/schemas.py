@@ -77,11 +77,14 @@ class BaseGetResponse(Schema):
         allow_population_by_field_name = True
 
 
-class QueryParams(Schema):
+class GetQueryParams(Schema):
+    expand: str = Field(None, alias='$expand')
+
+
+class ListQueryParams(GetQueryParams):
     filters: str = Field(None, alias='$filter')
     count: bool = Field(None, alias='$count')
     order_by: str = Field(None, alias='$orderby')
     skip: int = Field(0, alias='$skip')
     top: int = Field(None, alias='$top')
     select: str = Field(None, alias='$select')
-    expand: str = Field(None, alias='$expand')

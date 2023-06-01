@@ -1,7 +1,7 @@
 from ninja import Router, Query
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
-from hydrothings.schemas import QueryParams
+from hydrothings.schemas import ListQueryParams, GetQueryParams
 from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import ObservedPropertyPostBody, ObservedPropertyPatchBody, ObservedPropertyListResponse, \
     ObservedPropertyGetResponse
@@ -17,7 +17,7 @@ router = Router(tags=['Observed Properties'])
     url_name='list_observed_property',
     exclude_unset=True
 )
-def list_observed_properties(request: SensorThingsRequest, params: QueryParams = Query(...)):
+def list_observed_properties(request: SensorThingsRequest, params: ListQueryParams = Query(...)):
     """
     Get a collection of Observed Property entities.
 
@@ -43,7 +43,7 @@ def list_observed_properties(request: SensorThingsRequest, params: QueryParams =
     by_alias=True,
     exclude_unset=True
 )
-def get_observed_property(request, observed_property_id: str):
+def get_observed_property(request, observed_property_id: str, params: GetQueryParams = Query(...)):
     """
     Get an Observed Property entity.
 
@@ -53,7 +53,12 @@ def get_observed_property(request, observed_property_id: str):
       Observed Property Relations</a>
     """
 
-    response = request.engine.get(entity_id=observed_property_id)
+    response = request.engine.get(
+        entity_id=observed_property_id,
+        **parse_query_params(
+            query_params=params.dict()
+        )
+    )
 
     return entity_or_404(response, observed_property_id, ObservedPropertyGetResponse)
 

@@ -2,6 +2,7 @@ from ninja import Router, Query
 from typing import Union, List
 from django.http import HttpResponse
 from hydrothings.engine import SensorThingsRequest
+from hydrothings.schemas import GetQueryParams
 from hydrothings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import ObservationPostBody, ObservationPatchBody, ObservationListResponse, ObservationGetResponse, \
     ObservationParams, ObservationDataArrayResponse, ObservationDataArrayBody
@@ -52,7 +53,7 @@ def list_observations(request: SensorThingsRequest, params: ObservationParams = 
     by_alias=True,
     exclude_unset=True
 )
-def get_observation(request: SensorThingsRequest, observation_id: str):
+def get_observation(request: SensorThingsRequest, observation_id: str, params: GetQueryParams = Query(...)):
     """
     Get an Observation entity.
 
@@ -62,8 +63,12 @@ def get_observation(request: SensorThingsRequest, observation_id: str):
       Observation Relations</a>
     """
 
-    response = request.engine.get(entity_id=observation_id)
-
+    response = request.engine.get(
+        entity_id=observation_id,
+        **parse_query_params(
+            query_params=params.dict()
+        )
+    )
     return entity_or_404(response, observation_id, ObservationGetResponse)
 
 
