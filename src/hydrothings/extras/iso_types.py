@@ -4,6 +4,9 @@ from dateutil.parser import isoparse
 
 class ISOTime(str):
 
+    def __datetime__(self):
+        return isoparse(self)
+
     @classmethod
     def __get_validators__(cls):
         yield cls.validate
