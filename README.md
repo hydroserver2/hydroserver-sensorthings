@@ -1,10 +1,10 @@
-# Django HydroThings (WIP)
+# HydroServer SensorThings (WIP)
 
-The Django HydroThings Python package is an extension that helps implement the OGC SensorThings API specification in Django. The package is primarily built on top of the  [Django Ninja REST Framework](https://github.com/vitalik/django-ninja).
+The HydroServer Django SensorThings Python package is an extension that helps implement the OGC SensorThings API specification in Django. The package is primarily built on top of the  [Django Ninja REST Framework](https://github.com/vitalik/django-ninja).
 
 ## Installation
 
-You can install Django HydroThings using pip:
+You can install HydroServer SensorThings using pip:
 
 ```
 pip install django-hydrothings
@@ -12,7 +12,7 @@ pip install django-hydrothings
 
 ## Usage
 
-To use Django HydroThings in your Django project, add the following line to your `MIDDLEWARE` setting:
+To use HydroServer SensorThings in your Django project, add the following line to your `MIDDLEWARE` setting:
 
 ```
 MIDDLEWARE = [
@@ -63,4 +63,4 @@ You can also modify specific SensorThings endpoints and components using `hydrot
 
 ## Documentation
 
-For detailed documentation on how to use Django HydroThings, please refer to the [official documentation](https://hydroserver2.github.io/django-hydrothings/).
+For detailed documentation on how to use HydroServer SensorThings, please refer to the [official documentation](https://hydroserver2.github.io/django-hydrothings/).
