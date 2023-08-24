@@ -64,7 +64,3 @@ You can also modify specific SensorThings endpoints and components using `hydrot
 ## Documentation
 
 For detailed documentation on how to use Django HydroThings, please refer to the [official documentation](https://hydroserver2.github.io/django-hydrothings/).
-
-## License
-
-Django HydroThings is licensed under the [MIT License](https://github.com/hydroserver2/django-hydrothings/blob/main/LICENSE.txt).
