@@ -64,3 +64,7 @@ You can also modify specific SensorThings endpoints and components using `hydrot
 ## Documentation
 
 For detailed documentation on how to use HydroServer SensorThings, please refer to the [official documentation](https://hydroserver2.github.io/django-hydrothings/).
+
+## Funding and Acknowledgements
+
+Funding for this project was provided by the National Oceanic & Atmospheric Administration (NOAA), awarded to the Cooperative Institute for Research to Operations in Hydrology (CIROH) through the NOAA Cooperative Agreement with The University of Alabama (NA22NWS4320003).
