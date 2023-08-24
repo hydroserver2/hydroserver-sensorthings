@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from hydrothings import SensorThingsAbstractEngine
+from sensorthings import SensorThingsAbstractEngine
 
 
 @pytest.fixture

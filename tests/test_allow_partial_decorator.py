@@ -1,6 +1,6 @@
 import pytest
 from pydantic import BaseModel, ValidationError
-from hydrothings.validators import allow_partial
+from sensorthings.validators import allow_partial
 
 
 @pytest.fixture

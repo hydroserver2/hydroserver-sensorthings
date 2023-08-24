@@ -1,5 +1,5 @@
-name: Django HydroThings Tests
-run-name: ${{ github.actor }} is running Django HydroThings Tests on ${{ github.ref }}
+name: HydroServer SensorThings Tests
+run-name: ${{ github.actor }} is running HydroServer SensorThings Tests on ${{ github.ref }}
 
 on: [push, pull_request]
 

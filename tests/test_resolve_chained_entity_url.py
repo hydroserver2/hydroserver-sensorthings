@@ -1,7 +1,7 @@
 import pytest
 from django.test.client import RequestFactory
 from django.urls.exceptions import Http404
-from hydrothings.middleware import SensorThingsMiddleware
+from sensorthings.middleware import SensorThingsMiddleware
 
 
 @pytest.fixture

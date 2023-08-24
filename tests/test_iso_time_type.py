@@ -1,6 +1,6 @@
 import pytest
 from pydantic import BaseModel
-from hydrothings.extras.iso_types import ISOTime
+from sensorthings.extras.iso_types import ISOTime
 
 
 @pytest.fixture

@@ -1,5 +1,5 @@
-name: Django HydroThings PyPI Publish
-run-name: ${{ github.actor }} is running Django HydroThings PyPI Publish on ${{ github.ref }}
+name: HydroServer SensorThings PyPI Publish
+run-name: ${{ github.actor }} is running HydroServer SensorThings PyPI Publish on ${{ github.ref }}
 
 on:
   release:

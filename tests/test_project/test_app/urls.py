@@ -1,5 +1,5 @@
 from django.urls import path
-from hydrothings import SensorThingsAPI
+from sensorthings import SensorThingsAPI
 
 
 st_api = SensorThingsAPI(

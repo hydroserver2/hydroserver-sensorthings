@@ -1,6 +1,6 @@
 import pytest
 from pydantic import BaseModel, ValidationError, validator
-from hydrothings.components.sensors.utils import metadata_validator
+from sensorthings.components.sensors.utils import metadata_validator
 
 
 @pytest.mark.parametrize('metadata_value, encoding_value', [

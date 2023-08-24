@@ -1,6 +1,6 @@
 import pytest
 from pydantic import BaseModel
-from hydrothings.extras.iso_types import ISOInterval
+from sensorthings.extras.iso_types import ISOInterval
 
 
 @pytest.fixture

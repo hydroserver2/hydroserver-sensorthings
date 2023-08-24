@@ -1,6 +1,6 @@
 import pytest
 from pydantic import BaseModel, ValidationError, validator
-from hydrothings.validators import whitespace_to_none
+from sensorthings.validators import whitespace_to_none
 
 
 @pytest.fixture
