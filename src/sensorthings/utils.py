@@ -5,7 +5,7 @@ import sensorthings.schemas as core_schemas
 from ninja import Schema
 from odata_query.grammar import ODataParser, ODataLexer
 from django.http import HttpResponse
-from pydantic import HttpUrl
+from pydantic import AnyHttpUrl
 from typing import Literal, Union, List
 from requests import Response
 from sensorthings import settings
@@ -75,7 +75,7 @@ def generate_response_codes(method: str, response_schema=None) -> dict:
         }
     elif method == 'create':
         response_codes = {
-            201: Union[None, List[HttpUrl]],
+            201: Union[None, List[AnyHttpUrl]],
             403: core_schemas.PermissionDenied
         }
     elif method == 'update':

@@ -36,7 +36,7 @@ class UnitOfMeasurement(Schema):
 class ObservationFields(Schema):
     phenomenon_time: Union[ISOTime, ISOInterval, None] = Field(None, alias='phenomenonTime')
     result: str
-    result_time: Union[ISOTime, None] = Field(..., alias='resultTime')
+    result_time: Union[ISOTime, None] = Field(None, alias='resultTime')
     result_quality: Union[str, None] = Field(None, alias='resultQuality')
     valid_time: Union[ISOInterval, None] = Field(None, alias='validTime')
     parameters: dict = {}
