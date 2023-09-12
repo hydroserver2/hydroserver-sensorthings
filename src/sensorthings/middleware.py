@@ -62,6 +62,8 @@ class SensorThingsMiddleware(MiddlewareMixin):
         previous_component = None
         endpoint = None
 
+        request.component_path = '/'.join(path_components)
+
         for i, raw_component in enumerate(path_components):
             path_info = f'{path_prefix}/{raw_component}'
             field_name = None
@@ -177,7 +179,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
                 request.engine = st_api.engine(
                     host=request.get_host(),
                     scheme=request.scheme,
-                    path=request.path_info,
+                    path=getattr(request, 'component_path', request.path.split('/')[-1]),
                     version=st_api.version,
                     component=getattr(request, 'component', None)
                 )

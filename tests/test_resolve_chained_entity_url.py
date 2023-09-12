@@ -32,10 +32,13 @@ success_test_parameters = {
         ['Locations(4)/Things', 'Thing', [('Location', '4')]],
     ],
     'chained_implicit_url': [
-        ['Datastreams(1)/Sensor', 'Sensor', [('Datastream', '1')]],
-        ['Datastreams(2)/Thing', 'Thing', [('Datastream', '2')]],
-        ['Datastreams(3)/ObservedProperty', 'ObservedProperty', [('Datastream', '3')]],
-        ['Observations(4)/Datastream', 'Datastream', [('Observation', '4')]],
+        ['Datastreams(1)/Sensor', 'Sensor', [('Datastream', '1'), ('Sensor', 'sensor_id')]],
+        ['Datastreams(2)/Thing', 'Thing', [('Datastream', '2'), ('Thing', 'thing_id')]],
+        [
+            'Datastreams(3)/ObservedProperty', 'ObservedProperty',
+            [('Datastream', '3'), ('ObservedProperty', 'observed_property_id')]
+        ],
+        ['Observations(4)/Datastream', 'Datastream', [('Observation', '4'), ('Datastream', 'datastream_id')]],
     ],
     'address_to_property_url': [
         ['Things(1)/name', 'Thing', []],

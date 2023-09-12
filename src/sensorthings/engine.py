@@ -54,7 +54,7 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
         base_url = getattr(settings, 'PROXY_BASE_URL', f'{self.scheme}://{self.host}') + \
             f'/{settings.ST_API_PREFIX}/v{self.version}'
 
-        ref_url = f'{base_url}{override_component if override_component is not None else self.path}'
+        ref_url = f'{base_url}{override_component if override_component else "/" + self.path}'
 
         if entity_id is not None:
             ref_url = f'{ref_url}({entity_id})'
