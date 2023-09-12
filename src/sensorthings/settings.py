@@ -15,46 +15,48 @@ ST_CONFORMANCE = getattr(settings, 'ST_CONFORMANCE', [
     'http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/historical-location-auto-creation'
 ])
 
+ST_API_PREFIX = getattr(settings, 'ST_API_PREFIX', 'sensorthings')
+
 ST_CAPABILITIES = getattr(settings, 'ST_CAPABILITIES', [
     {
         'NAME': 'Things',
         'SINGULAR_NAME': 'Thing',
-        'VIEW': 'list_thing'
+        'VIEW': 'list_things'
     },
     {
         'NAME': 'Locations',
         'SINGULAR_NAME': 'Location',
-        'VIEW': 'list_location'
+        'VIEW': 'list_locations'
     },
     {
         'NAME': 'HistoricalLocations',
         'SINGULAR_NAME': 'HistoricalLocation',
-        'VIEW': 'list_historical_location'
+        'VIEW': 'list_historical_locations'
     },
     {
         'NAME': 'Datastreams',
         'SINGULAR_NAME': 'Datastream',
-        'VIEW': 'list_datastream'
+        'VIEW': 'list_datastreams'
     },
     {
         'NAME': 'Sensors',
         'SINGULAR_NAME': 'Sensor',
-        'VIEW': 'list_sensor'
+        'VIEW': 'list_sensors'
     },
     {
         'NAME': 'Observations',
         'SINGULAR_NAME': 'Observation',
-        'VIEW': 'list_observation'
+        'VIEW': 'list_observations'
     },
     {
         'NAME': 'ObservedProperties',
         'SINGULAR_NAME': 'ObservedProperty',
-        'VIEW': 'list_observed_property'
+        'VIEW': 'list_observed_properties'
     },
     {
         'NAME': 'FeaturesOfInterest',
         'SINGULAR_NAME': 'FeatureOfInterest',
-        'VIEW': 'list_feature_of_interest'
+        'VIEW': 'list_features_of_interest'
     },
 ])
 

@@ -18,7 +18,7 @@ def get_root(request):
     Get SensorThings server capabilities.
     """
 
-    host_url = request.get_host()
+    host_url = getattr(settings, 'PROXY_BASE_URL', request.get_host())
     response = {
         'server_settings': {
             'conformance': settings.ST_CONFORMANCE

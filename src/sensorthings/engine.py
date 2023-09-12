@@ -51,7 +51,10 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
         if override_component is not None:
             override_component = '/' + lookup_component(override_component, 'camel_singular', 'camel_plural')
 
-        ref_url = f'{self.scheme}://{self.host}{override_component if override_component is not None else self.path}'
+        base_url = getattr(settings, 'PROXY_BASE_URL', f'{self.scheme}://{self.host}') + \
+            f'/{settings.ST_API_PREFIX}/v{self.version}'
+
+        ref_url = f'{base_url}{override_component if override_component is not None else self.path}'
 
         if entity_id is not None:
             ref_url = f'{ref_url}({entity_id})'
@@ -152,7 +155,8 @@ class SensorThingsAbstractEngine(metaclass=ABCMeta):
         return f'{self.get_ref()}?$top={top}&$skip={top+skip}'
 
     @abstractmethod
-    def resolve_entity_id_chain(self, entity_chain: List[Tuple[str, Union[UUID, int, str]]]) -> bool:
+    def resolve_entity_id_chain(self, entity_chain: List[Tuple[str, Union[UUID, int, str]]]) -> \
+            (bool, Optional[Union[UUID, int, str]]):
         """
         Abstract method for resolving an entity chain passed to the API.
 

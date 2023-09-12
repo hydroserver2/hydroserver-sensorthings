@@ -1,3 +1,4 @@
+import json
 import sensorthings
 import sensorthings.components as component_schemas
 from django.utils.deprecation import MiddlewareMixin
@@ -113,7 +114,8 @@ class SensorThingsMiddleware(MiddlewareMixin):
                         output_type='snake_singular'
                     )
                     primary_component = raw_component
-                    endpoint = f'{path_prefix}/{component_plural}(1)'  # TODO Need to lookup the associated id.
+                    endpoint = f'{path_prefix}/{component_plural}(temp_id)'
+                    entity_chain.append((raw_component, f'{field_name}_id'))
                 except StopIteration:
                     # This sub-path may be a field name, $value, or $ref.
                     entity_chain = entity_chain[:-1]
@@ -177,7 +179,15 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     scheme=request.scheme,
                     path=request.path_info,
                     version=st_api.version,
-                    component=request.component,
+                    component=getattr(request, 'component', None)
                 )
-                if request.engine.resolve_entity_id_chain(request.entity_chain) is False:
-                    raise Http404
+
+                if hasattr(request, 'entity_chain'):
+                    entity_chain_valid, entity_id = request.engine.resolve_entity_id_chain(request.entity_chain)
+
+                    if entity_id:
+                        request.path_info = request.path_info.replace('temp_id', entity_id)
+                        for key in view_kwargs.keys():
+                            view_kwargs[key] = view_kwargs[key].replace('temp_id', entity_id)
+                    if entity_chain_valid is False:
+                        raise Http404
