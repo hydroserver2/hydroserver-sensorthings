@@ -1,0 +1,35 @@
+name: HydroServer SensorThings Tests
+run-name: ${{ github.actor }} is running HydroServer SensorThings Tests on ${{ github.ref }}
+
+on: [push, pull_request]
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10']
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Switch to Current Branch
+        run: git checkout ${{ env.BRANCH }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest
+          pip install mock
+
+      - name: Run unit tests
+        run: |
+          python -m pytest --import-mode=append tests/

@@ -6,6 +6,7 @@
 .DS_Store
 .idea
 .env
+.pytest_cache
 __pycache__/
 dist
 build

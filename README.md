@@ -1,23 +1,23 @@
-# Django HydroThings (WIP)
+# HydroServer SensorThings
 
-The Django HydroThings Python package is an extension that helps implement the OGC SensorThings API specification in Django. The package is primarily built on top of the  [Django Ninja REST Framework](https://github.com/vitalik/django-ninja).
+The HydroServer SensorThings Python package is an extension that helps implement the OGC SensorThings API specification in Django. The package is primarily built on top of the  [Django Ninja REST Framework](https://github.com/vitalik/django-ninja).
 
 ## Installation
 
-You can install Django HydroThings using pip:
+You can install HydroServer SensorThings using pip:
 
 ```
-pip install django-hydrothings
+pip install hydroserver-sensorthings
 ```
 
 ## Usage
 
-To use Django HydroThings in your Django project, add the following line to your `MIDDLEWARE` setting:
+To use HydroServer SensorThings in your Django project, add the following line to your `MIDDLEWARE` setting:
 
 ```
 MIDDLEWARE = [
 	# ...
-	'hydrothings.middleware.SensorThingsMiddleware',
+	'sensorthings.middleware.SensorThingsMiddleware',
 	# ...
 ]
 ```
@@ -27,9 +27,9 @@ Then you may use a prebuilt API backend by adding one of the following to your `
 ```
 INSTALLED_APPS = [
 	# ...
-	'hydrothings.backends.sensorthings',
-	'hydrothings.backends.odm2',
-	'hydrothings.backends.frostserver'
+	'sensorthings.backends.sensorthings',
+	'sensorthings.backends.odm2',
+	'sensorthings.backends.frostserver'
 	# ...
 ]
 ```
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
 Alternatively, you may initialize a custom SensorThings API using an existing backend as a template and adding it to your urls.py file:
 
 ```
-from hydrothings import SensorThingsAPI
+from sensorthings import SensorThingsAPI
 
 # ...
 
@@ -57,14 +57,14 @@ urlpatterns = [
 ]
 ```
 
-You may further customize your API instance by subclassing `hydrothings.SensorThingsAbstractEngine` to create your own SensorThings engine to pass to the API instance instead of an existing backend. This is useful if you want to map the SensorThings API endpoints to a custom database backend.
+You may further customize your API instance by subclassing `sensorthings.SensorThingsAbstractEngine` to create your own SensorThings engine to pass to the API instance instead of an existing backend. This is useful if you want to map the SensorThings API endpoints to a custom database backend.
 
-You can also modify specific SensorThings endpoints and components using `hydrothings.SensorThingsComponent` and `hydrothings.SensorThingsEndpoint` to add custom authorization rules, disable certain endpoints, or customize SensorThings properties schemas.
+You can also modify specific SensorThings endpoints and components using `sensorthings.SensorThingsComponent` and `sensorthings.SensorThingsEndpoint` to add custom authorization rules, disable certain endpoints, or customize SensorThings properties schemas.
 
 ## Documentation
 
-For detailed documentation on how to use Django HydroThings, please refer to the [official documentation]().
+For detailed documentation on how to use HydroServer SensorThings, please refer to the [official documentation](https://hydroserver2.github.io/hydroserver-sensorthings/).
 
-## License
+## Funding and Acknowledgements
 
-Django HydroThings is licensed under the [MIT License](https://github.com/hydroserver2/django-hydrothings/blob/main/LICENSE.txt).
+Funding for this project was provided by the National Oceanic & Atmospheric Administration (NOAA), awarded to the Cooperative Institute for Research to Operations in Hydrology (CIROH) through the NOAA Cooperative Agreement with The University of Alabama (NA22NWS4320003).
