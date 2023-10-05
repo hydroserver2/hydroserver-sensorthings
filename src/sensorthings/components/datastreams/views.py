@@ -1,22 +1,18 @@
-from ninja import Router, Query
-from django.http import HttpResponse
+from ninja import Query
+from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
-from sensorthings.utils import entities_or_404, entity_or_404, generate_response_codes, parse_query_params
 from .schemas import DatastreamPostBody, DatastreamPatchBody, DatastreamListResponse, DatastreamGetResponse
 
 
-router = Router(tags=['Datastreams'])
+router = SensorThingsRouter(tags=['Datastreams'])
 
 
-@router.get(
-    '/Datastreams',
-    response=generate_response_codes('list', DatastreamListResponse),
-    by_alias=True,
-    exclude_unset=True,
-    url_name='list_datastream'
-)
-def list_datastreams(request: SensorThingsRequest, params: ListQueryParams = Query(...)):
+@router.st_get('/Datastreams', response_schema=DatastreamListResponse, url_name='list_datastream')
+def list_datastreams(
+        request: SensorThingsRequest,
+        params: ListQueryParams = Query(...)
+):
     """
     Get a collection of Datastream entities.
 
@@ -26,23 +22,18 @@ def list_datastreams(request: SensorThingsRequest, params: ListQueryParams = Que
       Datastream Relations</a>
     """
 
-    response = request.engine.list(
-        **parse_query_params(
-            query_params=params.dict(),
-            entity_chain=request.entity_chain
-        )
+    return request.engine.list_entities(
+        request=request,
+        query_params=params.dict()
     )
 
-    return entities_or_404(response, DatastreamListResponse)
 
-
-@router.get(
-    '/Datastreams({datastream_id})',
-    response=generate_response_codes('get', DatastreamGetResponse),
-    by_alias=True,
-    exclude_unset=True
-)
-def get_datastream(request: SensorThingsRequest, datastream_id: str, params: GetQueryParams = Query(...)):
+@router.st_get('/Datastreams({datastream_id})', response_schema=DatastreamGetResponse)
+def get_datastream(
+        request: SensorThingsRequest,
+        datastream_id: str,
+        params: GetQueryParams = Query(...)
+):
     """
     Get a Datastream entity.
 
@@ -52,21 +43,18 @@ def get_datastream(request: SensorThingsRequest, datastream_id: str, params: Get
       Datastream Relations</a>
     """
 
-    response = request.engine.get(
+    return request.engine.get_entity(
+        request=request,
         entity_id=datastream_id,
-        **parse_query_params(
-            query_params=params.dict()
-        )
+        query_params=params.dict()
     )
 
-    return entity_or_404(response, datastream_id, DatastreamGetResponse)
 
-
-@router.post(
-    '/Datastreams',
-    response=generate_response_codes('create')
-)
-def create_datastream(request: SensorThingsRequest, response: HttpResponse, datastream: DatastreamPostBody):
+@router.st_post('/Datastreams')
+def create_datastream(
+        request: SensorThingsRequest,
+        datastream: DatastreamPostBody
+):
     """
     Create a new Datastream entity.
 
@@ -79,22 +67,18 @@ def create_datastream(request: SensorThingsRequest, response: HttpResponse, data
       Create Entity</a>
     """
 
-    datastream_id = request.engine.create(
+    return request.engine.create_entity(
+        request=request,
         entity_body=datastream
     )
 
-    response['location'] = request.engine.get_ref(
-        entity_id=datastream_id
-    )
 
-    return 201, None
-
-
-@router.patch(
-    '/Datastreams({datastream_id})',
-    response=generate_response_codes('update')
-)
-def update_datastream(request: SensorThingsRequest, datastream_id: str, datastream: DatastreamPatchBody):
+@router.patch('/Datastreams({datastream_id})')
+def update_datastream(
+        request: SensorThingsRequest,
+        datastream_id: str,
+        datastream: DatastreamPatchBody
+):
     """
     Update an existing Datastream entity.
 
@@ -107,19 +91,18 @@ def update_datastream(request: SensorThingsRequest, datastream_id: str, datastre
       Update Entity</a>
     """
 
-    request.engine.update(
+    return request.engine.update_entity(
+        request=request,
         entity_id=datastream_id,
         entity_body=datastream
     )
 
-    return 204, None
 
-
-@router.delete(
-    '/Datastreams({datastream_id})',
-    response=generate_response_codes('delete')
-)
-def delete_datastream(request: SensorThingsRequest, datastream_id: str):
+@router.delete('/Datastreams({datastream_id})')
+def delete_datastream(
+        request: SensorThingsRequest,
+        datastream_id: str
+):
     """
     Delete a Datastream entity.
 
@@ -128,8 +111,7 @@ def delete_datastream(request: SensorThingsRequest, datastream_id: str):
       Delete Entity</a>
     """
 
-    request.engine.delete(
+    return request.engine.delete_entity(
+        request=request,
         entity_id=datastream_id
     )
-
-    return 204, None

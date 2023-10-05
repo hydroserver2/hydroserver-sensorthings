@@ -1,4 +1,3 @@
-import json
 import sensorthings
 import sensorthings.components as component_schemas
 from django.utils.deprecation import MiddlewareMixin
@@ -43,7 +42,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
                         input_type='camel_plural',
                         output_type='camel_singular'
                     )
-                    request.entity_chain = []
+                    request.nested_resources = []
                 return None
         except StopIteration:
             # Path is not part of the SensorThings app. Proceed normally.
@@ -57,7 +56,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
         path_components = request.path_info.split('/')[route_length:]
         path_prefix = '/'.join(request.path_info.split('/')[:route_length])
         component = None
-        entity_chain = []
+        nested_resources = []
         primary_component = None
         previous_component = None
         endpoint = None
@@ -101,7 +100,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     )
                     primary_component = component
                     endpoint = f'{path_prefix}/{raw_component}'
-                    entity_chain.append((component, resolved_path.kwargs.get(f'{field_name}_id')))
+                    nested_resources.append((component, resolved_path.kwargs.get(f'{field_name}_id')))
             except Http404:
                 try:
                     # This sub-path may be an implicit relation and needs to be converted to an explicit path.
@@ -117,10 +116,10 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     )
                     primary_component = raw_component
                     endpoint = f'{path_prefix}/{component_plural}(temp_id)'
-                    entity_chain.append((raw_component, f'{field_name}_id'))
+                    nested_resources.append((raw_component, f'{field_name}_id'))
                 except StopIteration:
                     # This sub-path may be a field name, $value, or $ref.
-                    entity_chain = entity_chain[:-1]
+                    nested_resources = nested_resources[:-1]
                     component = raw_component
                     field_name = raw_component
 
@@ -142,7 +141,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
 
             previous_component = component
 
-        request.entity_chain = entity_chain
+        request.nested_resources = nested_resources
         if endpoint:
             request.path_info = endpoint
         if primary_component in [c['SINGULAR_NAME'] for c in settings.ST_CAPABILITIES]:
@@ -184,12 +183,13 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     component=getattr(request, 'component', None)
                 )
 
-                if hasattr(request, 'entity_chain'):
-                    entity_chain_valid, entity_id = request.engine.resolve_entity_id_chain(request.entity_chain)
+                if hasattr(request, 'nested_resources'):
+                    entity_id = request.engine.resolve_nested_resource_path(request.nested_resources)
 
-                    if entity_id:
-                        request.path_info = request.path_info.replace('temp_id', entity_id)
-                        for key in view_kwargs.keys():
-                            view_kwargs[key] = view_kwargs[key].replace('temp_id', entity_id)
-                    if entity_chain_valid is False:
-                        raise Http404
+
+                    # if entity_id:
+                    #     request.path_info = request.path_info.replace('temp_id', entity_id)
+                    #     for key in view_kwargs.keys():
+                    #         view_kwargs[key] = view_kwargs[key].replace('temp_id', entity_id)
+                    # if nested_resources_valid is False:
+                    #     raise Http404

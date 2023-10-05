@@ -1,25 +1,24 @@
-from ninja import Router, Query
+from ninja import Query
 from typing import Union, List
-from django.http import HttpResponse
+from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import GetQueryParams
-from sensorthings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import ObservationPostBody, ObservationPatchBody, ObservationListResponse, ObservationGetResponse, \
     ObservationParams, ObservationDataArrayResponse, ObservationDataArrayBody
-from .utils import convert_to_data_array, parse_data_array
 
 
-router = Router(tags=['Observations'])
+router = SensorThingsRouter(tags=['Observations'])
 
 
-@router.get(
+@router.st_list(
     '/Observations',
-    response=generate_response_codes('list', Union[ObservationListResponse, ObservationDataArrayResponse]),
-    by_alias=True,
-    url_name='list_observation',
-    exclude_unset=True
+    response_schema=Union[ObservationListResponse, ObservationDataArrayResponse],
+    url_name='list_observation'
 )
-def list_observations(request: SensorThingsRequest, params: ObservationParams = Query(...)):
+def list_observations(
+        request: SensorThingsRequest,
+        params: ObservationParams = Query(...)
+):
     """
     Get a collection of Observation entities.
 
@@ -29,31 +28,18 @@ def list_observations(request: SensorThingsRequest, params: ObservationParams = 
       Observation Relations</a>
     """
 
-    query_params = params.dict()
-    result_format = query_params.pop('result_format', None)
-
-    response = request.engine.list(
-        **parse_query_params(
-            query_params=query_params,
-            entity_chain=request.entity_chain,
-            sort_datastream=True
-        )
+    return request.engine.list_entities(
+        request=request,
+        query_params=params.dict()
     )
 
-    if result_format == 'dataArray':
-        response = convert_to_data_array(request, response)
-        return entities_or_404(response, ObservationDataArrayResponse)
-    else:
-        return entities_or_404(response, ObservationListResponse)
 
-
-@router.get(
-    '/Observations({observation_id})',
-    response=generate_response_codes('get', ObservationGetResponse),
-    by_alias=True,
-    exclude_unset=True
-)
-def get_observation(request: SensorThingsRequest, observation_id: str, params: GetQueryParams = Query(...)):
+@router.st_get('/Observations({observation_id})', response_schema=ObservationGetResponse)
+def get_observation(
+        request: SensorThingsRequest,
+        observation_id: str,
+        params: GetQueryParams = Query(...)
+):
     """
     Get an Observation entity.
 
@@ -63,22 +49,16 @@ def get_observation(request: SensorThingsRequest, observation_id: str, params: G
       Observation Relations</a>
     """
 
-    response = request.engine.get(
+    return request.engine.get_entity(
+        request=request,
         entity_id=observation_id,
-        **parse_query_params(
-            query_params=params.dict()
-        )
+        query_params=params.dict()
     )
-    return entity_or_404(response, observation_id, ObservationGetResponse)
 
 
-@router.post(
-    '/Observations',
-    response=generate_response_codes('create')
-)
+@router.post('/Observations')
 def create_observation(
         request: SensorThingsRequest,
-        response: HttpResponse,
         observation: Union[ObservationPostBody, List[ObservationDataArrayBody]]
 ):
     """
@@ -93,49 +73,18 @@ def create_observation(
       Create Entity</a>
     """
 
-    if isinstance(observation, list):
-        observations = parse_data_array(observation)
-
-        if hasattr(request.engine, 'bulk_create'):
-            observation_ids = request.engine.bulk_create(
-                entity_bodies=observations
-            )
-            response_body = [
-                request.engine.get_ref(
-                    entity_id=observation_id
-                ) for observation_id in observation_ids
-            ]
-        else:
-            response_body = []
-            for observation in observations:
-                observation_id = request.engine.create(
-                    entity_body=observation
-                )
-                response_body.extend(
-                    request.engine.get_ref(
-                        entity_id=observation_id
-                    )
-                )
-
-    else:
-        observation_id = request.engine.create(
-            entity_body=observation
-        )
-
-        response['location'] = request.engine.get_ref(
-            entity_id=observation_id
-        )
-
-        response_body = None
-
-    return 201, response_body
+    return request.engine.create_entity(
+        request=request,
+        entity_body=observation
+    )
 
 
-@router.patch(
-    '/Observations({observation_id})',
-    response=generate_response_codes('update')
-)
-def update_observation(request: SensorThingsRequest, observation_id: str, observation: ObservationPatchBody):
+@router.patch('/Observations({observation_id})')
+def update_observation(
+        request: SensorThingsRequest,
+        observation_id: str,
+        observation: ObservationPatchBody
+):
     """
     Update an existing Observation entity.
 
@@ -148,19 +97,18 @@ def update_observation(request: SensorThingsRequest, observation_id: str, observ
       Update Entity</a>
     """
 
-    request.engine.update(
+    return request.engine.update_entity(
+        request=request,
         entity_id=observation_id,
         entity_body=observation
     )
 
-    return 204, None
 
-
-@router.delete(
-    '/Observations({observation_id})',
-    response=generate_response_codes('delete')
-)
-def delete_observation(request: SensorThingsRequest, observation_id: str):
+@router.delete('/Observations({observation_id})')
+def delete_observation(
+        request: SensorThingsRequest,
+        observation_id: str
+):
     """
     Delete a Observation entity.
 
@@ -169,8 +117,7 @@ def delete_observation(request: SensorThingsRequest, observation_id: str):
       Delete Entity</a>
     """
 
-    request.engine.delete(
+    return request.engine.delete_entity(
+        request=request,
         entity_id=observation_id
     )
-
-    return 204, None

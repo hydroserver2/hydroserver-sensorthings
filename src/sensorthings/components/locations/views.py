@@ -1,22 +1,18 @@
-from ninja import Router, Query
-from django.http import HttpResponse
+from ninja import Query
+from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
-from sensorthings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import LocationPostBody, LocationPatchBody, LocationListResponse, LocationGetResponse
 
 
-router = Router(tags=['Locations'])
+router = SensorThingsRouter(tags=['Locations'])
 
 
-@router.get(
-    '/Locations',
-    response=generate_response_codes('list', LocationListResponse),
-    by_alias=True,
-    exclude_unset=True,
-    url_name='list_location'
-)
-def list_locations(request: SensorThingsRequest, params: ListQueryParams = Query(...)):
+@router.st_get('/Locations', response_schema=LocationListResponse, url_name='list_location')
+def list_locations(
+        request: SensorThingsRequest,
+        params: ListQueryParams = Query(...)
+):
     """
     Get a collection of Location entities.
 
@@ -26,23 +22,18 @@ def list_locations(request: SensorThingsRequest, params: ListQueryParams = Query
       Location Relations</a>
     """
 
-    response = request.engine.list(
-        **parse_query_params(
-            query_params=params.dict(),
-            entity_chain=request.entity_chain
-        )
+    return request.engine.list_entities(
+        request=request,
+        query_params=params.dict()
     )
 
-    return entities_or_404(response, LocationListResponse)
 
-
-@router.get(
-    '/Locations({location_id})',
-    response=generate_response_codes('get', LocationGetResponse),
-    by_alias=True,
-    exclude_unset=True
-)
-def get_location(request: SensorThingsRequest, location_id: str, params: GetQueryParams = Query(...)):
+@router.get('/Locations({location_id})', response=LocationGetResponse)
+def get_location(
+        request: SensorThingsRequest,
+        location_id: str,
+        params: GetQueryParams = Query(...)
+):
     """
     Get a Location entity.
 
@@ -52,21 +43,18 @@ def get_location(request: SensorThingsRequest, location_id: str, params: GetQuer
       Location Relations</a>
     """
 
-    response = request.engine.get(
+    return request.engine.get_entity(
+        request=request,
         entity_id=location_id,
-        **parse_query_params(
-            query_params=params.dict()
-        )
+        query_params=params.dict()
     )
 
-    return entity_or_404(response, location_id, LocationGetResponse)
 
-
-@router.post(
-    '/Locations',
-    response=generate_response_codes('create')
-)
-def create_location(request: SensorThingsRequest, response: HttpResponse, location: LocationPostBody):
+@router.post('/Locations')
+def create_location(
+        request: SensorThingsRequest,
+        location: LocationPostBody
+):
     """
     Create a new Location entity.
 
@@ -79,22 +67,18 @@ def create_location(request: SensorThingsRequest, response: HttpResponse, locati
       Create Entity</a>
     """
 
-    location_id = request.engine.create(
+    return request.engine.create_entity(
+        request=request,
         entity_body=location
     )
 
-    response['location'] = request.engine.get_ref(
-        entity_id=location_id
-    )
 
-    return 201, None
-
-
-@router.patch(
-    '/Locations({location_id})',
-    response=generate_response_codes('update')
-)
-def update_location(request: SensorThingsRequest, location_id: str, location: LocationPatchBody):
+@router.patch('/Locations({location_id})')
+def update_location(
+        request: SensorThingsRequest,
+        location_id: str,
+        location: LocationPatchBody
+):
     """
     Update an existing Location entity.
 
@@ -107,19 +91,18 @@ def update_location(request: SensorThingsRequest, location_id: str, location: Lo
       Update Entity</a>
     """
 
-    request.engine.update(
+    return request.engine.update_entity(
+        request=request,
         entity_id=location_id,
         entity_body=location
     )
 
-    return 204, None
 
-
-@router.delete(
-    '/Locations({location_id})',
-    response=generate_response_codes('delete')
-)
-def delete_location(request: SensorThingsRequest, location_id: str):
+@router.delete('/Locations({location_id})')
+def delete_location(
+        request: SensorThingsRequest,
+        location_id: str
+):
     """
     Delete a Location entity.
 
@@ -128,8 +111,7 @@ def delete_location(request: SensorThingsRequest, location_id: str):
       Delete Entity</a>
     """
 
-    request.engine.delete(
+    return request.engine.delete_entity(
+        request=request,
         entity_id=location_id
     )
-
-    return 204, None
