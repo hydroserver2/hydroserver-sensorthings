@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from typing import List
 
 
-class FeatureOfInterestEngine(metaclass=ABCMeta):
+class FeatureOfInterestBaseEngine(metaclass=ABCMeta):
 
     @abstractmethod
     def get_features_of_interest(

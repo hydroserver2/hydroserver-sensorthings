@@ -1,11 +1,11 @@
 import requests
 from uuid import UUID
 from typing import List, Union, Tuple
-from sensorthings.engine import SensorThingsAbstractEngine
+from sensorthings.engine import SensorThingsBaseEngine
 from sensorthings.settings import FROST_BASE_URL
 
 
-class FrostServerEngine(SensorThingsAbstractEngine):
+class FrostServerEngine(SensorThingsBaseEngine):
 
     def __init__(self, host: str, scheme: str, path: str, version: str, component: str, component_path: str):
         self.host = host

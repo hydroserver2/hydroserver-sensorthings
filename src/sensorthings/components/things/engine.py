@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from typing import List
 
 
-class ThingEngine(metaclass=ABCMeta):
+class ThingBaseEngine(metaclass=ABCMeta):
 
     @abstractmethod
     def get_things(

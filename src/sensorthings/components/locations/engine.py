@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from typing import List
 
 
-class LocationEngine(metaclass=ABCMeta):
+class LocationBaseEngine(metaclass=ABCMeta):
 
     @abstractmethod
     def get_locations(

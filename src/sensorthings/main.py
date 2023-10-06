@@ -7,7 +7,7 @@ from typing import Union, Literal, Type, NewType, List, Sequence, Optional, Call
 from sensorthings.backends.sensorthings.engine import SensorThingsEngine
 from sensorthings.backends.odm2.engine import SensorThingsEngineODM2
 from sensorthings.backends.frostserver.engine import FrostServerEngine
-from sensorthings.engine import SensorThingsAbstractEngine
+from sensorthings.engine import SensorThingsBaseEngine
 from sensorthings.components.root.views import router as root_router
 from sensorthings.components.datastreams.views import router as datastreams_router
 from sensorthings.components.featuresofinterest.views import router as featuresofinterest_router
@@ -31,7 +31,7 @@ class SensorThingsAPI(NinjaAPI):
     def __init__(
             self,
             backend: Literal['sensorthings', 'odm2', 'frostserver', None] = None,
-            engine: Union[Type[NewType('SensorThingsEngine', SensorThingsAbstractEngine)], None] = None,
+            engine: Union[Type[NewType('SensorThingsEngine', SensorThingsBaseEngine)], None] = None,
             components: Union[List['SensorThingsComponent'], None] = None,
             endpoints: Union[List['SensorThingsEndpoint'], None] = None,
             id_qualifier: str = '',
@@ -49,7 +49,7 @@ class SensorThingsAPI(NinjaAPI):
                 'Unsupported SensorThings backend. Supported backends are: "sensorthings", "odm2", "frostserver"'
             )
 
-        if not backend and not isinstance(engine, type(SensorThingsAbstractEngine)):
+        if not backend and not isinstance(engine, type(SensorThingsBaseEngine)):
             raise ValueError('No backend was specified, and no engine class was defined.')
 
         super().__init__(**kwargs)

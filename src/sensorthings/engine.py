@@ -2,31 +2,34 @@ import re
 from abc import ABCMeta
 from uuid import UUID
 from typing import Union, Tuple, List, Optional
+from ninja.errors import HttpError
 from django.http import HttpRequest
 from django.urls.exceptions import Http404
+from odata_query.grammar import ODataParser, ODataLexer
+from odata_query.exceptions import ParsingException
 from sensorthings import components as component_schemas
 from sensorthings import settings
 from sensorthings.utils import lookup_component
 from sensorthings.schemas import ListQueryParams
-from sensorthings.components.things.engine import ThingEngine
-from sensorthings.components.locations.engine import LocationEngine
-from sensorthings.components.historicallocations.engine import HistoricalLocationEngine
-from sensorthings.components.datastreams.engine import DatastreamEngine
-from sensorthings.components.sensors.engine import SensorEngine
-from sensorthings.components.observedproperties.engine import ObservedPropertyEngine
-from sensorthings.components.featuresofinterest.engine import FeatureOfInterestEngine
-from sensorthings.components.observations.engine import ObservationEngine
+from sensorthings.components.things.engine import ThingBaseEngine
+from sensorthings.components.locations.engine import LocationBaseEngine
+from sensorthings.components.historicallocations.engine import HistoricalLocationBaseEngine
+from sensorthings.components.datastreams.engine import DatastreamBaseEngine
+from sensorthings.components.sensors.engine import SensorBaseEngine
+from sensorthings.components.observedproperties.engine import ObservedPropertyBaseEngine
+from sensorthings.components.featuresofinterest.engine import FeatureOfInterestBaseEngine
+from sensorthings.components.observations.engine import ObservationBaseEngine
 
 
-class SensorThingsAbstractEngine(
-    ThingEngine,
-    LocationEngine,
-    HistoricalLocationEngine,
-    DatastreamEngine,
-    SensorEngine,
-    ObservedPropertyEngine,
-    FeatureOfInterestEngine,
-    ObservationEngine,
+class SensorThingsBaseEngine(
+    ThingBaseEngine,
+    LocationBaseEngine,
+    HistoricalLocationBaseEngine,
+    DatastreamBaseEngine,
+    SensorBaseEngine,
+    ObservedPropertyBaseEngine,
+    FeatureOfInterestBaseEngine,
+    ObservationBaseEngine,
     metaclass=ABCMeta
 ):
     """
@@ -59,7 +62,7 @@ class SensorThingsAbstractEngine(
         entities, count = getattr(self, 'get_' + lookup_component(
             component if component else self.component, 'camel_singular', 'snake_plural'
         ))(
-            filters=query_params.get('filters'),
+            filters=self.get_filters(query_params.get('filters')) if query_params.get('filters') else None,
             pagination=self.get_pagination(query_params),
             ordering=query_params.get('order_by'),
             **join_ids
@@ -86,7 +89,26 @@ class SensorThingsAbstractEngine(
         }
 
     def get_entity(self, request, entity_id, query_params):
-        pass
+
+        entities, count = getattr(self, 'get_' + lookup_component(
+            self.component, 'camel_singular', 'snake_plural'
+        ))(
+            filters=self.get_filters(f"id eq '{entity_id}'"),
+        )
+
+        entities = self.build_links_and_nested_components(
+            request=request,
+            component=self.component,
+            values=entities,
+            expand=query_params.get('expand')
+        )
+
+        entity = next(iter(entities), None)
+
+        if not entity:
+            raise HttpError(404, 'Record not found.')
+
+        return entity
 
     def create_entity(self, request, entity_body):
         pass
@@ -142,18 +164,44 @@ class SensorThingsAbstractEngine(
     def resolve_nested_resource_path(self, nested_resources):
         """"""
 
-        entity_id = None
+        entity = None
+        replacement_id = None
+        filter_id_string = None
         for nested_resource in nested_resources:
-            component = lookup_component(nested_resource[0], 'camel_singular', 'snake_singular')
-            entity = next(iter(getattr(self, f'get_{lookup_component(component, "snake_singular", "snake_plural")}')(
-                **{f'{component}_ids': [entity_id] if entity_id else None}
-            )), None)
-            if not entity:
-                raise Http404
+            if nested_resource[1] is not None:
+                component = lookup_component(nested_resource[0], 'camel_singular', 'snake_singular')
+                if nested_resource[1] != 'temp_id':
+                    lookup_id = nested_resource[1]
+                else:
+                    lookup_id = entity[f'{component}_id']
+                    replacement_id = lookup_id
+
+                entity = next(iter(getattr(
+                    self, f'get_{lookup_component(component, "snake_singular", "snake_plural")}'
+                )(
+                    **{f'{component}_ids': [lookup_id]}
+                )[0]), None)
+
+                if not entity:
+                    raise Http404
+
+                filter_id_string = f'{nested_resource[0]}/id eq {lookup_id}'
+
+            else:
+                filter_id_string = None
+
+        return replacement_id, filter_id_string
 
     @staticmethod
-    def get_filters(query_params):
-        return query_params.get('filters')
+    def get_filters(filter_string: str):
+
+        lexer = ODataLexer()
+        parser = ODataParser()
+
+        try:
+            return parser.parse(lexer.tokenize(filter_string))
+        except ParsingException:
+            raise HttpError(422, 'Failed to parse filter parameter.')
 
     @staticmethod
     def get_pagination(query_params):
@@ -226,7 +274,17 @@ class SensorThingsAbstractEngine(
                 }
 
                 for value in values:
-                    if related_components[expand_property_name]['is_collection']:
+                    if related_components[expand_property_name]['is_many_to_many']:
+                        value[f'{expand_property_name}_rel'] = [
+                            getattr(
+                                component_schemas, f'{expand_property_meta["component"]}GetResponse'
+                            )(**related_entity).dict(
+                                by_alias=True,
+                                exclude_none=True
+                            ) for related_entity in related_entities.values()
+                            if value['id'] in related_entity[join_field]
+                        ]
+                    elif related_components[expand_property_name]['is_collection']:
                         value[f'{expand_property_name}_rel'] = [
                             getattr(
                                 component_schemas, f'{expand_property_meta["component"]}GetResponse'
@@ -259,10 +317,17 @@ class SensorThingsAbstractEngine(
             The component's related components.
         """
 
+        many_to_many_relations = {
+            'Thing': ['Location'],
+            'Location': ['Thing', 'HistoricalLocation'],
+            'HistoricalLocation': ['Location']
+        }
+
         return {
             name: {
                 'component': field.type_.__name__,
-                'is_collection': True if lookup_component(name, 'snake_singular', 'camel_singular') is None else False
+                'is_collection': True if lookup_component(name, 'snake_singular', 'camel_singular') is None else False,
+                'is_many_to_many': True if field.type_.__name__ in many_to_many_relations.get(component, []) else False
             } for name, field in getattr(component_schemas, f'{component}Relations').__fields__.items()
         }
 
@@ -665,7 +730,7 @@ class SensorThingsRequest(HttpRequest):
     view function.
     """
 
-    engine: SensorThingsAbstractEngine
+    engine: SensorThingsBaseEngine
     auth: str
     component: str
     component_path: List[str]

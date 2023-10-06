@@ -3,7 +3,7 @@ import sensorthings.components as component_schemas
 from django.utils.deprecation import MiddlewareMixin
 from django.urls import resolve
 from django.urls.exceptions import Http404
-from django.http import HttpRequest
+from django.http import HttpRequest, QueryDict
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.utils import lookup_component
 from sensorthings import settings
@@ -116,7 +116,8 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     )
                     primary_component = raw_component
                     endpoint = f'{path_prefix}/{component_plural}(temp_id)'
-                    nested_resources.append((raw_component, f'{field_name}_id'))
+                    nested_resources.append((raw_component, f'temp_id'))
+                    component = raw_component
                 except StopIteration:
                     # This sub-path may be a field name, $value, or $ref.
                     nested_resources = nested_resources[:-1]
@@ -184,12 +185,19 @@ class SensorThingsMiddleware(MiddlewareMixin):
                 )
 
                 if hasattr(request, 'nested_resources'):
-                    entity_id = request.engine.resolve_nested_resource_path(request.nested_resources)
+                    replacement_id, filter_id_string = request.engine.resolve_nested_resource_path(
+                        request.nested_resources
+                    )
 
+                    if replacement_id:
+                        request.path_info = request.path_info.replace('temp_id', str(replacement_id))
+                        for key in view_kwargs.keys():
+                            view_kwargs[key] = view_kwargs[key].replace('temp_id', str(replacement_id))
 
-                    # if entity_id:
-                    #     request.path_info = request.path_info.replace('temp_id', entity_id)
-                    #     for key in view_kwargs.keys():
-                    #         view_kwargs[key] = view_kwargs[key].replace('temp_id', entity_id)
-                    # if nested_resources_valid is False:
-                    #     raise Http404
+                    if filter_id_string:
+                        query_dict = request.GET.copy()
+                        if not query_dict.get('$filter'):
+                            query_dict['$filter'] = filter_id_string
+                        else:
+                            query_dict['$filter'] += f' and {filter_id_string}'
+                        request.GET = query_dict

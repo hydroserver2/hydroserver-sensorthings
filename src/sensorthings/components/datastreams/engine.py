@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from typing import List
 
 
-class DatastreamEngine(metaclass=ABCMeta):
+class DatastreamBaseEngine(metaclass=ABCMeta):
 
     @abstractmethod
     def get_datastreams(

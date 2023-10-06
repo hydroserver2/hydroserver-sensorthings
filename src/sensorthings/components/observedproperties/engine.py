@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from typing import List
 
 
-class ObservedPropertyEngine(metaclass=ABCMeta):
+class ObservedPropertyBaseEngine(metaclass=ABCMeta):
 
     @abstractmethod
     def get_observed_properties(

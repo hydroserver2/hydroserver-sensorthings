@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from typing import List
 
 
-class ObservationEngine(metaclass=ABCMeta):
+class ObservationBaseEngine(metaclass=ABCMeta):
 
     @abstractmethod
     def get_observations(
