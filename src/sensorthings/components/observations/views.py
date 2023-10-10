@@ -28,10 +28,12 @@ def list_observations(
       Observation Relations</a>
     """
 
-    return request.engine.list_entities(
+    response = request.engine.list_entities(
         request=request,
         query_params=params.dict()
     )
+
+    return response
 
 
 @router.st_get('/Observations({observation_id})', response_schema=ObservationGetResponse)

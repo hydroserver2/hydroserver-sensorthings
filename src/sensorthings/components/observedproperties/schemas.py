@@ -40,4 +40,4 @@ class ObservedPropertyGetResponse(ObservedPropertyFields, BaseGetResponse):
 
 
 class ObservedPropertyListResponse(BaseListResponse):
-    values: List[ObservedPropertyGetResponse]
+    value: List[ObservedPropertyGetResponse]

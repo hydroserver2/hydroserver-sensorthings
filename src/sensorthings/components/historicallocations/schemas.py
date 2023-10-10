@@ -50,4 +50,4 @@ class HistoricalLocationGetResponse(HistoricalLocationFields, BaseGetResponse):
 
 
 class HistoricalLocationListResponse(BaseListResponse):
-    values: List[HistoricalLocationGetResponse]
+    value: List[HistoricalLocationGetResponse]

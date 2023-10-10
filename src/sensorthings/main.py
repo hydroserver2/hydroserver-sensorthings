@@ -17,7 +17,7 @@ from sensorthings.components.observations.views import router as observations_ro
 from sensorthings.components.observedproperties.views import router as observedproperties_router
 from sensorthings.components.sensors.views import router as sensors_router
 from sensorthings.components.things.views import router as things_router
-from sensorthings.utils import generate_response_codes
+from sensorthings.utils import generate_response_codes, lookup_component
 
 
 class SensorThingsAPI(NinjaAPI):
@@ -32,7 +32,7 @@ class SensorThingsAPI(NinjaAPI):
             self,
             backend: Literal['sensorthings', 'odm2', 'frostserver', None] = None,
             engine: Union[Type[NewType('SensorThingsEngine', SensorThingsBaseEngine)], None] = None,
-            components: Union[List['SensorThingsComponent'], None] = None,
+            # components: Union[List['SensorThingsComponent'], None] = None,
             endpoints: Union[List['SensorThingsEndpoint'], None] = None,
             id_qualifier: str = '',
             **kwargs
@@ -54,7 +54,6 @@ class SensorThingsAPI(NinjaAPI):
 
         super().__init__(**kwargs)
 
-        self.components = components if components is not None else []
         self.endpoints = endpoints if endpoints is not None else []
         self.id_qualifier = id_qualifier
 
@@ -96,10 +95,6 @@ class SensorThingsAPI(NinjaAPI):
 
     def _build_sensorthings_router(self, component, router):
 
-        component_settings = next(iter([
-            c for c in self.components if c.name == component
-        ]), None)
-
         endpoint_settings = {
             endpoint.name.split('_')[0]: endpoint
             for endpoint in self.endpoints
@@ -114,19 +109,38 @@ class SensorThingsAPI(NinjaAPI):
                 response_schema = getattr(operation.response_models.get(200), '__annotations__', {}).get('response')
                 operation_method = operation.view_func.__name__.split('_')[0]
 
-                if getattr(component_settings, 'component_schema', None) is not None:
-                    if view_func.__annotations__.get(component):
-                        for field, schema in component_settings.component_schema.__fields__.items():
+                if endpoint_settings['create'].name == operation.view_func.__name__ and \
+                        endpoint_settings['create'].body_schema is not None:
+                    for field, schema in endpoint_settings['create'].body_schema.__fields__.items():
+                        if hasattr(view_func.__annotations__[component], '__args__'):
+                            view_func.__annotations__[component].__args__[0].__fields__[field] = schema
+                        else:
                             view_func.__annotations__[component].__fields__[field] = schema
 
-                    if response_schema:
-                        if operation_method == 'list':
-                            for field, schema in component_settings.component_schema.__fields__.items():
-                                response_schema.__fields__['values'].type_.__fields__[field] = schema
+                if endpoint_settings['update'].name == operation.view_func.__name__ and \
+                        endpoint_settings['update'].body_schema is not None:
+                    for field, schema in endpoint_settings['update'].body_schema.__fields__.items():
+                        if hasattr(view_func.__annotations__[component], '__args__'):
+                            view_func.__annotations__[component].__args__[0].__fields__[field] = schema
+                        else:
+                            view_func.__annotations__[component].__fields__[field] = schema
 
-                        elif operation_method == 'get':
-                            for field, schema in component_settings.component_schema.__fields__.items():
-                                response_schema.__fields__[field] = schema
+                if f'list_{str(lookup_component(component, "snake_singular", "snake_plural"))}' == \
+                        operation.view_func.__name__ and \
+                        endpoint_settings['list'].response_schema is not None:
+                    for field, schema in endpoint_settings['list'].response_schema.__fields__.items():
+                        if hasattr(response_schema, '__args__'):
+                            response_schema.__args__[0].__fields__['value'].type_.__fields__[field] = schema
+                        else:
+                            response_schema.__fields__['value'].type_.__fields__[field] = schema
+
+                if endpoint_settings['get'].name == operation.view_func.__name__ and \
+                        endpoint_settings['get'].response_schema is not None:
+                    for field, schema in endpoint_settings['get'].response_schema.__fields__.items():
+                        if hasattr(response_schema, '__args__'):
+                            response_schema.__args__[0].__fields__[field] = schema
+                        else:
+                            response_schema.__fields__[field] = schema
 
                 authorization_callbacks = getattr(endpoint_settings.get(operation_method), 'authorization', [])
 
@@ -161,14 +175,5 @@ class SensorThingsEndpoint(BaseModel):
     deprecated: bool = False
     authentication: Optional[Union[Sequence[Callable], Callable]] = None
     authorization: Optional[Union[Sequence[Callable], Callable]] = None
-
-
-class SensorThingsComponent(BaseModel):
-    """
-    The SensorThings component settings class.
-
-    This class should be used to apply component level settings to a SensorThings API given the name of the component.
-    """
-
-    name: str
-    component_schema: Union[Type[Schema], None] = None
+    body_schema: Union[Type[Schema], None] = None
+    response_schema: Union[Type[Schema], None] = None

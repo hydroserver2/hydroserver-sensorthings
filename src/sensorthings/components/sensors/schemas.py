@@ -51,4 +51,4 @@ class SensorGetResponse(SensorFields, BaseGetResponse):
 
 
 class SensorListResponse(BaseListResponse):
-    values: List[SensorGetResponse]
+    value: List[SensorGetResponse]

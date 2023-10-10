@@ -12,7 +12,8 @@ class ObservationBaseEngine(metaclass=ABCMeta):
             feature_of_interest_ids: List[str] = None,
             pagination: dict = None,
             ordering: dict = None,
-            filters: dict = None
+            filters: dict = None,
+            expanded: bool = False
     ) -> (List[dict], int):
         pass
 

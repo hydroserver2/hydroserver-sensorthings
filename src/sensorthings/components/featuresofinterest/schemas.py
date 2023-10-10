@@ -45,4 +45,4 @@ class FeatureOfInterestGetResponse(FeatureOfInterestFields, BaseGetResponse):
 
 
 class FeatureOfInterestListResponse(BaseListResponse):
-    values: List[FeatureOfInterestGetResponse]
+    value: List[FeatureOfInterestGetResponse]

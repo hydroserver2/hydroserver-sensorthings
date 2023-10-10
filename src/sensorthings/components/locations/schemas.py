@@ -57,4 +57,4 @@ class LocationGetResponse(LocationFields, BaseGetResponse):
 
 
 class LocationListResponse(BaseListResponse):
-    values: List[LocationGetResponse]
+    value: List[LocationGetResponse]

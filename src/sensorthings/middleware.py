@@ -3,7 +3,7 @@ import sensorthings.components as component_schemas
 from django.utils.deprecation import MiddlewareMixin
 from django.urls import resolve
 from django.urls.exceptions import Http404
-from django.http import HttpRequest, QueryDict
+from django.http import HttpRequest
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.utils import lookup_component
 from sensorthings import settings
@@ -185,19 +185,23 @@ class SensorThingsMiddleware(MiddlewareMixin):
                 )
 
                 if hasattr(request, 'nested_resources'):
-                    replacement_id, filter_id_string = request.engine.resolve_nested_resource_path(
-                        request.nested_resources
-                    )
+                    try:
+                        replacement_id, filter_id_string = request.engine.resolve_nested_resource_path(
+                            request.nested_resources
+                        )
 
-                    if replacement_id:
-                        request.path_info = request.path_info.replace('temp_id', str(replacement_id))
-                        for key in view_kwargs.keys():
-                            view_kwargs[key] = view_kwargs[key].replace('temp_id', str(replacement_id))
+                        if replacement_id:
+                            request.path_info = request.path_info.replace('temp_id', str(replacement_id))
+                            for key in view_kwargs.keys():
+                                view_kwargs[key] = view_kwargs[key].replace('temp_id', str(replacement_id))
 
-                    if filter_id_string:
-                        query_dict = request.GET.copy()
-                        if not query_dict.get('$filter'):
-                            query_dict['$filter'] = filter_id_string
-                        else:
-                            query_dict['$filter'] += f' and {filter_id_string}'
-                        request.GET = query_dict
+                        if filter_id_string:
+                            query_dict = request.GET.copy()
+                            if not query_dict.get('$filter'):
+                                query_dict['$filter'] = filter_id_string
+                            else:
+                                query_dict['$filter'] += f' and {filter_id_string}'
+                            request.GET = query_dict
+
+                    except Http404:
+                        request.engine.component = None

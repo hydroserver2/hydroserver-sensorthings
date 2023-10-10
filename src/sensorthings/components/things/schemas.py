@@ -60,7 +60,7 @@ class ThingGetResponse(ThingFields, BaseGetResponse):
 
 
 class ThingListResponse(BaseListResponse):
-    values: List[ThingGetResponse]
+    value: List[ThingGetResponse]
 
 
 class ThingGetResponseODM(ThingGetResponse):

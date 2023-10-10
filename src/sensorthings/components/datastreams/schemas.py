@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List, Union
-from pydantic import Field, AnyHttpUrl
+from pydantic import Field, AnyHttpUrl, AnyUrl
 from ninja import Schema
 from sensorthings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, \
     NestedEntity
@@ -24,7 +24,7 @@ observationTypes = Literal[
 class UnitOfMeasurement(Schema):
     name: str
     symbol: str
-    definition: AnyHttpUrl
+    definition: str
 
 
 # TODO Add validation for temporal duration types.
@@ -84,4 +84,4 @@ class DatastreamGetResponse(DatastreamFields, BaseGetResponse):
 
 
 class DatastreamListResponse(BaseListResponse):
-    values: List[DatastreamGetResponse]
+    value: List[DatastreamGetResponse]

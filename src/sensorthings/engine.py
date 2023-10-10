@@ -1,4 +1,5 @@
 import re
+from itertools import groupby
 from abc import ABCMeta
 from uuid import UUID
 from typing import Union, Tuple, List, Optional
@@ -10,7 +11,7 @@ from odata_query.exceptions import ParsingException
 from sensorthings import components as component_schemas
 from sensorthings import settings
 from sensorthings.utils import lookup_component
-from sensorthings.schemas import ListQueryParams
+from sensorthings.schemas import ListQueryParams, EntityId
 from sensorthings.components.things.engine import ThingBaseEngine
 from sensorthings.components.locations.engine import LocationBaseEngine
 from sensorthings.components.historicallocations.engine import HistoricalLocationBaseEngine
@@ -19,6 +20,7 @@ from sensorthings.components.sensors.engine import SensorBaseEngine
 from sensorthings.components.observedproperties.engine import ObservedPropertyBaseEngine
 from sensorthings.components.featuresofinterest.engine import FeatureOfInterestBaseEngine
 from sensorthings.components.observations.engine import ObservationBaseEngine
+from sensorthings.components.observations.schemas import ObservationPostBody, ObservationDataArray
 
 
 class SensorThingsBaseEngine(
@@ -47,14 +49,20 @@ class SensorThingsBaseEngine(
             version,
             component
     ):
+        self.request = None
         self.host = host
         self.scheme = scheme
         self.path = path
         self.version = version
         self.component = component
 
-    def list_entities(self, request, query_params, component=None, join_ids=None, drop_related_links=False):
+    def list_entities(self, request, query_params, component=None, join_ids=None, drop_related_links=False, root=True):
         """"""
+
+        self.request = request
+
+        if not self.component:
+            raise HttpError(404, 'Entity not found.')
 
         if not join_ids:
             join_ids = {}
@@ -65,6 +73,7 @@ class SensorThingsBaseEngine(
             filters=self.get_filters(query_params.get('filters')) if query_params.get('filters') else None,
             pagination=self.get_pagination(query_params),
             ordering=query_params.get('order_by'),
+            expanded=not root,
             **join_ids
         )
 
@@ -82,13 +91,26 @@ class SensorThingsBaseEngine(
             drop_related_links=drop_related_links
         )
 
-        return {
+        response = {
             'count': count if query_params.get('count') is True else None,
-            'values': entities,
+            'value': entities,
             'next_link': next_link
         }
 
+        if query_params.get('result_format') == 'dataArray' and self.component == 'Observation':
+            response = self.convert_to_data_array(
+                request=request,
+                response=response
+            )
+
+        return response
+
     def get_entity(self, request, entity_id, query_params):
+
+        self.request = request
+
+        if not self.component:
+            raise HttpError(404, 'Entity not found.')
 
         entities, count = getattr(self, 'get_' + lookup_component(
             self.component, 'camel_singular', 'snake_plural'
@@ -179,6 +201,7 @@ class SensorThingsBaseEngine(
                 entity = next(iter(getattr(
                     self, f'get_{lookup_component(component, "snake_singular", "snake_plural")}'
                 )(
+                    expanded=True,
                     **{f'{component}_ids': [lookup_id]}
                 )[0]), None)
 
@@ -269,8 +292,9 @@ class SensorThingsBaseEngine(
                         join_ids={
                             join_field: expand_property_meta['join_ids']
                         },
-                        drop_related_links=True
-                    ).get('values')
+                        drop_related_links=True,
+                        root=False
+                    ).get('value')
                 }
 
                 for value in values:
@@ -376,349 +400,123 @@ class SensorThingsBaseEngine(
 
         return expand_properties
 
+    @property
+    def data_array_fields(self):
+        return [
+            ('id', 'id',),
+            ('phenomenon_time', 'phenomenonTime',),
+            ('result_time', 'resultTime',),
+            ('result', 'result',),
+            ('result_quality', 'resultQuality',),
+            ('valid_time', 'validTime',),
+            ('parameters', 'parameters',),
+            ('feature_of_interest', 'FeatureOfInterest/id',)
+        ]
 
+    @staticmethod
+    def get_field_index(components, field):
+        """"""
 
+        try:
+            return components.index(field)
+        except ValueError:
+            return None
 
+    def convert_to_data_array(
+            self,
+            request,
+            response: dict,
+            select: Union[list, None] = None
+    ) -> dict:
+        """
+        Converts an Observations response dictionary to the dataArray format.
 
-#     def get_related_components(self) -> dict:
-#         """
-#         Get all components related to this component.
-#
-#         Returns
-#         -------
-#         dict
-#             The component's related components.
-#         """
-#
-#         return {
-#             name: [
-#                 component for component
-#                 in settings.ST_CAPABILITIES
-#                 if component['SINGULAR_NAME'] == field.type_.__name__
-#             ][0]['NAME'] if field.shape == SHAPE_LIST
-#             else field.type_.__name__
-#             for name, field in getattr(component_schemas, f'{self.component}Relations').__fields__.items()
-#         }
+        Parameters
+        ----------
+        request : SensorThingsRequest
+            The SensorThingsRequest object associated with the response.
+        response : dict
+            A SensorThings response dictionary.
+        select
+            A list of fields that should be included in the response.
 
+        Returns
+        -------
+        dict
+            A SensorThings response dictionary formatted as a dataArray.
+        """
 
+        if select:
+            selected_fields = [
+                field for field in self.data_array_fields if field[0] in select
+            ]
+        else:
+            selected_fields = [
+                field for field in self.data_array_fields if field[0] in ['phenomenon_time', 'result']
+            ]
 
+        datastream_url_template = f'{request.scheme}://{request.get_host()}{request.path[:-12]}Datastreams'
 
+        response['value'] = [
+            {
+                'datastream': f'{datastream_url_template}({datastream_id})',
+                'components': [
+                    field[1] for field in selected_fields
+                ],
+                'data_array': [
+                    [
+                        observation[field[0]] for field in selected_fields
+                    ] for observation in observations
+                ]
+            } for datastream_id, observations in groupby(response['value'], key=lambda x: x['datastream_id'])
+        ]
 
+        return response
 
+    def parse_data_array(
+            self,
+            observation: List[ObservationDataArray]
+    ) -> List[ObservationPostBody]:
+        """
+        Parses an ObservationDataArray object.
 
+        Converts an ObservationDataArray object to a list of ObservationPostBody objects that can be loaded by the
+        SensorThings engine.
 
+        Parameters
+        ----------
+        observation: ObservationDataArray
+            An ObservationDataArray object.
 
+        Returns
+        -------
+        List[ObservationPostBody]
+            A list of ObservationPostBody objects.
+        """
 
-# class SensorThingsAbstractEngine(metaclass=ABCMeta):
-#     """
-#     Abstract base class for a SensorThings engine.
-#
-#     A SensorThings API must be linked to a SensorThings engine to perform database operations. This class defines all
-#     required methods for an engine class and should be inherited by any SensorThings engine used by an API.
-#     """
-#
-#     scheme: str
-#     host: str
-#     path: str
-#     version: str
-#     component: str
-#     component_path: str
-#
-#     def get_ref(
-#             self,
-#             entity_id: Union[str, None] = None,
-#             related_component: Union[str, None] = None,
-#             override_component: Union[str, None] = None
-#     ) -> str:
-#         """
-#         Builds a reference URL for a given entity.
-#
-#         Parameters
-#         ----------
-#         entity_id : str
-#             The ID of the entity.
-#         related_component : str
-#             The related component to be appended to the ref URL.
-#         override_component : str
-#             A value used to override the base component in the URL.
-#
-#         Returns
-#         -------
-#         str
-#             The entity's reference URL.
-#         """
-#
-#         if override_component is not None:
-#             override_component = '/' + lookup_component(override_component, 'camel_singular', 'camel_plural')
-#
-#         base_url = getattr(settings, 'PROXY_BASE_URL', f'{self.scheme}://{self.host}') + \
-#             f'/{settings.ST_API_PREFIX}/v{self.version}'
-#
-#         ref_url = f'{base_url}{override_component if override_component else "/" + self.path}'
-#
-#         if entity_id is not None:
-#             ref_url = f'{ref_url}({entity_id})'
-#
-#         if related_component is not None:
-#             ref_url = f'{ref_url}/{related_component}'
-#
-#         return ref_url
-#
-#     def get_related_components(self) -> dict:
-#         """
-#         Get all components related to this component.
-#
-#         Returns
-#         -------
-#         dict
-#             The component's related components.
-#         """
-#
-#         return {
-#             name: [
-#                 component for component
-#                 in settings.ST_CAPABILITIES
-#                 if component['SINGULAR_NAME'] == field.type_.__name__
-#             ][0]['NAME'] if field.shape == SHAPE_LIST
-#             else field.type_.__name__
-#             for name, field in getattr(component_schemas, f'{self.component}Relations').__fields__.items()
-#         }
-#
-#     def build_related_links(self, entity: dict, is_collection: bool = False) -> dict:
-#         """
-#         Creates SensorThings links to related components.
-#
-#         Parameters
-#         ----------
-#         entity : dict
-#             The entity response object dictionary.
-#         is_collection : bool
-#             Includes the entity ID in the reference URL if True, and omits it if False.
-#
-#         Returns
-#         -------
-#         dict
-#             The entity response object dictionary with related links included.
-#         """
-#
-#         return dict(
-#             entity,
-#             **{
-#                 f'{name}_link': self.get_ref(
-#                     entity['id'] if is_collection is True else None,
-#                     related_component
-#                 ) for name, related_component in self.get_related_components().items()
-#             }
-#         )
-#
-#     def build_self_links(self, entity: dict, is_collection: bool = False) -> dict:
-#         """
-#         Creates SensorThings self-referential link.
-#
-#         Parameters
-#         ----------
-#         entity : dict
-#             The entity response object dictionary.
-#         is_collection : bool
-#             Includes the entity ID in the reference URL if True, and omits it if False.
-#
-#         Returns
-#         -------
-#         dict
-#             The entity response object dictionary with the self link included.
-#         """
-#
-#         return dict(
-#             entity,
-#             **{
-#                 'self_link': self.get_ref(entity['id'] if is_collection is True else None)
-#             }
-#         )
-#
-#     def build_next_link(self, top: int, skip: int) -> str:
-#         """
-#         Creates SensorThings next link for paginated responses.
-#
-#         Parameters
-#         ----------
-#         top : int
-#             An integer representing how many records are returned in the response.
-#         skip : int
-#             An integer representing how many records are skipped in the response.
-#
-#         Returns
-#         -------
-#         str
-#             A URL that links to the next dataset following the subset of data in the current response.
-#         """
-#
-#         return f'{self.get_ref()}?$top={top}&$skip={top+skip}'
-#
-#     @abstractmethod
-#     def resolve_entity_id_chain(self, entity_chain: List[Tuple[str, Union[UUID, int, str]]]) -> \
-#             (bool, Optional[Union[UUID, int, str]]):
-#         """
-#         Abstract method for resolving an entity chain passed to the API.
-#
-#         SensorThings supports nested references to entities in URL paths. The Django HydroThings middleware will check
-#         the nested components to ensure each one is related to its parent and build a list of IDs that need to be
-#         verified by this method.
-#
-#         Parameters
-#         ----------
-#         entity_chain : list
-#             A list of tuples representing the entity chain where the first object in the tuple is a string representing
-#             the component name, and the second object in the tuple is a string, int, or UUID representing the entity ID.
-#
-#         Returns
-#         -------
-#         bool
-#             Returns True if the entity chain could be fully resolved, and False if any part of the entity chain could
-#             not be found or resolved.
-#         """
-#
-#         pass
-#
-#     @abstractmethod
-#     def list(
-#             self,
-#             filters,
-#             count,
-#             order_by,
-#             skip,
-#             top,
-#             select,
-#             expand
-#     ) -> dict:
-#         """
-#         Abstract method for handling GET collection requests.
-#
-#         This method should return a dictionary representing a collection of entities for this component and apply all
-#         the given query parameters.
-#
-#         Parameters
-#         ----------
-#         filters
-#
-#         count : bool
-#             If True, the pre-pagination result count should be included in the response. If False, the count should be
-#             omitted.
-#         order_by
-#
-#         skip : int
-#             An integer representing the number of records to skip in the response.
-#         top : int
-#             An integer representing the number of records the response should be limited to.
-#         select
-#             Represents a subset of this component's fields to include in the response.
-#         expand
-#             Represents related components whose fields should be included in the response.
-#
-#         Returns
-#         -------
-#         dict
-#             A dictionary object representing the SensorThings GET collection response.
-#         """
-#
-#         pass
-#
-#     @abstractmethod
-#     def get(
-#             self,
-#             entity_id: str,
-#             expand
-#     ) -> Optional[dict]:
-#         """
-#         Abstract method for handling GET entity requests.
-#
-#         This method should return a dictionary representing an entity with the given entity ID.
-#
-#         Parameters
-#         ----------
-#         entity_id : str
-#             The ID of the entity to be returned.
-#         expand
-#             Represents related components whose fields should be included in the response.
-#
-#         Returns
-#         -------
-#         dict
-#             A dictionary object representing the SensorThings GET entity response.
-#         """
-#
-#         pass
-#
-#     @abstractmethod
-#     def create(
-#             self,
-#             entity_body: BasePostBody,
-#     ) -> str:
-#         """
-#         Abstract method for handling POST entity requests.
-#
-#         This method should create a new entity and return the ID of the created entity.
-#
-#         Parameters
-#         ----------
-#         entity_body : BasePostBody
-#             A dictionary object containing the attributes of the entity that will be created.
-#
-#         Returns
-#         -------
-#         str
-#             The ID of the newly created entity.
-#         """
-#
-#         pass
-#
-#     @abstractmethod
-#     def update(
-#             self,
-#             entity_id: str,
-#             entity_body: BasePatchBody
-#     ) -> str:
-#         """
-#         Abstract method for handling PATCH entity requests.
-#
-#         This method should update an existing entity with the attributes included in the entity_body and return the ID
-#         of the updated entity.
-#
-#         Parameters
-#         ----------
-#         entity_id : str
-#             The ID of the entity to be updated.
-#         entity_body : BasePatchBody
-#             A dictionary object containing the attributes of the entity that will be updated.
-#
-#         Returns
-#         -------
-#         str
-#             The ID of the updated entity.
-#         """
-#
-#         pass
-#
-#     @abstractmethod
-#     def delete(
-#             self,
-#             entity_id
-#     ) -> None:
-#         """
-#         Abstract method for handling DELETE entity requests.
-#
-#         This method should delete an existing entity with the given entity_id.
-#
-#         Parameters
-#         ----------
-#         entity_id : str
-#             The ID of the entity t obe deleted.
-#
-#         Returns
-#         -------
-#         None
-#         """
-#
-#         pass
+        observations = []
+
+        for datastream in observation:
+            datastream_fields = [
+                (field[0], field[1], self.get_field_index(datastream.components, field[1]),)
+                for field in self.data_array_fields
+            ]
+
+            observations.extend([
+                ObservationPostBody(
+                    datastream=datastream.datastream,
+                    **{
+                        datastream_field[0]: entity[datastream_field[2]]
+                        if datastream_field[0] != 'feature_of_interest'
+                        else EntityId(
+                            id=entity[datastream_field[2]]
+                        )
+                        for datastream_field in datastream_fields if datastream_field[2] is not None
+                    }
+                ) for entity in datastream.data_array
+            ])
+
+        return observations
 
 
 class SensorThingsRequest(HttpRequest):
