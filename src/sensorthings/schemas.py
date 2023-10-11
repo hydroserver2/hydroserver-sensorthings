@@ -1,3 +1,4 @@
+import urllib.parse
 from uuid import UUID
 from pydantic import Field, Extra, AnyHttpUrl, validator
 from typing import Union
@@ -88,3 +89,19 @@ class ListQueryParams(GetQueryParams):
     skip: int = Field(0, alias='$skip')
     top: int = Field(None, alias='$top')
     select: str = Field(None, alias='$select')
+
+    class Config:
+        allow_population_by_field_name = True
+
+    def get_query_string(self):
+        """"""
+
+        query_string = '&'.join([
+            f'{model.alias}={urllib.parse.quote(str(getattr(self, field)), safe="~")}'
+            for field, model in self.__fields__.items() if getattr(self, field, None) is not None
+        ])
+
+        if query_string:
+            query_string = '?' + query_string
+
+        return query_string

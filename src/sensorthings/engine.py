@@ -72,14 +72,13 @@ class SensorThingsBaseEngine(
         ))(
             filters=self.get_filters(query_params.get('filters')) if query_params.get('filters') else None,
             pagination=self.get_pagination(query_params),
-            ordering=query_params.get('order_by'),
+            ordering=self.get_ordering(query_params),
             expanded=not root,
             **join_ids
         )
 
         next_link = self.build_next_link(
-            skip=query_params.get('skip'),
-            top=query_params.get('top'),
+            query_params=query_params,
             count=count
         )
 
@@ -103,7 +102,6 @@ class SensorThingsBaseEngine(
         if query_params.get('result_format') == 'dataArray' and \
                 (component is None and self.component == 'Observation' or component == 'Observation'):
             response = self.convert_to_data_array(
-                request=request,
                 response=response
             )
 
@@ -175,7 +173,9 @@ class SensorThingsBaseEngine(
         base_url = getattr(settings, 'PROXY_BASE_URL', f'{self.scheme}://{self.host}') + \
             f'/{settings.ST_API_PREFIX}/v{self.version}'
 
-        ref_url = f'{base_url}/{component if component else self.component}'
+        url_component = lookup_component(component if component else self.component, 'camel_singular', 'camel_plural')
+
+        ref_url = f'{base_url}/{url_component}'
 
         if entity_id is not None:
             ref_url = f'{ref_url}({entity_id})'
@@ -221,6 +221,7 @@ class SensorThingsBaseEngine(
 
     @staticmethod
     def get_filters(filter_string: str):
+        """"""
 
         lexer = ODataLexer()
         parser = ODataParser()
@@ -229,6 +230,24 @@ class SensorThingsBaseEngine(
             return parser.parse(lexer.tokenize(filter_string))
         except ParsingException:
             raise HttpError(422, 'Failed to parse filter parameter.')
+
+    @staticmethod
+    def get_ordering(query_params: dict):
+        """"""
+
+        order_by_string = query_params.get('order_by')
+
+        if not order_by_string:
+            order_by_string = ''
+
+        ordering = [
+            {
+                'field': order_field.strip().split(' ')[0],
+                'direction': 'desc' if order_field.strip().endswith('desc') else 'asc'
+            } for order_field in order_by_string.split(',')
+        ] if order_by_string != '' else []
+
+        return ordering
 
     @staticmethod
     def get_pagination(query_params):
@@ -240,8 +259,15 @@ class SensorThingsBaseEngine(
             'count': query_params['count'] if query_params['count'] is not None else False
         }
 
-    def build_next_link(self, count: int, top: Optional[int] = None, skip: Optional[int] = None):
+    def build_next_link(
+            self,
+            query_params: dict,
+            count: int
+    ):
         """"""
+
+        top = query_params.pop('top', None)
+        skip = query_params.pop('skip', None)
 
         if top is None:
             top = 100
@@ -250,7 +276,13 @@ class SensorThingsBaseEngine(
             skip = 0
 
         if count is not None and top + skip < count:
-            return f'{self.get_ref()}?$top={top}&$skip={top + skip}'
+            query_string = ListQueryParams(
+                top=top,
+                skip=top + skip,
+                **query_params
+            ).get_query_string()
+
+            return f'{self.get_ref()}{query_string}'
         else:
             return None
 
@@ -442,7 +474,6 @@ class SensorThingsBaseEngine(
 
     def convert_to_data_array(
             self,
-            request,
             response: dict,
             select: Union[list, None] = None
     ) -> dict:
@@ -451,8 +482,6 @@ class SensorThingsBaseEngine(
 
         Parameters
         ----------
-        request : SensorThingsRequest
-            The SensorThingsRequest object associated with the response.
         response : dict
             A SensorThings response dictionary.
         select
@@ -473,12 +502,10 @@ class SensorThingsBaseEngine(
                 field for field in self.data_array_fields if field[0] in ['phenomenon_time', 'result']
             ]
 
-        datastream_url_template = f'{request.scheme}://{request.get_host()}{request.path[:-12]}/Datastreams'
-
         response['value'] = [
             {
                 'datastream_id': datastream_id,
-                'datastream': f'{datastream_url_template}({datastream_id})',
+                'datastream': self.get_ref('Datastream', datastream_id),
                 'components': [
                     field[1] for field in selected_fields
                 ],
