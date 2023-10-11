@@ -80,7 +80,9 @@ class DatastreamGetResponse(DatastreamFields, BaseGetResponse):
         nested_class='ObservedPropertyGetResponse'
     )
     observations_link: AnyHttpUrl = Field(None, alias='Observations@iot.navigationLink')
-    observations_rel: List[NestedEntity] = Field(None, alias='Observations', nested_class='ObservationGetResponse')
+    observations_rel: Union[List[NestedEntity], NestedEntity] = Field(
+        None, alias='Observations', nested_class='ObservationGetResponse'
+    )
 
 
 class DatastreamListResponse(BaseListResponse):

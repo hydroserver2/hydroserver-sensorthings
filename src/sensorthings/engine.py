@@ -20,7 +20,7 @@ from sensorthings.components.sensors.engine import SensorBaseEngine
 from sensorthings.components.observedproperties.engine import ObservedPropertyBaseEngine
 from sensorthings.components.featuresofinterest.engine import FeatureOfInterestBaseEngine
 from sensorthings.components.observations.engine import ObservationBaseEngine
-from sensorthings.components.observations.schemas import ObservationPostBody, ObservationDataArray
+from sensorthings.components.observations.schemas import ObservationPostBody, ObservationDataArray, ObservationParams
 
 
 class SensorThingsBaseEngine(
@@ -92,12 +92,16 @@ class SensorThingsBaseEngine(
         )
 
         response = {
-            'count': count if query_params.get('count') is True else None,
-            'value': entities,
-            'next_link': next_link
+            'value': entities
         }
 
-        if query_params.get('result_format') == 'dataArray' and self.component == 'Observation':
+        if query_params.get('count') is True:
+            response['count'] = count
+
+        if next_link:
+            response['next_link'] = next_link
+        if query_params.get('result_format') == 'dataArray' and \
+                (component is None and self.component == 'Observation' or component == 'Observation'):
             response = self.convert_to_data_array(
                 request=request,
                 response=response
@@ -284,8 +288,12 @@ class SensorThingsBaseEngine(
                     ) + '_ids'
                 else:
                     join_field = expand_property_meta['join_field'] + 's'
+
+                apply_data_array = expand_property_meta['query_params'].get('result_format') == 'dataArray'
+
                 related_entities = {
-                    entity.get('id'): entity for entity in self.list_entities(
+                    entity.get('id') if not apply_data_array else entity.get('datastream_id'): entity
+                    for entity in self.list_entities(
                         request=request,
                         query_params=expand_property_meta['query_params'],
                         component=expand_property_meta['component'],
@@ -309,15 +317,22 @@ class SensorThingsBaseEngine(
                             if value['id'] in related_entity[join_field]
                         ]
                     elif related_components[expand_property_name]['is_collection']:
+                        if apply_data_array:
+                            del related_entities[value['id']]['datastream']
                         value[f'{expand_property_name}_rel'] = [
                             getattr(
                                 component_schemas, f'{expand_property_meta["component"]}GetResponse'
                             )(**related_entity).dict(
                                 by_alias=True,
-                                exclude_none=True
+                                exclude_unset=True
                             ) for related_entity in related_entities.values()
                             if related_entity[join_field[:-1]] == value['id']
-                        ]
+                        ] if not apply_data_array else ObservationDataArray(
+                            **related_entities.get(value['id'])
+                        ).dict(
+                            by_alias=True,
+                            exclude_unset=True
+                        )
                     else:
                         value[f'{expand_property_name}_rel'] = getattr(
                             component_schemas, f'{expand_property_meta["component"]}GetResponse'
@@ -396,7 +411,10 @@ class SensorThingsBaseEngine(
                 ) if '$expand' in expand_properties[component_name]['query_params'] else expand_component.split('/')[1]
 
         for expand_property in expand_properties.values():
-            expand_property['query_params'] = ListQueryParams(**expand_property['query_params']).dict()
+            if expand_property['component'] == 'Observation':
+                expand_property['query_params'] = ObservationParams(**expand_property['query_params']).dict()
+            else:
+                expand_property['query_params'] = ListQueryParams(**expand_property['query_params']).dict()
 
         return expand_properties
 
@@ -455,10 +473,11 @@ class SensorThingsBaseEngine(
                 field for field in self.data_array_fields if field[0] in ['phenomenon_time', 'result']
             ]
 
-        datastream_url_template = f'{request.scheme}://{request.get_host()}{request.path[:-12]}Datastreams'
+        datastream_url_template = f'{request.scheme}://{request.get_host()}{request.path[:-12]}/Datastreams'
 
         response['value'] = [
             {
+                'datastream_id': datastream_id,
                 'datastream': f'{datastream_url_template}({datastream_id})',
                 'components': [
                     field[1] for field in selected_fields

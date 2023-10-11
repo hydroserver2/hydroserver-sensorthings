@@ -52,7 +52,7 @@ class Observation(ObservationFields, ObservationRelations):
 
 
 class ObservationDataArray(Schema):
-    datastream: AnyHttpUrl = Field(..., alias='Datastream@iot.navigationLink')
+    datastream: AnyHttpUrl = Field(None, alias='Datastream@iot.navigationLink')
     components: List[observationComponents]
     data_array: List[list] = Field(..., alias='dataArray')
 
