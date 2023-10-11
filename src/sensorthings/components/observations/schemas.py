@@ -34,10 +34,10 @@ class UnitOfMeasurement(Schema):
 
 
 class ObservationFields(Schema):
-    phenomenon_time: Union[ISOTime, ISOInterval, None] = Field(None, alias='phenomenonTime')
+    phenomenon_time: Union[ISOTime, ISOInterval] = Field(..., alias='phenomenonTime')
     result: str
     result_time: Union[ISOTime, None] = Field(None, alias='resultTime')
-    result_quality: Union[str, None] = Field(None, alias='resultQuality')
+    result_quality: dict = Field({}, alias='resultQuality')
     valid_time: Union[ISOInterval, None] = Field(None, alias='validTime')
     parameters: dict = {}
 
@@ -52,7 +52,7 @@ class Observation(ObservationFields, ObservationRelations):
 
 
 class ObservationDataArray(Schema):
-    datastream: AnyHttpUrl = Field(..., alias='Datastream@iot.navigationLink')
+    datastream: AnyHttpUrl = Field(None, alias='Datastream@iot.navigationLink')
     components: List[observationComponents]
     data_array: List[list] = Field(..., alias='dataArray')
 
@@ -91,22 +91,13 @@ class ObservationGetResponse(ObservationFields, BaseGetResponse):
         nested_class='FeatureOfInterestGetResponse'
     )
 
-    class Config:
-        allow_population_by_field_name = True
-
 
 class ObservationListResponse(BaseListResponse):
     value: List[ObservationGetResponse]
 
-    class Config:
-        allow_population_by_field_name = True
-
 
 class ObservationDataArrayResponse(BaseListResponse):
-    values: List[ObservationDataArray]
-
-    class Config:
-        allow_population_by_field_name = True
+    value: List[ObservationDataArray]
 
 
 class ObservationParams(ListQueryParams):

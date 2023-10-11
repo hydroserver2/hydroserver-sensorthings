@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List, Union
-from pydantic import Field, AnyHttpUrl
+from pydantic import Field, AnyHttpUrl, AnyUrl
 from ninja import Schema
 from sensorthings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, \
     NestedEntity
@@ -24,7 +24,7 @@ observationTypes = Literal[
 class UnitOfMeasurement(Schema):
     name: str
     symbol: str
-    definition: AnyHttpUrl
+    definition: str
 
 
 # TODO Add validation for temporal duration types.
@@ -69,7 +69,7 @@ class DatastreamPatchBody(BasePatchBody, DatastreamFields):
     observed_property: EntityId = Field(..., alias='ObservedProperty')
 
 
-class DatastreamGetResponse(BaseGetResponse, DatastreamFields):
+class DatastreamGetResponse(DatastreamFields, BaseGetResponse):
     thing_link: AnyHttpUrl = Field(None, alias='Thing@iot.navigationLink')
     thing_rel: NestedEntity = Field(None, alias='Thing', nested_class='ThingGetResponse')
     sensor_link: AnyHttpUrl = Field(None, alias='Sensor@iot.navigationLink')
@@ -80,8 +80,10 @@ class DatastreamGetResponse(BaseGetResponse, DatastreamFields):
         nested_class='ObservedPropertyGetResponse'
     )
     observations_link: AnyHttpUrl = Field(None, alias='Observations@iot.navigationLink')
-    observations_rel: List[NestedEntity] = Field(None, alias='Observations', nested_class='ObservationGetResponse')
+    observations_rel: Union[List[NestedEntity], NestedEntity] = Field(
+        None, alias='Observations', nested_class='ObservationGetResponse'
+    )
 
 
 class DatastreamListResponse(BaseListResponse):
-    values: List[DatastreamGetResponse]
+    value: List[DatastreamGetResponse]

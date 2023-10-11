@@ -43,7 +43,7 @@ def lookup_component(
         } for capability in settings.ST_CAPABILITIES
     ]
 
-    return next((c[output_type] for c in st_components if c[input_type] == input_value))
+    return next((c[output_type] for c in st_components if c[input_type] == input_value), None)
 
 
 def generate_response_codes(method: str, response_schema=None) -> dict:

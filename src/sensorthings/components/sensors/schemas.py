@@ -46,9 +46,9 @@ class SensorPatchBody(BasePatchBody, SensorFields):
 
 
 class SensorGetResponse(SensorFields, BaseGetResponse):
-    datastreams_link: AnyHttpUrl = Field(..., alias='Datastreams@iot.navigationLink')
+    datastreams_link: AnyHttpUrl = Field(None, alias='Datastreams@iot.navigationLink')
     datastreams_rel: List[NestedEntity] = Field(None, alias='Datastreams', nested_class='DatastreamGetResponse')
 
 
 class SensorListResponse(BaseListResponse):
-    values: List[SensorGetResponse]
+    value: List[SensorGetResponse]

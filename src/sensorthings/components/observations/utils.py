@@ -61,7 +61,7 @@ def convert_to_data_array(
                     observation[field[0]] for field in selected_fields
                 ] for observation in observations
             ]
-        } for datastream_id, observations in groupby(response['values'], key=lambda x: x['datastream_id'])
+        } for datastream_id, observations in groupby(response['value'], key=lambda x: x['datastream_id'])
     ]
 
     return response

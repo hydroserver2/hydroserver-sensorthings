@@ -1,7 +1,7 @@
-from sensorthings.engine import SensorThingsAbstractEngine
+from sensorthings.engine import SensorThingsBaseEngine
 
 
-class SensorThingsEngineODM2(SensorThingsAbstractEngine):
+class SensorThingsEngineODM2(SensorThingsBaseEngine):
 
     def __init__(self, host: str, scheme: str, path: str, component: str):
         self.host = host

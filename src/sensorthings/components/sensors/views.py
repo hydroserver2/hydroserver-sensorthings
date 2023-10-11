@@ -1,22 +1,18 @@
-from ninja import Router, Query
-from django.http import HttpResponse
+from ninja import Query
+from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
-from sensorthings.utils import entity_or_404, entities_or_404, generate_response_codes, parse_query_params
 from .schemas import SensorPostBody, SensorPatchBody, SensorListResponse, SensorGetResponse
 
 
-router = Router(tags=['Sensors'])
+router = SensorThingsRouter(tags=['Sensors'])
 
 
-@router.get(
-    '/Sensors',
-    response=generate_response_codes('list', SensorListResponse),
-    by_alias=True,
-    url_name='list_sensor',
-    exclude_unset=True
-)
-def list_sensors(request, params: ListQueryParams = Query(...)):
+@router.st_list('/Sensors', response_schema=SensorListResponse, url_name='list_sensor')
+def list_sensors(
+        request,
+        params: ListQueryParams = Query(...)
+):
     """
     Get a collection of Sensor entities.
 
@@ -26,22 +22,18 @@ def list_sensors(request, params: ListQueryParams = Query(...)):
       Sensor Relations</a>
     """
 
-    response = request.engine.list(
-        **parse_query_params(
-            query_params=params.dict(),
-            entity_chain=request.entity_chain
-        )
+    return request.engine.list_entities(
+        request=request,
+        query_params=params.dict()
     )
-    return entities_or_404(response, SensorListResponse)
 
 
-@router.get(
-    '/Sensors({sensor_id})',
-    response=generate_response_codes('get', SensorGetResponse),
-    by_alias=True,
-    exclude_unset=True
-)
-def get_sensor(request, sensor_id: str, params: GetQueryParams = Query(...)):
+@router.st_get('/Sensors({sensor_id})', response_schema=SensorGetResponse)
+def get_sensor(
+        request: SensorThingsRequest,
+        sensor_id: str,
+        params: GetQueryParams = Query(...)
+):
     """
     Get a Sensor entity.
 
@@ -51,21 +43,18 @@ def get_sensor(request, sensor_id: str, params: GetQueryParams = Query(...)):
       Sensor Relations</a>
     """
 
-    response = request.engine.get(
+    return request.engine.get_entity(
+        request=request,
         entity_id=sensor_id,
-        **parse_query_params(
-            query_params=params.dict()
-        )
+        query_params=params.dict()
     )
 
-    return entity_or_404(response, sensor_id, SensorGetResponse)
 
-
-@router.post(
-    '/Sensors',
-    response=generate_response_codes('create')
-)
-def create_sensor(request: SensorThingsRequest, response: HttpResponse, sensor: SensorPostBody):
+@router.st_post('/Sensors')
+def create_sensor(
+        request: SensorThingsRequest,
+        sensor: SensorPostBody
+):
     """
     Create a new Sensor entity.
 
@@ -78,22 +67,18 @@ def create_sensor(request: SensorThingsRequest, response: HttpResponse, sensor: 
       Create Entity</a>
     """
 
-    sensor_id = request.engine.create(
+    return request.engine.create_entity(
+        request=request,
         entity_body=sensor
     )
 
-    response['location'] = request.engine.get_ref(
-        entity_id=sensor_id
-    )
 
-    return 201, None
-
-
-@router.patch(
-    '/Sensors({sensor_id})',
-    response=generate_response_codes('update')
-)
-def update_sensor(request: SensorThingsRequest, sensor_id: str, sensor: SensorPatchBody):
+@router.patch('/Sensors({sensor_id})')
+def update_sensor(
+        request: SensorThingsRequest,
+        sensor_id: str,
+        sensor: SensorPatchBody
+):
     """
     Update an existing Sensor entity.
 
@@ -106,19 +91,18 @@ def update_sensor(request: SensorThingsRequest, sensor_id: str, sensor: SensorPa
       Update Entity</a>
     """
 
-    request.engine.update(
+    return request.engine.update_entity(
+        request=request,
         entity_id=sensor_id,
         entity_body=sensor
     )
 
-    return 204, None
 
-
-@router.delete(
-    '/Sensors({sensor_id})',
-    response=generate_response_codes('delete')
-)
-def delete_sensor(request, sensor_id: str):
+@router.delete('/Sensors({sensor_id})')
+def delete_sensor(
+        request: SensorThingsRequest,
+        sensor_id: str
+):
     """
     Delete a Sensor entity.
 
@@ -127,8 +111,7 @@ def delete_sensor(request, sensor_id: str):
       Delete Entity</a>
     """
 
-    request.engine.delete(
+    return request.engine.delete_entity(
+        request=request,
         entity_id=sensor_id
     )
-
-    return 204, None
