@@ -20,7 +20,8 @@ from sensorthings.components.sensors.engine import SensorBaseEngine
 from sensorthings.components.observedproperties.engine import ObservedPropertyBaseEngine
 from sensorthings.components.featuresofinterest.engine import FeatureOfInterestBaseEngine
 from sensorthings.components.observations.engine import ObservationBaseEngine
-from sensorthings.components.observations.schemas import ObservationPostBody, ObservationDataArray, ObservationParams
+from sensorthings.components.observations.schemas import ObservationPostBody, ObservationDataArrayFields, \
+     ObservationDataArray, ObservationParams
 
 
 class SensorThingsBaseEngine(
@@ -450,19 +451,6 @@ class SensorThingsBaseEngine(
 
         return expand_properties
 
-    @property
-    def data_array_fields(self):
-        return [
-            ('id', 'id',),
-            ('phenomenon_time', 'phenomenonTime',),
-            ('result_time', 'resultTime',),
-            ('result', 'result',),
-            ('result_quality', 'resultQuality',),
-            ('valid_time', 'validTime',),
-            ('parameters', 'parameters',),
-            ('feature_of_interest', 'FeatureOfInterest/id',)
-        ]
-
     @staticmethod
     def get_field_index(components, field):
         """"""
@@ -476,7 +464,7 @@ class SensorThingsBaseEngine(
             self,
             response: dict,
             select: Union[list, None] = None
-    ) -> dict:
+    ):
         """
         Converts an Observations response dictionary to the dataArray format.
 
@@ -495,11 +483,11 @@ class SensorThingsBaseEngine(
 
         if select:
             selected_fields = [
-                field for field in self.data_array_fields if field[0] in select
+                field for field in ObservationDataArrayFields.__fields__ if field in select
             ]
         else:
             selected_fields = [
-                field for field in self.data_array_fields if field[0] in ['phenomenon_time', 'result']
+                field for field in ObservationDataArrayFields.__fields__ if field in ['phenomenon_time', 'result']
             ]
 
         response['value'] = [
@@ -507,11 +495,12 @@ class SensorThingsBaseEngine(
                 'datastream_id': datastream_id,
                 'datastream': self.get_ref('Datastream', datastream_id),
                 'components': [
-                    field[1] for field in selected_fields
+                    ObservationDataArrayFields.__fields__[field].alias for field in selected_fields
                 ],
                 'data_array': [
                     [
-                        observation[field[0]] for field in selected_fields
+                        value for field, value in ObservationDataArrayFields(**observation).dict().items()
+                        if field in selected_fields
                     ] for observation in observations
                 ]
             } for datastream_id, observations in groupby(response['value'], key=lambda x: x['datastream_id'])

@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List, Union
-from pydantic import Field, AnyHttpUrl, AnyUrl
+from pydantic import Field, AnyHttpUrl
 from ninja import Schema
 from sensorthings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, \
     NestedEntity

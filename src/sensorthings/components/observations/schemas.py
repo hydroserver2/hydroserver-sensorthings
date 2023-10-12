@@ -1,3 +1,4 @@
+from uuid import UUID
 from typing import TYPE_CHECKING, Literal, Union, List
 from pydantic import Field, AnyHttpUrl
 from ninja import Schema
@@ -27,15 +28,9 @@ observationComponents = Literal[
 observationResultFormats = Literal['dataArray']
 
 
-class UnitOfMeasurement(Schema):
-    name: str
-    symbol: str
-    definition: AnyHttpUrl
-
-
 class ObservationFields(Schema):
     phenomenon_time: Union[ISOTime, ISOInterval] = Field(..., alias='phenomenonTime')
-    result: str
+    result: float
     result_time: Union[ISOTime, None] = Field(None, alias='resultTime')
     result_quality: dict = Field({}, alias='resultQuality')
     valid_time: Union[ISOInterval, None] = Field(None, alias='validTime')
@@ -49,6 +44,14 @@ class ObservationRelations(Schema):
 
 class Observation(ObservationFields, ObservationRelations):
     pass
+
+
+class ObservationDataArrayFields(ObservationFields):
+    datastream_id: Union[UUID, str] = Field(..., alias='Datastream/id')
+    feature_of_interest_id: Union[UUID, str] = Field(None, alias='FeatureOfInterest/id')
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 class ObservationDataArray(Schema):

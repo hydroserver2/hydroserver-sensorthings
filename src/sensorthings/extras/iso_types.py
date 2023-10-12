@@ -25,7 +25,7 @@ class ISOTime(str):
         except TypeError:
             raise ValueError('invalid ISO time format')
 
-        return cls(value.isoformat(sep='T', timespec='milliseconds').replace('+00:00', 'Z'))
+        return cls(value.isoformat(sep='T', timespec='seconds').replace('+00:00', 'Z'))
 
 
 class ISOInterval(str):
