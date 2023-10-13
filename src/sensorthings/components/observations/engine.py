@@ -25,6 +25,13 @@ class ObservationBaseEngine(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def create_observation_bulk(
+            self,
+            observations
+    ) -> List[str]:
+        pass
+
+    @abstractmethod
     def update_observation(
             self,
             observation_id: str,

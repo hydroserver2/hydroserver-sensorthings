@@ -2,6 +2,7 @@ import re
 from itertools import groupby
 from abc import ABCMeta
 from uuid import UUID
+from datetime import datetime
 from typing import Union, Tuple, List, Optional
 from ninja.errors import HttpError
 from django.http import HttpRequest
@@ -135,14 +136,74 @@ class SensorThingsBaseEngine(
 
         return entity
 
-    def create_entity(self, request, entity_body):
-        pass
+    def create_entity(self, request, response, entity_body):
+        """"""
 
-    def update_entity(self, request, entity_id, entity_body):
-        pass
+        self.request = request
+
+        entity_id = getattr(self, 'create_' + lookup_component(
+            self.component, 'camel_singular', 'snake_singular'
+        ))(
+            entity_body
+        )
+
+        response['Location'] = self.get_ref(self.component, entity_id)
+
+    def create_entity_bulk(self, request, entity_body):
+        """"""
+
+        self.request = request
+        grouped_entity_body = {}
+
+        if request.component == 'Observation':
+            for group in entity_body:
+                grouped_entity_body[group.datastream.id] = grouped_entity_body.get(
+                    group.datastream.id, []
+                )
+                mapped_fields = {
+                    group.components.index(meta.alias) if meta.alias in group.components else None: field
+                    for field, meta in ObservationPostBody.__fields__.items()
+                }
+                grouped_entity_body[group.datastream.id].extend([
+                    ObservationPostBody(
+                        datastream=EntityId(id=group.datastream.id),
+                        **{
+                            mapped_fields[i]: value for i, value in enumerate(entity)
+                        }
+                    ) for entity in group.data_array
+                ])
+
+        entity_ids = getattr(self, 'create_' + lookup_component(
+            self.component, 'camel_singular', 'snake_singular'
+        ) + '_bulk')(
+            grouped_entity_body
+        )
+
+        return [
+            self.get_ref(self.component, entity_id)
+            for entity_id in entity_ids
+        ]
+
+    def update_entity(self, request, entity_id, entity_body, component=None):
+        """"""
+
+        self.request = request
+
+        getattr(self, 'update_' + lookup_component(
+            component if component else self.component, 'camel_singular', 'snake_singular'
+        ))(
+            entity_id,
+            entity_body
+        )
 
     def delete_entity(self, request, entity_id):
-        pass
+        self.request = request
+
+        getattr(self, 'delete_' + lookup_component(
+            self.component, 'camel_singular', 'snake_singular'
+        ))(
+            entity_id,
+        )
 
     def get_ref(
             self,
@@ -277,7 +338,7 @@ class SensorThingsBaseEngine(
             skip = 0
 
         if count is not None and top + skip < count:
-            query_string = ListQueryParams(
+            query_string = ObservationParams(
                 top=top,
                 skip=top + skip,
                 **query_params
@@ -508,50 +569,18 @@ class SensorThingsBaseEngine(
 
         return response
 
-    def parse_data_array(
-            self,
-            observation: List[ObservationDataArray]
-    ) -> List[ObservationPostBody]:
-        """
-        Parses an ObservationDataArray object.
+    @staticmethod
+    def iso_time_interval(start_time: Optional[datetime], end_time: Optional[datetime]):
+        """"""
 
-        Converts an ObservationDataArray object to a list of ObservationPostBody objects that can be loaded by the
-        SensorThings engine.
-
-        Parameters
-        ----------
-        observation: ObservationDataArray
-            An ObservationDataArray object.
-
-        Returns
-        -------
-        List[ObservationPostBody]
-            A list of ObservationPostBody objects.
-        """
-
-        observations = []
-
-        for datastream in observation:
-            datastream_fields = [
-                (field[0], field[1], self.get_field_index(datastream.components, field[1]),)
-                for field in self.data_array_fields
-            ]
-
-            observations.extend([
-                ObservationPostBody(
-                    datastream=datastream.datastream,
-                    **{
-                        datastream_field[0]: entity[datastream_field[2]]
-                        if datastream_field[0] != 'feature_of_interest'
-                        else EntityId(
-                            id=entity[datastream_field[2]]
-                        )
-                        for datastream_field in datastream_fields if datastream_field[2] is not None
-                    }
-                ) for entity in datastream.data_array
-            ])
-
-        return observations
+        if start_time and end_time:
+            return start_time.isoformat(timespec='seconds') + '/' + end_time.isoformat(timespec='seconds')
+        elif start_time and not end_time:
+            return start_time.isoformat(timespec='seconds')
+        elif end_time and not start_time:
+            return end_time.isoformat(timespec='seconds')
+        else:
+            return None
 
 
 class SensorThingsRequest(HttpRequest):
