@@ -1,4 +1,5 @@
 from ninja import Query
+from django.http import HttpResponse
 from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
@@ -53,6 +54,7 @@ def get_datastream(
 @router.st_post('/Datastreams')
 def create_datastream(
         request: SensorThingsRequest,
+        response: HttpResponse,
         datastream: DatastreamPostBody
 ):
     """
@@ -69,6 +71,7 @@ def create_datastream(
 
     return request.engine.create_entity(
         request=request,
+        response=response,
         entity_body=datastream
     )
 

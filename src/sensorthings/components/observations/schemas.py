@@ -46,23 +46,6 @@ class Observation(ObservationFields, ObservationRelations):
     pass
 
 
-class ObservationDataArrayFields(ObservationFields):
-    datastream_id: Union[UUID, str] = Field(..., alias='Datastream/id')
-    feature_of_interest_id: Union[UUID, str] = Field(None, alias='FeatureOfInterest/id')
-
-    class Config:
-        allow_population_by_field_name = True
-
-
-class ObservationDataArray(Schema):
-    datastream: AnyHttpUrl = Field(None, alias='Datastream@iot.navigationLink')
-    components: List[observationComponents]
-    data_array: List[list] = Field(..., alias='dataArray')
-
-    class Config:
-        allow_population_by_field_name = True
-
-
 class ObservationPostBody(BasePostBody, ObservationFields):
     datastream: Union[EntityId, NestedEntity] = Field(
         ..., alias='Datastream', nested_class='DatastreamPostBody'
@@ -70,12 +53,6 @@ class ObservationPostBody(BasePostBody, ObservationFields):
     feature_of_interest: Union[EntityId, NestedEntity, None] = Field(
         None, alias='FeatureOfInterest', nested_class='FeatureOfInterestPostBody'
     )
-
-
-class ObservationDataArrayBody(Schema):
-    datastream: EntityId = Field(..., alias='Datastream')
-    components: List[observationComponents]
-    data_array: List[list] = Field(..., alias='dataArray')
 
 
 @allow_partial
@@ -97,6 +74,29 @@ class ObservationGetResponse(ObservationFields, BaseGetResponse):
 
 class ObservationListResponse(BaseListResponse):
     value: List[ObservationGetResponse]
+
+
+class ObservationDataArrayFields(ObservationFields):
+    datastream_id: Union[UUID, str] = Field(..., alias='Datastream/id')
+    feature_of_interest_id: Union[UUID, str] = Field(None, alias='FeatureOfInterest/id')
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+class ObservationDataArray(Schema):
+    datastream: AnyHttpUrl = Field(None, alias='Datastream@iot.navigationLink')
+    components: List[observationComponents]
+    data_array: List[list] = Field(..., alias='dataArray')
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+class ObservationDataArrayBody(Schema):
+    datastream: EntityId = Field(..., alias='Datastream')
+    components: List[observationComponents]
+    data_array: List[list] = Field(..., alias='dataArray')
 
 
 class ObservationDataArrayResponse(BaseListResponse):

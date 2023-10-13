@@ -1,10 +1,14 @@
+import pytz
 from ninja import Query
 from typing import Union, List
+from dateutil.parser import isoparse
+from django.http import HttpResponse
 from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import GetQueryParams
 from .schemas import ObservationPostBody, ObservationPatchBody, ObservationListResponse, ObservationGetResponse, \
     ObservationParams, ObservationDataArrayResponse, ObservationDataArrayBody
+from sensorthings.components.datastreams.schemas import DatastreamPatchBody
 
 
 router = SensorThingsRouter(tags=['Observations'])
@@ -58,9 +62,10 @@ def get_observation(
     )
 
 
-@router.post('/Observations')
+@router.st_post('/Observations')
 def create_observation(
         request: SensorThingsRequest,
+        response: HttpResponse,
         observation: Union[ObservationPostBody, List[ObservationDataArrayBody]]
 ):
     """
@@ -75,13 +80,112 @@ def create_observation(
       Create Entity</a>
     """
 
-    return request.engine.create_entity(
-        request=request,
-        entity_body=observation
-    )
+    observation_links = None
+
+    if isinstance(observation, ObservationPostBody):
+        request.engine.create_entity(
+            request=request,
+            response=response,
+            entity_body=observation
+        )
+    else:
+        observation_links = request.engine.create_entity_bulk(
+            request=request,
+            entity_body=observation
+        )
+
+    for group in observation if isinstance(observation, list) else [observation]:
+
+        first_observation = next(iter(request.engine.list_entities(
+            request=request,
+            query_params=ObservationParams(
+                filters=f'Datastream/id eq \'{group.datastream.id}\'',
+                expand='Datastream',
+                order_by='phenomenonTime asc',
+                top=1
+            ).dict()
+        )['value']), {})
+
+        obs_phenomenon_begin_time_string = first_observation.get('phenomenon_time', None)
+        obs_phenomenon_begin_time = isoparse(obs_phenomenon_begin_time_string).replace(tzinfo=pytz.UTC) if \
+            obs_phenomenon_begin_time_string else None
+        ds_phenomenon_begin_time_interval = first_observation.get('datastream_rel', {}).get('phenomenonTime', None)
+        ds_phenomenon_begin_time = isoparse(ds_phenomenon_begin_time_interval.split('/')[0]) if \
+            ds_phenomenon_begin_time_interval else None
+
+        obs_result_begin_time_string = first_observation.get('result_time', None)
+        obs_result_begin_time = isoparse(obs_result_begin_time_string).replace(tzinfo=pytz.UTC) if \
+            obs_result_begin_time_string else None
+        ds_result_begin_time_interval = first_observation.get('datastream_rel', {}).get('resultTime', None)
+        ds_result_begin_time = isoparse(ds_result_begin_time_interval.split('/')[0]) if ds_result_begin_time_interval \
+            else None
+
+        if obs_phenomenon_begin_time and (not ds_phenomenon_begin_time or
+                                          obs_phenomenon_begin_time < ds_phenomenon_begin_time):
+            phenomenon_begin_time = obs_phenomenon_begin_time
+        else:
+            phenomenon_begin_time = ds_phenomenon_begin_time
+
+        if obs_result_begin_time and (
+                not ds_result_begin_time or obs_result_begin_time > ds_result_begin_time):
+            result_begin_time = obs_result_begin_time
+        else:
+            result_begin_time = ds_result_begin_time
+
+        last_observation = next(iter(request.engine.list_entities(
+            request=request,
+            query_params=ObservationParams(
+                filters=f'Datastream/id eq \'{group.datastream.id}\'',
+                expand='Datastream',
+                order_by='phenomenonTime desc',
+                top=1
+            ).dict()
+        )['value']), {})
+
+        obs_phenomenon_end_time_string = last_observation.get('phenomenon_time', None)
+        obs_phenomenon_end_time = isoparse(obs_phenomenon_end_time_string).replace(tzinfo=pytz.UTC) if \
+            obs_phenomenon_end_time_string else None
+        ds_phenomenon_end_time_interval = last_observation.get('datastream_rel', {}).get('phenomenonTime', None)
+        ds_phenomenon_end_time = isoparse(ds_phenomenon_end_time_interval.split('/')[-1]) if \
+            ds_phenomenon_end_time_interval else None
+
+        obs_result_end_time_string = last_observation.get('result_time', None)
+        obs_result_end_time = isoparse(obs_result_end_time_string).replace(tzinfo=pytz.UTC) if \
+            obs_result_end_time_string else None
+        ds_result_end_time_interval = last_observation.get('datastream_rel', {}).get('resultTime', None)
+        ds_result_end_time = isoparse(ds_result_end_time_interval.split('/')[-1]) if ds_result_end_time_interval else None
+
+        if obs_phenomenon_end_time and (not ds_phenomenon_end_time or obs_phenomenon_end_time > ds_phenomenon_end_time):
+            phenomenon_end_time = obs_phenomenon_end_time
+        else:
+            phenomenon_end_time = ds_phenomenon_end_time
+
+        if obs_result_end_time and (
+                not ds_result_end_time or obs_result_end_time > ds_result_end_time):
+            result_end_time = obs_result_end_time
+        else:
+            result_end_time = ds_result_end_time
+
+        updated_phenomenon_time = request.engine.iso_time_interval(phenomenon_begin_time, phenomenon_end_time)
+        updated_result_time = request.engine.iso_time_interval(result_begin_time, result_end_time)
+
+        updated_phenomenon_time = updated_phenomenon_time.replace('+00:00', 'Z') if updated_phenomenon_time else None
+        updated_result_time = updated_result_time.replace('+00:00', 'Z') if updated_result_time else None
+
+        request.engine.update_entity(
+            request=request,
+            entity_id=group.datastream.id,
+            entity_body=DatastreamPatchBody(
+                phenomenon_time=updated_phenomenon_time,
+                result_time=updated_result_time
+            ),
+            component='Datastream'
+        )
+
+    return 201, observation_links
 
 
-@router.patch('/Observations({observation_id})')
+@router.st_patch('/Observations({observation_id})')
 def update_observation(
         request: SensorThingsRequest,
         observation_id: str,
@@ -106,7 +210,7 @@ def update_observation(
     )
 
 
-@router.delete('/Observations({observation_id})')
+@router.st_delete('/Observations({observation_id})')
 def delete_observation(
         request: SensorThingsRequest,
         observation_id: str
