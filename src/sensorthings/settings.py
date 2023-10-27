@@ -61,4 +61,5 @@ ST_CAPABILITIES = getattr(settings, 'ST_CAPABILITIES', [
     },
 ])
 
+PROXY_BASE_URL = getattr(settings, 'PROXY_BASE_URL', None)
 FROST_BASE_URL = getattr(settings, 'FROST_BASE_URL', None)

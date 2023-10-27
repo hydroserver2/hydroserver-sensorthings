@@ -233,8 +233,8 @@ class SensorThingsBaseEngine(
             The entity's reference URL.
         """
 
-        base_url = getattr(settings, 'PROXY_BASE_URL', f'{self.scheme}://{self.host}') + \
-            f'/{settings.ST_API_PREFIX}/v{self.version}'
+        base_url = settings.PROXY_BASE_URL if settings.PROXY_BASE_URL is not None else f'{self.scheme}://{self.host}'
+        base_url = f'{base_url}/{settings.ST_API_PREFIX}/v{self.version}'
 
         url_component = lookup_component(component if component else self.component, 'camel_singular', 'camel_plural')
 
