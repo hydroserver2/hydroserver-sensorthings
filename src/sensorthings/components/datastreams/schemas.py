@@ -33,7 +33,7 @@ class DatastreamFields(Schema):
     description: str
     unit_of_measurement: UnitOfMeasurement = Field(..., alias='unitOfMeasurement')
     observation_type: observationTypes = Field(..., alias='observationType')
-    observed_area: dict = Field({}, alias='observedArea')
+    observed_area: dict = Field(None, alias='observedArea')
     phenomenon_time: Union[ISOTime, ISOInterval, None] = Field(None, alias='phenomenonTime')
     result_time: Union[ISOTime, ISOInterval, None] = Field(None, alias='resultTime')
     properties: dict = {}
