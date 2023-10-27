@@ -1,4 +1,5 @@
 from ninja import Query
+from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
@@ -7,6 +8,7 @@ from .schemas import ObservedPropertyPostBody, ObservedPropertyPatchBody, Observ
 
 
 router = SensorThingsRouter(tags=['Observed Properties'])
+id_qualifier = settings.ST_API_ID_QUALIFIER
 
 
 @router.st_list('/ObservedProperties', response_schema=ObservedPropertyListResponse, url_name='list_observed_property')
@@ -29,7 +31,10 @@ def list_observed_properties(
     )
 
 
-@router.st_get('/ObservedProperties({observed_property_id})', response_schema=ObservedPropertyGetResponse)
+@router.st_get(
+    f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})',
+    response_schema=ObservedPropertyGetResponse
+)
 def get_observed_property(
         request: SensorThingsRequest,
         observed_property_id: str,
@@ -74,7 +79,7 @@ def create_observed_property(
     )
 
 
-@router.st_patch('/ObservedProperties({observed_property_id})')
+@router.st_patch(f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})')
 def update_observed_property(
         request: SensorThingsRequest,
         observed_property_id: str,
@@ -99,7 +104,7 @@ def update_observed_property(
     )
 
 
-@router.delete('/ObservedProperties({observed_property_id})')
+@router.delete(f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})')
 def delete_observed_property(request: SensorThingsRequest, observed_property_id: str):
     """
     Delete an Observed Property entity.

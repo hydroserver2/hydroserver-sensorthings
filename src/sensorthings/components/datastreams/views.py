@@ -1,5 +1,6 @@
 from ninja import Query
 from django.http import HttpResponse
+from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
@@ -7,6 +8,7 @@ from .schemas import DatastreamPostBody, DatastreamPatchBody, DatastreamListResp
 
 
 router = SensorThingsRouter(tags=['Datastreams'])
+id_qualifier = settings.ST_API_ID_QUALIFIER
 
 
 @router.st_get('/Datastreams', response_schema=DatastreamListResponse, url_name='list_datastream')
@@ -29,7 +31,7 @@ def list_datastreams(
     )
 
 
-@router.st_get('/Datastreams({datastream_id})', response_schema=DatastreamGetResponse)
+@router.st_get(f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})', response_schema=DatastreamGetResponse)
 def get_datastream(
         request: SensorThingsRequest,
         datastream_id: str,
@@ -76,7 +78,7 @@ def create_datastream(
     )
 
 
-@router.patch('/Datastreams({datastream_id})')
+@router.patch(f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})')
 def update_datastream(
         request: SensorThingsRequest,
         datastream_id: str,
@@ -101,7 +103,7 @@ def update_datastream(
     )
 
 
-@router.delete('/Datastreams({datastream_id})')
+@router.delete(f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})')
 def delete_datastream(
         request: SensorThingsRequest,
         datastream_id: str

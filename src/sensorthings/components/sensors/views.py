@@ -1,4 +1,5 @@
 from ninja import Query
+from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
@@ -6,6 +7,7 @@ from .schemas import SensorPostBody, SensorPatchBody, SensorListResponse, Sensor
 
 
 router = SensorThingsRouter(tags=['Sensors'])
+id_qualifier = settings.ST_API_ID_QUALIFIER
 
 
 @router.st_list('/Sensors', response_schema=SensorListResponse, url_name='list_sensor')
@@ -28,7 +30,7 @@ def list_sensors(
     )
 
 
-@router.st_get('/Sensors({sensor_id})', response_schema=SensorGetResponse)
+@router.st_get(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})', response_schema=SensorGetResponse)
 def get_sensor(
         request: SensorThingsRequest,
         sensor_id: str,
@@ -73,7 +75,7 @@ def create_sensor(
     )
 
 
-@router.patch('/Sensors({sensor_id})')
+@router.patch(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})')
 def update_sensor(
         request: SensorThingsRequest,
         sensor_id: str,
@@ -98,7 +100,7 @@ def update_sensor(
     )
 
 
-@router.delete('/Sensors({sensor_id})')
+@router.delete(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})')
 def delete_sensor(
         request: SensorThingsRequest,
         sensor_id: str

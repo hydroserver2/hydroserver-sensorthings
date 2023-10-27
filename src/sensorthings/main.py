@@ -32,9 +32,7 @@ class SensorThingsAPI(NinjaAPI):
             self,
             backend: Literal['sensorthings', 'odm2', 'frostserver', None] = None,
             engine: Union[Type[NewType('SensorThingsEngine', SensorThingsBaseEngine)], None] = None,
-            # components: Union[List['SensorThingsComponent'], None] = None,
             endpoints: Union[List['SensorThingsEndpoint'], None] = None,
-            id_qualifier: str = '',
             **kwargs
     ):
 
@@ -55,7 +53,6 @@ class SensorThingsAPI(NinjaAPI):
         super().__init__(**kwargs)
 
         self.endpoints = endpoints if endpoints is not None else []
-        self.id_qualifier = id_qualifier
 
         if backend == 'sensorthings':
             self.engine = SensorThingsEngine
@@ -150,7 +147,7 @@ class SensorThingsAPI(NinjaAPI):
                     authorization_callbacks = []
 
                 (getattr(st_router, operation.methods[0].lower())(
-                    path.replace('(', f'({self.id_qualifier}').replace(')', f'{self.id_qualifier})'),
+                    path,
                     response=generate_response_codes(operation_method, response_schema),
                     deprecated=getattr(endpoint_settings.get(operation_method), 'deprecated', False),
                     exclude_unset=True,
