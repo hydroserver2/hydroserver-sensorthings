@@ -1,4 +1,5 @@
 from ninja import Query
+from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
@@ -7,6 +8,7 @@ from .schemas import FeatureOfInterestPostBody, FeatureOfInterestPatchBody, Feat
 
 
 router = SensorThingsRouter(tags=['Features Of Interest'])
+id_qualifier = settings.ST_API_ID_QUALIFIER
 
 
 @router.st_get('/FeaturesOfInterest', response_schema=FeatureOfInterestListResponse)
@@ -29,7 +31,10 @@ def list_features_of_interest(
     )
 
 
-@router.st_get('/FeaturesOfInterest({feature_of_interest_id})', response_schema=FeatureOfInterestGetResponse)
+@router.st_get(
+    f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})',
+    response_schema=FeatureOfInterestGetResponse
+)
 def get_feature_of_interest(
         request: SensorThingsRequest,
         feature_of_interest_id: str,
@@ -74,7 +79,7 @@ def create_feature_of_interest(
     )
 
 
-@router.st_patch('/FeaturesOfInterest({feature_of_interest_id})')
+@router.st_patch(f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})')
 def update_feature_of_interest(
         request: SensorThingsRequest,
         feature_of_interest_id: str,
@@ -99,7 +104,7 @@ def update_feature_of_interest(
     )
 
 
-@router.st_delete('/FeaturesOfInterest({feature_of_interest_id})')
+@router.st_delete(f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})')
 def delete_feature_of_interest(
         request: SensorThingsRequest,
         feature_of_interest_id: str

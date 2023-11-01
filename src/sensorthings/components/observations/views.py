@@ -3,6 +3,7 @@ from ninja import Query
 from typing import Union, List
 from dateutil.parser import isoparse
 from django.http import HttpResponse
+from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import GetQueryParams
@@ -12,6 +13,7 @@ from sensorthings.components.datastreams.schemas import DatastreamPatchBody
 
 
 router = SensorThingsRouter(tags=['Observations'])
+id_qualifier = settings.ST_API_ID_QUALIFIER
 
 
 @router.st_list(
@@ -40,7 +42,7 @@ def list_observations(
     return response
 
 
-@router.st_get('/Observations({observation_id})', response_schema=ObservationGetResponse)
+@router.st_get(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})', response_schema=ObservationGetResponse)
 def get_observation(
         request: SensorThingsRequest,
         observation_id: str,
@@ -185,7 +187,7 @@ def create_observation(
     return 201, observation_links
 
 
-@router.st_patch('/Observations({observation_id})')
+@router.st_patch(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})')
 def update_observation(
         request: SensorThingsRequest,
         observation_id: str,
@@ -210,7 +212,7 @@ def update_observation(
     )
 
 
-@router.st_delete('/Observations({observation_id})')
+@router.st_delete(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})')
 def delete_observation(
         request: SensorThingsRequest,
         observation_id: str

@@ -57,6 +57,7 @@ class SensorThingsBaseEngine(
         self.path = path
         self.version = version
         self.component = component
+        self.id_qualifier = settings.ST_API_ID_QUALIFIER
 
     def list_entities(self, request, query_params, component=None, join_ids=None, drop_related_links=False, root=True):
         """"""
@@ -232,15 +233,15 @@ class SensorThingsBaseEngine(
             The entity's reference URL.
         """
 
-        base_url = getattr(settings, 'PROXY_BASE_URL', f'{self.scheme}://{self.host}') + \
-            f'/{settings.ST_API_PREFIX}/v{self.version}'
+        base_url = settings.PROXY_BASE_URL if settings.PROXY_BASE_URL is not None else f'{self.scheme}://{self.host}'
+        base_url = f'{base_url}/{settings.ST_API_PREFIX}/v{self.version}'
 
         url_component = lookup_component(component if component else self.component, 'camel_singular', 'camel_plural')
 
         ref_url = f'{base_url}/{url_component}'
 
         if entity_id is not None:
-            ref_url = f'{ref_url}({entity_id})'
+            ref_url = f'{ref_url}({self.id_qualifier}{entity_id}{self.id_qualifier})'
 
         if related_component is not None:
             if is_collection is True:
@@ -258,8 +259,8 @@ class SensorThingsBaseEngine(
         for nested_resource in nested_resources:
             if nested_resource[1] is not None:
                 component = lookup_component(nested_resource[0], 'camel_singular', 'snake_singular')
-                if nested_resource[1] != 'temp_id':
-                    lookup_id = nested_resource[1]
+                if 'temp_id' not in nested_resource[1]:
+                    lookup_id = nested_resource[1].replace(self.id_qualifier, '')
                 else:
                     lookup_id = entity[f'{component}_id']
                     replacement_id = lookup_id
@@ -274,7 +275,7 @@ class SensorThingsBaseEngine(
                 if not entity:
                     raise Http404
 
-                filter_id_string = f'{nested_resource[0]}/id eq {lookup_id}'
+                filter_id_string = f'{nested_resource[0]}/id eq \'{lookup_id}\''
 
             else:
                 filter_id_string = None

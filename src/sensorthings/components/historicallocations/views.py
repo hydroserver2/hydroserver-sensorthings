@@ -1,4 +1,5 @@
 from ninja import Query
+from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
@@ -7,6 +8,7 @@ from .schemas import HistoricalLocationPostBody, HistoricalLocationPatchBody, Hi
 
 
 router = SensorThingsRouter(tags=['Historical Locations'])
+id_qualifier = settings.ST_API_ID_QUALIFIER
 
 
 @router.st_list(
@@ -33,7 +35,10 @@ def list_historical_locations(
     )
 
 
-@router.st_get('/HistoricalLocations({historical_location_id})', response_schema=HistoricalLocationGetResponse)
+@router.st_get(
+    f'/HistoricalLocations({id_qualifier}{{historical_location_id}}{id_qualifier})',
+    response_schema=HistoricalLocationGetResponse
+)
 def get_historical_location(
         request: SensorThingsRequest,
         historical_location_id: str,
@@ -78,7 +83,7 @@ def create_historical_location(
     )
 
 
-@router.st_patch('/HistoricalLocations({historical_location_id})')
+@router.st_patch(f'/HistoricalLocations({id_qualifier}{{historical_location_id}}{id_qualifier})')
 def update_historical_location(
         request: SensorThingsRequest,
         historical_location_id: str,
@@ -103,7 +108,7 @@ def update_historical_location(
     )
 
 
-@router.st_delete('/HistoricalLocations({historical_location_id})')
+@router.st_delete(f'/HistoricalLocations({id_qualifier}{{historical_location_id}}{id_qualifier})')
 def delete_historical_location(request: SensorThingsRequest, historical_location_id: str):
     """
     Delete a Historical Location entity.

@@ -9,6 +9,9 @@ from sensorthings.utils import lookup_component
 from sensorthings import settings
 
 
+id_qualifier = settings.ST_API_ID_QUALIFIER
+
+
 class SensorThingsMiddleware(MiddlewareMixin):
 
     @staticmethod
@@ -115,7 +118,7 @@ class SensorThingsMiddleware(MiddlewareMixin):
                         output_type='snake_singular'
                     )
                     primary_component = raw_component
-                    endpoint = f'{path_prefix}/{component_plural}(temp_id)'
+                    endpoint = f'{path_prefix}/{component_plural}({id_qualifier}temp_id{id_qualifier})'
                     nested_resources.append((raw_component, f'temp_id'))
                     component = raw_component
                 except StopIteration:

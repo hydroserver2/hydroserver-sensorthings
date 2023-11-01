@@ -1,4 +1,5 @@
 from ninja import Query
+from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.engine import SensorThingsRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
@@ -6,6 +7,7 @@ from .schemas import LocationPostBody, LocationPatchBody, LocationListResponse, 
 
 
 router = SensorThingsRouter(tags=['Locations'])
+id_qualifier = settings.ST_API_ID_QUALIFIER
 
 
 @router.st_get('/Locations', response_schema=LocationListResponse, url_name='list_location')
@@ -28,7 +30,7 @@ def list_locations(
     )
 
 
-@router.get('/Locations({location_id})', response=LocationGetResponse)
+@router.get(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})', response=LocationGetResponse)
 def get_location(
         request: SensorThingsRequest,
         location_id: str,
@@ -73,7 +75,7 @@ def create_location(
     )
 
 
-@router.patch('/Locations({location_id})')
+@router.patch(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})')
 def update_location(
         request: SensorThingsRequest,
         location_id: str,
@@ -98,7 +100,7 @@ def update_location(
     )
 
 
-@router.delete('/Locations({location_id})')
+@router.delete(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})')
 def delete_location(
         request: SensorThingsRequest,
         location_id: str
