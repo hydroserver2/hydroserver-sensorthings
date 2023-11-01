@@ -40,11 +40,15 @@ class SensorThingsMiddleware(MiddlewareMixin):
                 # Check if path is part of a SensorThings API and determine the component.
                 st_api = getattr(getattr(resolved_path.func, '__self__', None), 'api', None)
                 if isinstance(st_api, sensorthings.SensorThingsAPI):
-                    request.component = lookup_component(
-                        input_value=request.path_info.split('/')[-1].split('(')[0],
-                        input_type='camel_plural',
-                        output_type='camel_singular'
-                    )
+                    component_str = request.path_info.split('/')[-1].split('(')[0]
+                    if component_str == 'CreateObservations':
+                        request.component = 'Observation'
+                    else:
+                        request.component = lookup_component(
+                            input_value=request.path_info.split('/')[-1].split('(')[0],
+                            input_type='camel_plural',
+                            output_type='camel_singular'
+                        )
                     request.nested_resources = []
                 return None
         except StopIteration:

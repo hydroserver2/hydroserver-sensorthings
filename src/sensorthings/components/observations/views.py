@@ -1,5 +1,5 @@
 from ninja import Query
-from typing import Union
+from typing import Union, List
 from django.http import HttpResponse
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
@@ -95,7 +95,7 @@ def create_observation(
 def create_observations(
         request: SensorThingsRequest,
         response: HttpResponse,
-        observations: ObservationDataArrayBody
+        observations: List[ObservationDataArrayBody]
 ):
     """
     Create new Observation entities.
