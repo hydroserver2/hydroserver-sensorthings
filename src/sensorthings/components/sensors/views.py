@@ -8,6 +8,7 @@ from .schemas import SensorPostBody, SensorPatchBody, SensorListResponse, Sensor
 
 router = SensorThingsRouter(tags=['Sensors'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
+id_type = settings.ST_API_ID_TYPE
 
 
 @router.st_list('/Sensors', response_schema=SensorListResponse, url_name='list_sensor')
@@ -33,7 +34,7 @@ def list_sensors(
 @router.st_get(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})', response_schema=SensorGetResponse)
 def get_sensor(
         request: SensorThingsRequest,
-        sensor_id: str,
+        sensor_id: id_type,
         params: GetQueryParams = Query(...)
 ):
     """
@@ -78,7 +79,7 @@ def create_sensor(
 @router.patch(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})')
 def update_sensor(
         request: SensorThingsRequest,
-        sensor_id: str,
+        sensor_id: id_type,
         sensor: SensorPatchBody
 ):
     """
@@ -103,7 +104,7 @@ def update_sensor(
 @router.delete(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})')
 def delete_sensor(
         request: SensorThingsRequest,
-        sensor_id: str
+        sensor_id: id_type
 ):
     """
     Delete a Sensor entity.

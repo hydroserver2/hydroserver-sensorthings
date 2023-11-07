@@ -9,6 +9,7 @@ from .schemas import ObservedPropertyPostBody, ObservedPropertyPatchBody, Observ
 
 router = SensorThingsRouter(tags=['Observed Properties'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
+id_type = settings.ST_API_ID_TYPE
 
 
 @router.st_list('/ObservedProperties', response_schema=ObservedPropertyListResponse, url_name='list_observed_property')
@@ -37,7 +38,7 @@ def list_observed_properties(
 )
 def get_observed_property(
         request: SensorThingsRequest,
-        observed_property_id: str,
+        observed_property_id: id_type,
         params: GetQueryParams = Query(...)
 ):
     """
@@ -82,7 +83,7 @@ def create_observed_property(
 @router.st_patch(f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})')
 def update_observed_property(
         request: SensorThingsRequest,
-        observed_property_id: str,
+        observed_property_id: id_type,
         observed_property: ObservedPropertyPatchBody
 ):
     """
@@ -105,7 +106,7 @@ def update_observed_property(
 
 
 @router.delete(f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})')
-def delete_observed_property(request: SensorThingsRequest, observed_property_id: str):
+def delete_observed_property(request: SensorThingsRequest, observed_property_id: id_type):
     """
     Delete an Observed Property entity.
 

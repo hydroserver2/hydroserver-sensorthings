@@ -9,6 +9,7 @@ from .schemas import FeatureOfInterestPostBody, FeatureOfInterestPatchBody, Feat
 
 router = SensorThingsRouter(tags=['Features Of Interest'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
+id_type = settings.ST_API_ID_TYPE
 
 
 @router.st_get('/FeaturesOfInterest', response_schema=FeatureOfInterestListResponse)
@@ -37,7 +38,7 @@ def list_features_of_interest(
 )
 def get_feature_of_interest(
         request: SensorThingsRequest,
-        feature_of_interest_id: str,
+        feature_of_interest_id: id_type,
         params: GetQueryParams = Query(...)
 ):
     """
@@ -82,7 +83,7 @@ def create_feature_of_interest(
 @router.st_patch(f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})')
 def update_feature_of_interest(
         request: SensorThingsRequest,
-        feature_of_interest_id: str,
+        feature_of_interest_id: id_type,
         feature_of_interest: FeatureOfInterestPatchBody
 ):
     """
@@ -107,7 +108,7 @@ def update_feature_of_interest(
 @router.st_delete(f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})')
 def delete_feature_of_interest(
         request: SensorThingsRequest,
-        feature_of_interest_id: str
+        feature_of_interest_id: id_type
 ):
     """
     Delete a Feature of Interest entity.

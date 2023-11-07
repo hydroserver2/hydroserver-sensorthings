@@ -12,6 +12,7 @@ from .schemas import ObservationPostBody, ObservationPatchBody, ObservationListR
 
 router = SensorThingsRouter(tags=['Observations'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
+id_type = settings.ST_API_ID_TYPE
 
 
 @router.st_list(
@@ -43,7 +44,7 @@ def list_observations(
 @router.st_get(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})', response_schema=ObservationGetResponse)
 def get_observation(
         request: SensorThingsRequest,
-        observation_id: str,
+        observation_id: id_type,
         params: GetQueryParams = Query(...)
 ):
     """
@@ -123,7 +124,7 @@ def create_observations(
 @router.st_patch(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})')
 def update_observation(
         request: SensorThingsRequest,
-        observation_id: str,
+        observation_id: id_type,
         observation: ObservationPatchBody
 ):
     """
@@ -148,7 +149,7 @@ def update_observation(
 @router.st_delete(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})')
 def delete_observation(
         request: SensorThingsRequest,
-        observation_id: str
+        observation_id: id_type
 ):
     """
     Delete a Observation entity.
