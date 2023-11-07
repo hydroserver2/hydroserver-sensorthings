@@ -9,6 +9,7 @@ from .schemas import HistoricalLocationPostBody, HistoricalLocationPatchBody, Hi
 
 router = SensorThingsRouter(tags=['Historical Locations'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
+id_type = settings.ST_API_ID_TYPE
 
 
 @router.st_list(
@@ -41,7 +42,7 @@ def list_historical_locations(
 )
 def get_historical_location(
         request: SensorThingsRequest,
-        historical_location_id: str,
+        historical_location_id: id_type,
         params: GetQueryParams = Query(...)
 ):
     """
@@ -86,7 +87,7 @@ def create_historical_location(
 @router.st_patch(f'/HistoricalLocations({id_qualifier}{{historical_location_id}}{id_qualifier})')
 def update_historical_location(
         request: SensorThingsRequest,
-        historical_location_id: str,
+        historical_location_id: id_type,
         historical_location: HistoricalLocationPatchBody
 ):
     """
@@ -109,7 +110,7 @@ def update_historical_location(
 
 
 @router.st_delete(f'/HistoricalLocations({id_qualifier}{{historical_location_id}}{id_qualifier})')
-def delete_historical_location(request: SensorThingsRequest, historical_location_id: str):
+def delete_historical_location(request: SensorThingsRequest, historical_location_id: id_type):
     """
     Delete a Historical Location entity.
 

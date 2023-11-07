@@ -8,6 +8,7 @@ from .schemas import LocationPostBody, LocationPatchBody, LocationListResponse, 
 
 router = SensorThingsRouter(tags=['Locations'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
+id_type = settings.ST_API_ID_TYPE
 
 
 @router.st_get('/Locations', response_schema=LocationListResponse, url_name='list_location')
@@ -33,7 +34,7 @@ def list_locations(
 @router.get(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})', response=LocationGetResponse)
 def get_location(
         request: SensorThingsRequest,
-        location_id: str,
+        location_id: id_type,
         params: GetQueryParams = Query(...)
 ):
     """
@@ -78,7 +79,7 @@ def create_location(
 @router.patch(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})')
 def update_location(
         request: SensorThingsRequest,
-        location_id: str,
+        location_id: id_type,
         location: LocationPatchBody
 ):
     """
@@ -103,7 +104,7 @@ def update_location(
 @router.delete(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})')
 def delete_location(
         request: SensorThingsRequest,
-        location_id: str
+        location_id: id_type
 ):
     """
     Delete a Location entity.

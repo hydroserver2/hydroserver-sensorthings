@@ -17,6 +17,7 @@ ST_CONFORMANCE = getattr(settings, 'ST_CONFORMANCE', [
 
 ST_API_PREFIX = getattr(settings, 'ST_API_PREFIX', 'sensorthings')
 ST_API_ID_QUALIFIER = getattr(settings, 'ST_API_ID_QUALIFIER', '')
+ST_API_ID_TYPE = getattr(settings, 'ST_API_ID_TYPE', str)
 
 ST_CAPABILITIES = getattr(settings, 'ST_CAPABILITIES', [
     {
