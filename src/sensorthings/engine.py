@@ -85,13 +85,14 @@ class SensorThingsBaseEngine(
             count=count
         )
 
-        entities = self.build_links_and_nested_components(
-            request=request,
-            component=component if component else self.component,
-            values=entities,
-            expand=query_params.get('expand'),
-            drop_related_links=drop_related_links
-        )
+        if query_params.get('result_format') != 'dataArray':
+            entities = self.build_links_and_nested_components(
+                request=request,
+                component=component if component else self.component,
+                values=entities,
+                expand=query_params.get('expand'),
+                drop_related_links=drop_related_links
+            )
 
         response = {
             'value': entities
