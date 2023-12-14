@@ -4,7 +4,7 @@ from copy import deepcopy
 from django.urls import re_path
 from pydantic import BaseModel
 from typing import Union, Literal, Type, NewType, List, Sequence, Optional, Callable
-from sensorthings.backends.sensorthings.engine import SensorThingsEngine
+from sensorthings.backends.sensorthings_v1_1.engine import SensorThingsEngine
 from sensorthings.backends.odm2.engine import SensorThingsEngineODM2
 from sensorthings.backends.frostserver.engine import FrostServerEngine
 from sensorthings.engine import SensorThingsBaseEngine

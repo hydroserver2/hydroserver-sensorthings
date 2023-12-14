@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union, List
+from typing import TYPE_CHECKING, Union, List, Optional
 from pydantic import Field, AnyHttpUrl
 from ninja import Schema
 from sensorthings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, NestedEntity
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class ThingFields(Schema):
     name: str
     description: str
-    properties: Union[dict, None] = None
+    properties: Optional[dict] = None
 
     class Config:
         allow_population_by_field_name = True
@@ -46,6 +46,7 @@ class ThingPatchBody(BasePatchBody, ThingFields):
     locations: List[EntityId] = Field([], alias='Locations')
 
 
+@allow_partial
 class ThingGetResponse(ThingFields, BaseGetResponse):
     locations_link: AnyHttpUrl = Field(None, alias='Locations@iot.navigationLink')
     locations_rel: List[NestedEntity] = Field(None, alias='Locations', nested_class='LocationGetResponse')

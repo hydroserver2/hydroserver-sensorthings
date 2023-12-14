@@ -34,6 +34,7 @@ class ObservedPropertyPatchBody(BasePatchBody, ObservedPropertyFields):
     pass
 
 
+@allow_partial
 class ObservedPropertyGetResponse(ObservedPropertyFields, BaseGetResponse):
     datastreams_link: AnyHttpUrl = Field(None, alias='Datastreams@iot.navigationLink')
     datastreams_rel: List[NestedEntity] = Field(None, alias='Datastreams', nested_class='DatastreamGetResponse')

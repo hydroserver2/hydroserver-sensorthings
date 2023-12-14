@@ -86,11 +86,12 @@ class SensorThingsBaseEngine(
         )
 
         if query_params.get('result_format') != 'dataArray':
-            entities = self.build_links_and_nested_components(
+            entities = self.build_selects_links_and_nested_components(
                 request=request,
                 component=component if component else self.component,
                 values=entities,
                 expand=query_params.get('expand'),
+                select=query_params.get('select'),
                 drop_related_links=drop_related_links
             )
 
@@ -106,7 +107,8 @@ class SensorThingsBaseEngine(
         if query_params.get('result_format') == 'dataArray' and \
                 (component is None and self.component == 'Observation' or component == 'Observation'):
             response = self.convert_to_data_array(
-                response=response
+                response=response,
+                select=query_params.get('select')
             )
 
         return response
@@ -124,7 +126,7 @@ class SensorThingsBaseEngine(
             filters=self.get_filters(f"id eq '{entity_id}'"),
         )
 
-        entities = self.build_links_and_nested_components(
+        entities = self.build_selects_links_and_nested_components(
             request=request,
             component=self.component,
             values=entities,
@@ -350,94 +352,110 @@ class SensorThingsBaseEngine(
         else:
             return None
 
-    def build_links_and_nested_components(self, request, component, values, expand, drop_related_links=False):
+    def build_selects_links_and_nested_components(
+            self,
+            request,
+            component,
+            values,
+            expand,
+            select=None,
+            data_array=False,
+            drop_related_links=False
+    ):
         """"""
 
         related_components = self.get_related_components(component)
         expand_properties = self.parse_expand_parameter(component, expand)
+        unselect_components = self.parse_select_parameter(component, select)
 
         for value in values:
 
-            value['self_link'] = self.get_ref(
-                component=component,
-                entity_id=value['id']
-            )
+            for unselect_component in unselect_components:
+                value.pop(unselect_component, None)
 
-            for related_component, component_meta in related_components.items():
-                if related_component not in expand_properties:
-                    value[f'{related_component}_link'] = self.get_ref(
-                        component=component,
-                        entity_id=value['id'],
-                        related_component=component_meta['component'],
-                        is_collection=component_meta['is_collection']
-                    ) if not drop_related_links else None
-                else:
-                    expand_properties[related_component]['join_ids'].append(
-                        value[expand_properties[related_component]['join_field']]
-                    )
+            if len(unselect_components) == 0 and data_array is False:
+                value['self_link'] = self.get_ref(
+                    component=component,
+                    entity_id=value['id']
+                )
 
-        for expand_property_name, expand_property_meta in expand_properties.items():
-            if len(expand_property_meta['join_ids']) > 0:
-                if expand_property_meta['join_field'] == 'id':
-                    join_field = lookup_component(
-                        component, 'camel_singular', 'snake_singular'
-                    ) + '_ids'
-                else:
-                    join_field = expand_property_meta['join_field'] + 's'
+            if data_array is False:
+                for related_component, component_meta in related_components.items():
+                    if related_component in expand_properties:
+                        expand_properties[related_component]['join_ids'].append(
+                            value[expand_properties[related_component]['join_field']]
+                        )
+                    elif related_component not in unselect_components:
+                        value[f'{related_component}_link'] = self.get_ref(
+                            component=component,
+                            entity_id=value['id'],
+                            related_component=component_meta['component'],
+                            is_collection=component_meta['is_collection']
+                        ) if not drop_related_links else None
 
-                apply_data_array = expand_property_meta['query_params'].get('result_format') == 'dataArray'
+        if data_array is False:
+            for expand_property_name, expand_property_meta in expand_properties.items():
+                if len(expand_property_meta['join_ids']) > 0:
+                    if expand_property_meta['join_field'] == 'id':
+                        join_field = lookup_component(
+                            component, 'camel_singular', 'snake_singular'
+                        ) + '_ids'
+                    else:
+                        join_field = expand_property_meta['join_field'] + 's'
 
-                related_entities = {
-                    entity.get('id') if not apply_data_array else entity.get('datastream_id'): entity
-                    for entity in self.list_entities(
-                        request=request,
-                        query_params=expand_property_meta['query_params'],
-                        component=expand_property_meta['component'],
-                        join_ids={
-                            join_field: expand_property_meta['join_ids']
-                        },
-                        drop_related_links=True,
-                        root=False
-                    ).get('value')
-                }
+                    apply_data_array = expand_property_meta['query_params'].get('result_format') == 'dataArray'
 
-                for value in values:
-                    if related_components[expand_property_name]['is_many_to_many']:
-                        value[f'{expand_property_name}_rel'] = [
-                            getattr(
-                                component_schemas, f'{expand_property_meta["component"]}GetResponse'
-                            )(**related_entity).dict(
-                                by_alias=True,
-                                exclude_none=True
-                            ) for related_entity in related_entities.values()
-                            if value['id'] in related_entity[join_field]
-                        ]
-                    elif related_components[expand_property_name]['is_collection']:
-                        if apply_data_array:
-                            del related_entities[value['id']]['datastream']
-                        value[f'{expand_property_name}_rel'] = [
-                            getattr(
-                                component_schemas, f'{expand_property_meta["component"]}GetResponse'
-                            )(**related_entity).dict(
+                    related_entities = {
+                        entity.get('id') if not apply_data_array else entity.get('datastream_id'): entity
+                        for entity in self.list_entities(
+                            request=request,
+                            query_params=expand_property_meta['query_params'],
+                            component=expand_property_meta['component'],
+                            join_ids={
+                                join_field: expand_property_meta['join_ids']
+                            },
+                            drop_related_links=True,
+                            root=False
+                        ).get('value')
+                    }
+
+                    for value in values:
+                        if related_components[expand_property_name]['is_many_to_many']:
+                            value[f'{expand_property_name}_rel'] = [
+                                getattr(
+                                    component_schemas, f'{expand_property_meta["component"]}GetResponse'
+                                )(**related_entity).dict(
+                                    by_alias=True,
+                                    exclude_none=True
+                                ) for related_entity in related_entities.values()
+                                if value['id'] in related_entity[join_field]
+                            ]
+                        elif related_components[expand_property_name]['is_collection']:
+                            if apply_data_array:
+                                del related_entities[value['id']]['datastream']
+                            value[f'{expand_property_name}_rel'] = [
+                                getattr(
+                                    component_schemas, f'{expand_property_meta["component"]}GetResponse'
+                                )(**related_entity).dict(
+                                    by_alias=True,
+                                    exclude_unset=True
+                                ) for related_entity in related_entities.values()
+                                if related_entity[join_field[:-1]] == value['id']
+                            ] if not apply_data_array else ObservationDataArray(
+                                **related_entities.get(value['id'])
+                            ).dict(
                                 by_alias=True,
                                 exclude_unset=True
-                            ) for related_entity in related_entities.values()
-                            if related_entity[join_field[:-1]] == value['id']
-                        ] if not apply_data_array else ObservationDataArray(
-                            **related_entities.get(value['id'])
-                        ).dict(
-                            by_alias=True,
-                            exclude_unset=True
-                        )
-                    else:
-                        value[f'{expand_property_name}_rel'] = getattr(
-                            component_schemas, f'{expand_property_meta["component"]}GetResponse'
-                        )(**related_entities[
-                            value[expand_property_meta['join_field']]
-                        ]).dict(
-                            by_alias=True,
-                            exclude_none=True
-                        )
+                            )
+                        else:
+                            value[f'{expand_property_name}_rel'] = getattr(
+                                component_schemas, f'{expand_property_meta["component"]}GetResponse'
+                            )(**related_entities[
+                                value[expand_property_meta['join_field']]
+                            ]).dict(
+                                by_alias=True,
+                                exclude_none=True
+                            )
 
         return values
 
@@ -465,6 +483,24 @@ class SensorThingsBaseEngine(
                 'is_many_to_many': True if field.type_.__name__ in many_to_many_relations.get(component, []) else False
             } for name, field in getattr(component_schemas, f'{component}Relations').__fields__.items()
         }
+
+    @staticmethod
+    def parse_select_parameter(component, select_parameter):
+
+        if not select_parameter:
+            return []
+
+        select_parameter = select_parameter.split(',')
+
+        unselect_components = [
+            field[0] for field in getattr(component_schemas, component).__fields__.items()
+            if field[1].alias not in select_parameter
+        ]
+
+        if len(select_parameter) > 0 and 'id' not in select_parameter:
+            unselect_components.append('id')
+
+        return unselect_components
 
     def parse_expand_parameter(self, component, expand_parameter):
         """"""
@@ -526,7 +562,7 @@ class SensorThingsBaseEngine(
     def convert_to_data_array(
             self,
             response: dict,
-            select: Union[list, None] = None
+            select: Union[str, None] = None
     ):
         """
         Converts an Observations response dictionary to the dataArray format.
@@ -546,7 +582,8 @@ class SensorThingsBaseEngine(
 
         if select:
             selected_fields = [
-                field for field in ObservationDataArrayFields.__fields__ if field in select
+                field[0] for field in ObservationDataArrayFields.__fields__.items()
+                if field[1].alias in select.split(',')
             ]
         else:
             selected_fields = [
