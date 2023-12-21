@@ -80,6 +80,7 @@ class BaseGetResponse(Schema):
 
 class GetQueryParams(Schema):
     expand: str = Field(None, alias='$expand')
+    select: str = Field(None, alias='$select')
 
 
 class ListQueryParams(GetQueryParams):

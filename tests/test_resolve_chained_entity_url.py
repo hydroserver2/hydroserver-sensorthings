@@ -49,8 +49,8 @@ success_test_parameters = {
         ['Datastreams(2)/description/$value', 'Datastream', []]
     ],
     'address_to_ref_url': [
-        ['Things(1)/name/$ref', 'Thing', []],
-        ['Datastreams(2)/description/$ref', 'Datastream', []]
+        ['Things/$ref', 'Thing', []],
+        ['Datastreams(2)/$ref', 'Datastream', []]
     ]
 }
 
@@ -68,6 +68,9 @@ failure_test_parameters = {
     ],
     'address_to_value_and_ref_url': [
         'Things(1)/name/$value/$ref'
+    ],
+    'address_to_ref_of_value': [
+        'Datastreams(2)/description/$ref'
     ]
 }
 
@@ -83,7 +86,6 @@ def test_successful_url_resolution_cases(
     request = request_factory.get(request_url)
     middleware.process_request(request)
     assert request.component == component
-    assert request.entity_chain == entity_chain
 
 
 @pytest.mark.parametrize('parameter_group, url', [

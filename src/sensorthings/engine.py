@@ -130,13 +130,17 @@ class SensorThingsBaseEngine(
             request=request,
             component=self.component,
             values=entities,
-            expand=query_params.get('expand')
+            expand=query_params.get('expand'),
+            select=query_params.get('select')
         )
 
         entity = next(iter(entities), None)
 
         if not entity:
             raise HttpError(404, 'Record not found.')
+
+        if getattr(request, 'value_only', False) is True:
+            request.response_string = entity[query_params['select']]
 
         return entity
 
@@ -362,22 +366,34 @@ class SensorThingsBaseEngine(
             data_array=False,
             drop_related_links=False
     ):
-        """"""
+        """
+        The build_selects_links_and_nested_components function is used to build the self_link, related_component_links,
+        and nested components for a given component. The function takes in the following parameters:
+
+        :param self: Refer to the current object
+        :param request: Get the query parameters from the request
+        :param component: Determine which component is being queried
+        :param values: Pass in the values that are returned from the list_entities function
+        :param expand: Expand nested components
+        :param select: Specify which fields should be returned in the response
+        :param data_array: Determine whether the data should be returned in a dataarray format
+        :param drop_related_links: Drop the related links from the response
+        :return: A list of dictionaries
+        """
 
         related_components = self.get_related_components(component)
         expand_properties = self.parse_expand_parameter(component, expand)
         unselect_components = self.parse_select_parameter(component, select)
 
         for value in values:
-
-            for unselect_component in unselect_components:
-                value.pop(unselect_component, None)
-
-            if len(unselect_components) == 0 and data_array is False:
+            if select == 'self_link' or (len(unselect_components) == 0 and data_array is False):
                 value['self_link'] = self.get_ref(
                     component=component,
                     entity_id=value['id']
                 )
+
+            for unselect_component in unselect_components:
+                value.pop(unselect_component, None)
 
             if data_array is False:
                 for related_component, component_meta in related_components.items():
@@ -462,12 +478,10 @@ class SensorThingsBaseEngine(
     @staticmethod
     def get_related_components(component):
         """
-        Get all components related to this component.
+        The get_related_components function returns a dictionary of related components for the given component.
 
-        Returns
-        -------
-        dict
-            The component's related components.
+        :param component: Get the related components of a specific component
+        :return: A dict of related components
         """
 
         many_to_many_relations = {
@@ -486,6 +500,17 @@ class SensorThingsBaseEngine(
 
     @staticmethod
     def parse_select_parameter(component, select_parameter):
+        """
+        The parse_select_parameter function takes in a component and a select_parameter.
+        If the select_parameter is not None, it splits the parameter into an array of strings.
+        It then creates an unselect_components list that contains all fields from the component's schema except for
+        those that are in the select parameter (if any). If there are no fields specified in the select parameter, or if
+        'id' is not included as one of them, it adds 'id' to this list as well.
+
+        :param component: Determine which component schema to use
+        :param select_parameter: Determine which fields are returned in the response
+        :return: A list of components that should be unselected
+        """
 
         if not select_parameter:
             return []
@@ -503,7 +528,20 @@ class SensorThingsBaseEngine(
         return unselect_components
 
     def parse_expand_parameter(self, component, expand_parameter):
-        """"""
+        """
+        The parse_expand_parameter function takes a component and an expand_parameter as input.
+        The function returns a dictionary of related components that are to be expanded, with the following keys:
+            - component: The name of the related component (e.g., 'Observation')
+            - join_field: The field in the current table that is used to join with this related table (e.g., 'id' or
+                          'observation_id')
+            - query_params: A dictionary containing all query parameters for this specific nested request, including any
+                            $expand parameters for further nesting.
+
+        :param self: Represent the instance of the class
+        :param component: Get the related components of a component
+        :param expand_parameter: Expand the results of a query
+        :return: A dictionary of the form:
+        """
 
         if not expand_parameter:
             expand_parameter = ''
@@ -552,7 +590,15 @@ class SensorThingsBaseEngine(
 
     @staticmethod
     def get_field_index(components, field):
-        """"""
+        """
+        The get_field_index function takes two arguments:
+            1. components - a list of strings representing the fields in a CSV file
+            2. field - the name of one of those fields
+
+        :param components: Store the list of components in a row
+        :param field: Find the index of a field in the components list
+        :return: The index of the field in the components list
+        """
 
         try:
             return components.index(field)
@@ -565,19 +611,16 @@ class SensorThingsBaseEngine(
             select: Union[str, None] = None
     ):
         """
-        Converts an Observations response dictionary to the dataArray format.
+        The convert_to_data_array function takes a response from the Observation entity and converts it to an array of
+        observations. The function is called by the get_many method in the Observation class, which is used when
+        querying multiple observations at once. The convert_to_data_array function groups all observations by their
+        datastream id, and then creates a list of dictionaries containing each observation's phenomenon time (time) and
+        result value (value). It also adds a 'datastream' key with its corresponding datastream id.
 
-        Parameters
-        ----------
-        response : dict
-            A SensorThings response dictionary.
-        select
-            A list of fields that should be included in the response.
-
-        Returns
-        -------
-        dict
-            A SensorThings response dictionary formatted as a dataArray.
+        :param self: Make the method belong to the class
+        :param response: dict: Pass the response from the get_observations function
+        :param select: Union[str: Select the fields that will be returned in the response
+        :return: A dictionary with the following keys:
         """
 
         if select:
@@ -610,7 +653,15 @@ class SensorThingsBaseEngine(
 
     @staticmethod
     def iso_time_interval(start_time: Optional[datetime], end_time: Optional[datetime]):
-        """"""
+        """
+        The iso_time_interval function takes two datetime objects as input and returns a string in the format
+            start_time/end_time, where both times are formatted according to ISO 8601. If either of the inputs is None,
+            then that time will be omitted from the output string.
+
+        :param start_time: Optional[datetime]: Specify that the start_time parameter is optional
+        :param end_time: Optional[datetime]: Specify that the end_time parameter is optional
+        :return: A string that represents the time interval between two datetime objects
+        """
 
         if start_time and end_time:
             return start_time.isoformat(timespec='seconds') + '/' + end_time.isoformat(timespec='seconds')
@@ -636,3 +687,4 @@ class SensorThingsRequest(HttpRequest):
     component: str
     component_path: List[str]
     entity_chain: List[Tuple[str, Union[UUID, int, str]]]
+    value_only: bool

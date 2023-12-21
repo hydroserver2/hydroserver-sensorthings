@@ -8,6 +8,7 @@ from sensorthings.backends.sensorthings_v1_1.engine import SensorThingsEngine
 from sensorthings.backends.odm2.engine import SensorThingsEngineODM2
 from sensorthings.backends.frostserver.engine import FrostServerEngine
 from sensorthings.engine import SensorThingsBaseEngine
+from sensorthings.renderer import SensorThingsRenderer
 from sensorthings.components.root.views import router as root_router
 from sensorthings.components.datastreams.views import router as datastreams_router
 from sensorthings.components.featuresofinterest.views import router as featuresofinterest_router
@@ -50,7 +51,10 @@ class SensorThingsAPI(NinjaAPI):
         if not backend and not isinstance(engine, type(SensorThingsBaseEngine)):
             raise ValueError('No backend was specified, and no engine class was defined.')
 
-        super().__init__(**kwargs)
+        super().__init__(
+            renderer=SensorThingsRenderer(),
+            **kwargs
+        )
 
         self.endpoints = endpoints if endpoints is not None else []
 
@@ -106,7 +110,8 @@ class SensorThingsAPI(NinjaAPI):
                 response_schema = getattr(operation.response_models.get(200), '__annotations__', {}).get('response')
                 operation_method = operation.view_func.__name__.split('_')[0]
 
-                if endpoint_settings['create'].name == operation.view_func.__name__ and \
+                if 'create' in endpoint_settings and \
+                        endpoint_settings['create'].name == operation.view_func.__name__ and \
                         endpoint_settings['create'].body_schema is not None:
                     for field, schema in endpoint_settings['create'].body_schema.__fields__.items():
                         if hasattr(view_func.__annotations__[component], '__args__'):
@@ -114,7 +119,8 @@ class SensorThingsAPI(NinjaAPI):
                         else:
                             view_func.__annotations__[component].__fields__[field] = schema
 
-                if endpoint_settings['update'].name == operation.view_func.__name__ and \
+                if 'update' in endpoint_settings and \
+                        endpoint_settings['update'].name == operation.view_func.__name__ and \
                         endpoint_settings['update'].body_schema is not None:
                     for field, schema in endpoint_settings['update'].body_schema.__fields__.items():
                         if hasattr(view_func.__annotations__[component], '__args__'):
@@ -122,22 +128,28 @@ class SensorThingsAPI(NinjaAPI):
                         else:
                             view_func.__annotations__[component].__fields__[field] = schema
 
-                if f'list_{str(lookup_component(component, "snake_singular", "snake_plural"))}' == \
+                if 'list' in endpoint_settings and \
+                        f'list_{str(lookup_component(component, "snake_singular", "snake_plural"))}' == \
                         operation.view_func.__name__ and \
                         endpoint_settings['list'].response_schema is not None:
                     for field, schema in endpoint_settings['list'].response_schema.__fields__.items():
                         if hasattr(response_schema, '__args__'):
                             response_schema.__args__[0].__fields__['value'].type_.__fields__[field] = schema
+                            response_schema.__args__[0].__fields__['value'].type_.__fields__[field].required = False
                         else:
                             response_schema.__fields__['value'].type_.__fields__[field] = schema
+                            response_schema.__fields__[field].required = False
 
-                if endpoint_settings['get'].name == operation.view_func.__name__ and \
+                if 'get' in endpoint_settings and \
+                        endpoint_settings['get'].name == operation.view_func.__name__ and \
                         endpoint_settings['get'].response_schema is not None:
                     for field, schema in endpoint_settings['get'].response_schema.__fields__.items():
                         if hasattr(response_schema, '__args__'):
                             response_schema.__args__[0].__fields__[field] = schema
+                            response_schema.__args__[0].__fields__[field].required = False
                         else:
                             response_schema.__fields__[field] = schema
+                            response_schema.__fields__[field].required = False
 
                 authorization_callbacks = getattr(endpoint_settings.get(operation_method), 'authorization', [])
 

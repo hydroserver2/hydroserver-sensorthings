@@ -14,7 +14,7 @@ id_type = settings.ST_API_ID_TYPE
 
 @router.st_list(
     '/HistoricalLocations',
-    response_schema=HistoricalLocationListResponse,
+    response_schemas=(HistoricalLocationListResponse,),
     url_name='list_historical_location'
 )
 def list_historical_locations(
@@ -38,7 +38,7 @@ def list_historical_locations(
 
 @router.st_get(
     f'/HistoricalLocations({id_qualifier}{{historical_location_id}}{id_qualifier})',
-    response_schema=HistoricalLocationGetResponse
+    response_schemas=(HistoricalLocationGetResponse,)
 )
 def get_historical_location(
         request: SensorThingsRequest,

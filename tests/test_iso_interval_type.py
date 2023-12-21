@@ -13,8 +13,8 @@ def interval_model():
 
 
 @pytest.mark.parametrize('iso_interval_value, iso_parsed_value', [
-    ['2023-01-01T11:11:11+00:00/2023-01-02T11:11:11+00:00', '2023-01-01T11:11:11.000Z/2023-01-02T11:11:11.000Z'],
-    ['2023-01-01T11:11:11/2023-01-02T11:11:11', '2023-01-01T11:11:11.000Z/2023-01-02T11:11:11.000Z']
+    ['2023-01-01T11:11:11+00:00/2023-01-02T11:11:11+00:00', '2023-01-01T11:11:11Z/2023-01-02T11:11:11Z'],
+    ['2023-01-01T11:11:11/2023-01-02T11:11:11', '2023-01-01T11:11:11Z/2023-01-02T11:11:11Z']
 ])
 def test_iso_interval_valid_value(interval_model, iso_interval_value, iso_parsed_value):
     interval_instance = interval_model(iso_interval=iso_interval_value)
