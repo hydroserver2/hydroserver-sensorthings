@@ -86,11 +86,12 @@ class SensorThingsBaseEngine(
         )
 
         if query_params.get('result_format') != 'dataArray':
-            entities = self.build_links_and_nested_components(
+            entities = self.build_selects_links_and_nested_components(
                 request=request,
                 component=component if component else self.component,
                 values=entities,
                 expand=query_params.get('expand'),
+                select=query_params.get('select'),
                 drop_related_links=drop_related_links
             )
 
@@ -106,7 +107,8 @@ class SensorThingsBaseEngine(
         if query_params.get('result_format') == 'dataArray' and \
                 (component is None and self.component == 'Observation' or component == 'Observation'):
             response = self.convert_to_data_array(
-                response=response
+                response=response,
+                select=query_params.get('select')
             )
 
         return response
@@ -124,17 +126,21 @@ class SensorThingsBaseEngine(
             filters=self.get_filters(f"id eq '{entity_id}'"),
         )
 
-        entities = self.build_links_and_nested_components(
+        entities = self.build_selects_links_and_nested_components(
             request=request,
             component=self.component,
             values=entities,
-            expand=query_params.get('expand')
+            expand=query_params.get('expand'),
+            select=query_params.get('select')
         )
 
         entity = next(iter(entities), None)
 
         if not entity:
             raise HttpError(404, 'Record not found.')
+
+        if getattr(request, 'value_only', False) is True:
+            request.response_string = entity[query_params['select']]
 
         return entity
 
@@ -350,106 +356,132 @@ class SensorThingsBaseEngine(
         else:
             return None
 
-    def build_links_and_nested_components(self, request, component, values, expand, drop_related_links=False):
-        """"""
+    def build_selects_links_and_nested_components(
+            self,
+            request,
+            component,
+            values,
+            expand,
+            select=None,
+            data_array=False,
+            drop_related_links=False
+    ):
+        """
+        The build_selects_links_and_nested_components function is used to build the self_link, related_component_links,
+        and nested components for a given component. The function takes in the following parameters:
+
+        :param self: Refer to the current object
+        :param request: Get the query parameters from the request
+        :param component: Determine which component is being queried
+        :param values: Pass in the values that are returned from the list_entities function
+        :param expand: Expand nested components
+        :param select: Specify which fields should be returned in the response
+        :param data_array: Determine whether the data should be returned in a dataarray format
+        :param drop_related_links: Drop the related links from the response
+        :return: A list of dictionaries
+        """
 
         related_components = self.get_related_components(component)
         expand_properties = self.parse_expand_parameter(component, expand)
+        unselect_components = self.parse_select_parameter(component, select)
 
         for value in values:
+            if select == 'self_link' or (len(unselect_components) == 0 and data_array is False):
+                value['self_link'] = self.get_ref(
+                    component=component,
+                    entity_id=value['id']
+                )
 
-            value['self_link'] = self.get_ref(
-                component=component,
-                entity_id=value['id']
-            )
+            for unselect_component in unselect_components:
+                value.pop(unselect_component, None)
 
-            for related_component, component_meta in related_components.items():
-                if related_component not in expand_properties:
-                    value[f'{related_component}_link'] = self.get_ref(
-                        component=component,
-                        entity_id=value['id'],
-                        related_component=component_meta['component'],
-                        is_collection=component_meta['is_collection']
-                    ) if not drop_related_links else None
-                else:
-                    expand_properties[related_component]['join_ids'].append(
-                        value[expand_properties[related_component]['join_field']]
-                    )
+            if data_array is False:
+                for related_component, component_meta in related_components.items():
+                    if related_component in expand_properties:
+                        expand_properties[related_component]['join_ids'].append(
+                            value[expand_properties[related_component]['join_field']]
+                        )
+                    elif related_component not in unselect_components:
+                        value[f'{related_component}_link'] = self.get_ref(
+                            component=component,
+                            entity_id=value['id'],
+                            related_component=component_meta['component'],
+                            is_collection=component_meta['is_collection']
+                        ) if not drop_related_links else None
 
-        for expand_property_name, expand_property_meta in expand_properties.items():
-            if len(expand_property_meta['join_ids']) > 0:
-                if expand_property_meta['join_field'] == 'id':
-                    join_field = lookup_component(
-                        component, 'camel_singular', 'snake_singular'
-                    ) + '_ids'
-                else:
-                    join_field = expand_property_meta['join_field'] + 's'
+        if data_array is False:
+            for expand_property_name, expand_property_meta in expand_properties.items():
+                if len(expand_property_meta['join_ids']) > 0:
+                    if expand_property_meta['join_field'] == 'id':
+                        join_field = lookup_component(
+                            component, 'camel_singular', 'snake_singular'
+                        ) + '_ids'
+                    else:
+                        join_field = expand_property_meta['join_field'] + 's'
 
-                apply_data_array = expand_property_meta['query_params'].get('result_format') == 'dataArray'
+                    apply_data_array = expand_property_meta['query_params'].get('result_format') == 'dataArray'
 
-                related_entities = {
-                    entity.get('id') if not apply_data_array else entity.get('datastream_id'): entity
-                    for entity in self.list_entities(
-                        request=request,
-                        query_params=expand_property_meta['query_params'],
-                        component=expand_property_meta['component'],
-                        join_ids={
-                            join_field: expand_property_meta['join_ids']
-                        },
-                        drop_related_links=True,
-                        root=False
-                    ).get('value')
-                }
+                    related_entities = {
+                        entity.get('id') if not apply_data_array else entity.get('datastream_id'): entity
+                        for entity in self.list_entities(
+                            request=request,
+                            query_params=expand_property_meta['query_params'],
+                            component=expand_property_meta['component'],
+                            join_ids={
+                                join_field: expand_property_meta['join_ids']
+                            },
+                            drop_related_links=True,
+                            root=False
+                        ).get('value')
+                    }
 
-                for value in values:
-                    if related_components[expand_property_name]['is_many_to_many']:
-                        value[f'{expand_property_name}_rel'] = [
-                            getattr(
-                                component_schemas, f'{expand_property_meta["component"]}GetResponse'
-                            )(**related_entity).dict(
-                                by_alias=True,
-                                exclude_none=True
-                            ) for related_entity in related_entities.values()
-                            if value['id'] in related_entity[join_field]
-                        ]
-                    elif related_components[expand_property_name]['is_collection']:
-                        if apply_data_array:
-                            del related_entities[value['id']]['datastream']
-                        value[f'{expand_property_name}_rel'] = [
-                            getattr(
-                                component_schemas, f'{expand_property_meta["component"]}GetResponse'
-                            )(**related_entity).dict(
+                    for value in values:
+                        if related_components[expand_property_name]['is_many_to_many']:
+                            value[f'{expand_property_name}_rel'] = [
+                                getattr(
+                                    component_schemas, f'{expand_property_meta["component"]}GetResponse'
+                                )(**related_entity).dict(
+                                    by_alias=True,
+                                    exclude_none=True
+                                ) for related_entity in related_entities.values()
+                                if value['id'] in related_entity[join_field]
+                            ]
+                        elif related_components[expand_property_name]['is_collection']:
+                            if apply_data_array:
+                                del related_entities[value['id']]['datastream']
+                            value[f'{expand_property_name}_rel'] = [
+                                getattr(
+                                    component_schemas, f'{expand_property_meta["component"]}GetResponse'
+                                )(**related_entity).dict(
+                                    by_alias=True,
+                                    exclude_unset=True
+                                ) for related_entity in related_entities.values()
+                                if related_entity[join_field[:-1]] == value['id']
+                            ] if not apply_data_array else ObservationDataArray(
+                                **related_entities.get(value['id'])
+                            ).dict(
                                 by_alias=True,
                                 exclude_unset=True
-                            ) for related_entity in related_entities.values()
-                            if related_entity[join_field[:-1]] == value['id']
-                        ] if not apply_data_array else ObservationDataArray(
-                            **related_entities.get(value['id'])
-                        ).dict(
-                            by_alias=True,
-                            exclude_unset=True
-                        )
-                    else:
-                        value[f'{expand_property_name}_rel'] = getattr(
-                            component_schemas, f'{expand_property_meta["component"]}GetResponse'
-                        )(**related_entities[
-                            value[expand_property_meta['join_field']]
-                        ]).dict(
-                            by_alias=True,
-                            exclude_none=True
-                        )
+                            )
+                        else:
+                            value[f'{expand_property_name}_rel'] = getattr(
+                                component_schemas, f'{expand_property_meta["component"]}GetResponse'
+                            )(**related_entities[
+                                value[expand_property_meta['join_field']]
+                            ]).dict(
+                                by_alias=True,
+                                exclude_none=True
+                            )
 
         return values
 
     @staticmethod
     def get_related_components(component):
         """
-        Get all components related to this component.
+        The get_related_components function returns a dictionary of related components for the given component.
 
-        Returns
-        -------
-        dict
-            The component's related components.
+        :param component: Get the related components of a specific component
+        :return: A dict of related components
         """
 
         many_to_many_relations = {
@@ -466,8 +498,50 @@ class SensorThingsBaseEngine(
             } for name, field in getattr(component_schemas, f'{component}Relations').__fields__.items()
         }
 
+    @staticmethod
+    def parse_select_parameter(component, select_parameter):
+        """
+        The parse_select_parameter function takes in a component and a select_parameter.
+        If the select_parameter is not None, it splits the parameter into an array of strings.
+        It then creates an unselect_components list that contains all fields from the component's schema except for
+        those that are in the select parameter (if any). If there are no fields specified in the select parameter, or if
+        'id' is not included as one of them, it adds 'id' to this list as well.
+
+        :param component: Determine which component schema to use
+        :param select_parameter: Determine which fields are returned in the response
+        :return: A list of components that should be unselected
+        """
+
+        if not select_parameter:
+            return []
+
+        select_parameter = select_parameter.split(',')
+
+        unselect_components = [
+            field[0] for field in getattr(component_schemas, component).__fields__.items()
+            if field[1].alias not in select_parameter
+        ]
+
+        if len(select_parameter) > 0 and 'id' not in select_parameter:
+            unselect_components.append('id')
+
+        return unselect_components
+
     def parse_expand_parameter(self, component, expand_parameter):
-        """"""
+        """
+        The parse_expand_parameter function takes a component and an expand_parameter as input.
+        The function returns a dictionary of related components that are to be expanded, with the following keys:
+            - component: The name of the related component (e.g., 'Observation')
+            - join_field: The field in the current table that is used to join with this related table (e.g., 'id' or
+                          'observation_id')
+            - query_params: A dictionary containing all query parameters for this specific nested request, including any
+                            $expand parameters for further nesting.
+
+        :param self: Represent the instance of the class
+        :param component: Get the related components of a component
+        :param expand_parameter: Expand the results of a query
+        :return: A dictionary of the form:
+        """
 
         if not expand_parameter:
             expand_parameter = ''
@@ -516,7 +590,15 @@ class SensorThingsBaseEngine(
 
     @staticmethod
     def get_field_index(components, field):
-        """"""
+        """
+        The get_field_index function takes two arguments:
+            1. components - a list of strings representing the fields in a CSV file
+            2. field - the name of one of those fields
+
+        :param components: Store the list of components in a row
+        :param field: Find the index of a field in the components list
+        :return: The index of the field in the components list
+        """
 
         try:
             return components.index(field)
@@ -526,27 +608,25 @@ class SensorThingsBaseEngine(
     def convert_to_data_array(
             self,
             response: dict,
-            select: Union[list, None] = None
+            select: Union[str, None] = None
     ):
         """
-        Converts an Observations response dictionary to the dataArray format.
+        The convert_to_data_array function takes a response from the Observation entity and converts it to an array of
+        observations. The function is called by the get_many method in the Observation class, which is used when
+        querying multiple observations at once. The convert_to_data_array function groups all observations by their
+        datastream id, and then creates a list of dictionaries containing each observation's phenomenon time (time) and
+        result value (value). It also adds a 'datastream' key with its corresponding datastream id.
 
-        Parameters
-        ----------
-        response : dict
-            A SensorThings response dictionary.
-        select
-            A list of fields that should be included in the response.
-
-        Returns
-        -------
-        dict
-            A SensorThings response dictionary formatted as a dataArray.
+        :param self: Make the method belong to the class
+        :param response: dict: Pass the response from the get_observations function
+        :param select: Union[str: Select the fields that will be returned in the response
+        :return: A dictionary with the following keys:
         """
 
         if select:
             selected_fields = [
-                field for field in ObservationDataArrayFields.__fields__ if field in select
+                field[0] for field in ObservationDataArrayFields.__fields__.items()
+                if field[1].alias in select.split(',')
             ]
         else:
             selected_fields = [
@@ -573,7 +653,15 @@ class SensorThingsBaseEngine(
 
     @staticmethod
     def iso_time_interval(start_time: Optional[datetime], end_time: Optional[datetime]):
-        """"""
+        """
+        The iso_time_interval function takes two datetime objects as input and returns a string in the format
+            start_time/end_time, where both times are formatted according to ISO 8601. If either of the inputs is None,
+            then that time will be omitted from the output string.
+
+        :param start_time: Optional[datetime]: Specify that the start_time parameter is optional
+        :param end_time: Optional[datetime]: Specify that the end_time parameter is optional
+        :return: A string that represents the time interval between two datetime objects
+        """
 
         if start_time and end_time:
             return start_time.isoformat(timespec='seconds') + '/' + end_time.isoformat(timespec='seconds')
@@ -599,3 +687,4 @@ class SensorThingsRequest(HttpRequest):
     component: str
     component_path: List[str]
     entity_chain: List[Tuple[str, Union[UUID, int, str]]]
+    value_only: bool

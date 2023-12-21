@@ -69,6 +69,7 @@ class DatastreamPatchBody(BasePatchBody, DatastreamFields):
     observed_property: EntityId = Field(..., alias='ObservedProperty')
 
 
+@allow_partial
 class DatastreamGetResponse(DatastreamFields, BaseGetResponse):
     thing_link: AnyHttpUrl = Field(None, alias='Thing@iot.navigationLink')
     thing_rel: NestedEntity = Field(None, alias='Thing', nested_class='ThingGetResponse')

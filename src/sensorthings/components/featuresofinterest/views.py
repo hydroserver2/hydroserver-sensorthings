@@ -12,7 +12,7 @@ id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_get('/FeaturesOfInterest', response_schema=FeatureOfInterestListResponse)
+@router.st_get('/FeaturesOfInterest', response_schemas=(FeatureOfInterestListResponse,))
 def list_features_of_interest(
         request: SensorThingsRequest,
         params: ListQueryParams = Query(...)
@@ -34,7 +34,7 @@ def list_features_of_interest(
 
 @router.st_get(
     f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})',
-    response_schema=FeatureOfInterestGetResponse
+    response_schemas=(FeatureOfInterestGetResponse,)
 )
 def get_feature_of_interest(
         request: SensorThingsRequest,

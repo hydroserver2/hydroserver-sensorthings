@@ -38,6 +38,7 @@ class HistoricalLocationPatchBody(HistoricalLocationFields, BasePatchBody):
     locations: List[EntityId] = Field(..., alias='Locations')
 
 
+@allow_partial
 class HistoricalLocationGetResponse(HistoricalLocationFields, BaseGetResponse):
     thing_link: AnyHttpUrl = Field(None, alias='Thing@iot.navigationLink')
     thing_rel: NestedEntity = Field(None, alias='Thing', nested_class='ThingGetResponse')

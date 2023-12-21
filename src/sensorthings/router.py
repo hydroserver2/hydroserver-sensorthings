@@ -1,26 +1,26 @@
 from ninja import Router
 from pydantic import AnyHttpUrl
-from typing import Union, List
+from typing import Union, List, Tuple, Any
 from sensorthings.schemas import PermissionDenied, EntityNotFound
 
 
 class SensorThingsRouter(Router):
-    def st_list(self, route, response_schema, url_name=None):
+    def st_list(self, route, response_schemas: Tuple, url_name=None):
         return super(SensorThingsRouter, self).get(
             route,
             response={
-                200: response_schema
+                200: Union[(*response_schemas, str,)]
             },
             by_alias=True,
             exclude_unset=True,
             url_name=url_name
         )
 
-    def st_get(self, route, response_schema, url_name=None):
+    def st_get(self, route, response_schemas: Tuple, url_name=None):
         return super(SensorThingsRouter, self).get(
             route,
             response={
-                200: response_schema,
+                200: Union[(*response_schemas, str,)],
                 403: PermissionDenied,
                 404: EntityNotFound
             },

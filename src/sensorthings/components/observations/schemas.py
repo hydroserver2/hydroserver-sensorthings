@@ -1,6 +1,6 @@
 from uuid import UUID
 from typing import TYPE_CHECKING, Literal, Union, List
-from pydantic import Field, AnyHttpUrl
+from pydantic import Field, AnyHttpUrl, root_validator
 from ninja import Schema
 from sensorthings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, EntityId, \
     NestedEntity, ListQueryParams
@@ -61,6 +61,7 @@ class ObservationPatchBody(BasePatchBody, ObservationFields):
     feature_of_interest: EntityId = Field(..., alias='FeatureOfInterest')
 
 
+@allow_partial
 class ObservationGetResponse(ObservationFields, BaseGetResponse):
     datastream_link: AnyHttpUrl = Field(None, alias='Datastream@iot.navigationLink')
     datastream_rel: NestedEntity = Field(None, alias='Datastream', nested_class='DatastreamGetResponse')
@@ -70,6 +71,11 @@ class ObservationGetResponse(ObservationFields, BaseGetResponse):
         alias='FeatureOfInterest',
         nested_class='FeatureOfInterestGetResponse'
     )
+
+    @root_validator(pre=False)
+    def data_array_validator(cls, values):
+        assert any(values.values())
+        return values
 
 
 class ObservationListResponse(BaseListResponse):

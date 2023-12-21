@@ -121,6 +121,8 @@ class SensorThingsMiddleware(MiddlewareMixin):
                         input_type='camel_singular',
                         output_type='snake_singular'
                     )
+                    if not field_name:
+                        raise StopIteration
                     primary_component = raw_component
                     endpoint = f'{path_prefix}/{component_plural}({id_qualifier}temp_id{id_qualifier})'
                     nested_resources.append((raw_component, f'temp_id'))
@@ -130,22 +132,37 @@ class SensorThingsMiddleware(MiddlewareMixin):
                     nested_resources = nested_resources[:-1]
                     component = raw_component
                     field_name = raw_component
-
+                    query_dict = request.GET.copy()
+                    query_dict['$select'] = field_name
+                    request.GET = query_dict
             if previous_component in [c['SINGULAR_NAME'] for c in settings.ST_CAPABILITIES]:
                 # Check that this component is a valid child of the previous part of the path.
-                if field_name not in getattr(component_schemas, previous_component).__fields__:
+                if field_name == '$ref':
+                    query_dict = request.GET.copy()
+                    query_dict['$select'] = 'self_link'
+                    request.GET = query_dict
+                elif field_name not in getattr(component_schemas, previous_component).__fields__:
                     raise Http404
             elif previous_component in ['$value', '$ref']:
                 # $value/$ref must be the last components of a path.
                 raise Http404
             elif component == '$value':
-                # The previous component must be a non-relational field.
-                pass  # TODO Need to verify that the previous component is not a related field.
+                if resolve(endpoint).url_name.startswith('list') or lookup_component(
+                    input_value=previous_component,
+                    input_type='camel_singular',
+                    output_type='snake_singular'
+                ) is not None or previous_component not in getattr(
+                    component_schemas, primary_component
+                ).__fields__.keys():
+                    # $value can only be used on individual non-relational component fields.
+                    raise Http404
+                request.value_only = True
+                query_dict = request.GET.copy()
+                query_dict['$select'] = previous_component
+                request.GET = query_dict
             elif component == '$ref':
-                # The previous component must be a non-relational field.
-                pass  # TODO Need to verify that the previous component is not a related field.
-            else:
-                pass  # TODO Need to figure out any other cases that need to be handled here.
+                # $ref should be handled in a previous step.
+                raise Http404
 
             previous_component = component
 

@@ -12,7 +12,11 @@ id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_list('/ObservedProperties', response_schema=ObservedPropertyListResponse, url_name='list_observed_property')
+@router.st_list(
+    '/ObservedProperties',
+    response_schemas=(ObservedPropertyListResponse,),
+    url_name='list_observed_property'
+)
 def list_observed_properties(
         request: SensorThingsRequest,
         params: ListQueryParams = Query(...)
@@ -34,7 +38,7 @@ def list_observed_properties(
 
 @router.st_get(
     f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})',
-    response_schema=ObservedPropertyGetResponse
+    response_schemas=(ObservedPropertyGetResponse,)
 )
 def get_observed_property(
         request: SensorThingsRequest,

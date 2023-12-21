@@ -11,7 +11,7 @@ id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_list('/Sensors', response_schema=SensorListResponse, url_name='list_sensor')
+@router.st_list('/Sensors', response_schemas=(SensorListResponse,), url_name='list_sensor')
 def list_sensors(
         request,
         params: ListQueryParams = Query(...)
@@ -31,7 +31,7 @@ def list_sensors(
     )
 
 
-@router.st_get(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})', response_schema=SensorGetResponse)
+@router.st_get(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})', response_schemas=(SensorGetResponse,))
 def get_sensor(
         request: SensorThingsRequest,
         sensor_id: id_type,

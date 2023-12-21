@@ -45,6 +45,7 @@ class SensorPatchBody(BasePatchBody, SensorFields):
     pass
 
 
+@allow_partial
 class SensorGetResponse(SensorFields, BaseGetResponse):
     datastreams_link: AnyHttpUrl = Field(None, alias='Datastreams@iot.navigationLink')
     datastreams_rel: List[NestedEntity] = Field(None, alias='Datastreams', nested_class='DatastreamGetResponse')
