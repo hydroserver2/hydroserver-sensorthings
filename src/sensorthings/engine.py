@@ -386,10 +386,12 @@ class SensorThingsBaseEngine(
         unselect_components = self.parse_select_parameter(component, select)
 
         for value in values:
+            value['uid'] = value['id']
+
             if select == 'self_link' or (len(unselect_components) == 0 and data_array is False):
                 value['self_link'] = self.get_ref(
                     component=component,
-                    entity_id=value['id']
+                    entity_id=value['uid']
                 )
 
             for unselect_component in unselect_components:
@@ -404,7 +406,7 @@ class SensorThingsBaseEngine(
                     elif related_component not in unselect_components:
                         value[f'{related_component}_link'] = self.get_ref(
                             component=component,
-                            entity_id=value['id'],
+                            entity_id=value['uid'],
                             related_component=component_meta['component'],
                             is_collection=component_meta['is_collection']
                         ) if not drop_related_links else None
@@ -412,7 +414,7 @@ class SensorThingsBaseEngine(
         if data_array is False:
             for expand_property_name, expand_property_meta in expand_properties.items():
                 if len(expand_property_meta['join_ids']) > 0:
-                    if expand_property_meta['join_field'] == 'id':
+                    if expand_property_meta['join_field'] == 'uid':
                         join_field = lookup_component(
                             component, 'camel_singular', 'snake_singular'
                         ) + '_ids'
@@ -422,7 +424,7 @@ class SensorThingsBaseEngine(
                     apply_data_array = expand_property_meta['query_params'].get('result_format') == 'dataArray'
 
                     related_entities = {
-                        entity.get('id') if not apply_data_array else entity.get('datastream_id'): entity
+                        entity.get('uid') if not apply_data_array else entity.get('datastream_id'): entity
                         for entity in self.list_entities(
                             request=request,
                             query_params=expand_property_meta['query_params'],
@@ -444,11 +446,11 @@ class SensorThingsBaseEngine(
                                     by_alias=True,
                                     exclude_none=True
                                 ) for related_entity in related_entities.values()
-                                if value['id'] in related_entity[join_field]
+                                if value['uid'] in related_entity[join_field]
                             ]
                         elif related_components[expand_property_name]['is_collection']:
                             if apply_data_array:
-                                del related_entities[value['id']]['datastream']
+                                del related_entities[value['uid']]['datastream']
                             value[f'{expand_property_name}_rel'] = [
                                 getattr(
                                     component_schemas, f'{expand_property_meta["component"]}GetResponse'
@@ -456,9 +458,9 @@ class SensorThingsBaseEngine(
                                     by_alias=True,
                                     exclude_unset=True
                                 ) for related_entity in related_entities.values()
-                                if related_entity[join_field[:-1]] == value['id']
+                                if related_entity[join_field[:-1]] == value['uid']
                             ] if not apply_data_array else ObservationDataArray(
-                                **related_entities.get(value['id'])
+                                **related_entities.get(value['uid'])
                             ).dict(
                                 by_alias=True,
                                 exclude_unset=True
@@ -564,7 +566,7 @@ class SensorThingsBaseEngine(
             if component_name not in expand_properties:
                 expand_properties[component_name] = {
                     'component': related_components[component_name]['component'],
-                    'join_field': 'id' if related_components[component_name]['is_collection'] else
+                    'join_field': 'uid' if related_components[component_name]['is_collection'] else
                     lookup_component(
                         related_components[component_name]['component'], 'camel_singular', 'snake_singular'
                     ) + '_id',
