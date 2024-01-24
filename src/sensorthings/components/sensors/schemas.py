@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Literal, List
+from typing import TYPE_CHECKING, Literal, List, Optional
 from pydantic import Field, AnyHttpUrl, validator
 from ninja import Schema
 from sensorthings.schemas import BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, NestedEntity
@@ -21,7 +21,7 @@ class SensorFields(Schema):
     description: str
     encoding_type: sensorEncodingTypes = Field(..., alias='encodingType')
     sensor_metadata: str = Field(..., alias='metadata')
-    properties: dict = {}
+    properties: Optional[dict] = None
 
     _metadata_validator = validator('sensor_metadata', allow_reuse=True, check_fields=False)(metadata_validator)
 
