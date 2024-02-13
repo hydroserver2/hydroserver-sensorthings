@@ -77,11 +77,13 @@ class SensorThingsBaseEngine(
             pagination=self.get_pagination(query_params),
             ordering=self.get_ordering(query_params),
             expanded=not root,
+            get_count=True if query_params.get('count') is True else False,
             **join_ids
         )
 
         next_link = self.build_next_link(
             query_params=query_params,
+            length=len(entities),
             count=count
         )
 
@@ -124,6 +126,7 @@ class SensorThingsBaseEngine(
             self.component, 'camel_singular', 'snake_plural'
         ))(
             filters=self.get_filters(f"id eq '{entity_id}'"),
+            get_count=False
         )
 
         entities = self.build_selects_links_and_nested_components(
@@ -332,7 +335,8 @@ class SensorThingsBaseEngine(
     def build_next_link(
             self,
             query_params: dict,
-            count: int
+            length: int,
+            count: Optional[int] = None
     ):
         """"""
 
@@ -345,7 +349,7 @@ class SensorThingsBaseEngine(
         if skip is None:
             skip = 0
 
-        if count is not None and top + skip < count:
+        if count is not None and top + skip < count or count is None and top == length:
             query_string = ObservationParams(
                 top=top,
                 skip=top + skip,
