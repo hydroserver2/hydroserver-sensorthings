@@ -552,7 +552,7 @@ class SensorThingsBaseEngine(
         if not expand_parameter:
             expand_parameter = ''
         expand_properties = {}
-        expand_components = expand_parameter.split(',')
+        expand_components = re.split(r',(?![^(]*\))', expand_parameter)
         related_components = self.get_related_components(component)
 
         for expand_component in expand_components:
