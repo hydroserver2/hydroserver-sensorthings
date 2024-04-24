@@ -2,6 +2,7 @@ import functools
 from ninja import NinjaAPI, Schema, Router
 from copy import deepcopy
 from django.urls import re_path
+from django.http import HttpResponse
 from pydantic import BaseModel
 from typing import Union, Literal, Type, NewType, List, Sequence, Optional, Callable
 from sensorthings.backends.sensorthings_v1_1.engine import SensorThingsEngine
@@ -80,7 +81,7 @@ class SensorThingsAPI(NinjaAPI):
     def _get_urls(self):
 
         urls = super()._get_urls()
-        urls.append(re_path(r'^.*', lambda request: None, name='st_complex_handler'))
+        urls.append(re_path(r'^.*', lambda request: HttpResponse(status=404), name='st_complex_handler'))
 
         return urls
 

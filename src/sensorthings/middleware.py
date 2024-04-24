@@ -229,5 +229,3 @@ class SensorThingsMiddleware(MiddlewareMixin):
 
                     except Http404:
                         request.engine.component = None
-        else:
-            raise Http404
