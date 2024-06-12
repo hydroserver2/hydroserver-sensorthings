@@ -1,10 +1,11 @@
 from ninja import Query
+from django.http import HttpResponse
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
-from sensorthings.engine import SensorThingsRequest
+from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
-from .schemas import ObservedPropertyPostBody, ObservedPropertyPatchBody, ObservedPropertyListResponse, \
-    ObservedPropertyGetResponse
+from .schemas import (ObservedProperty, ObservedPropertyPostBody, ObservedPropertyPatchBody,
+                      ObservedPropertyListResponse, ObservedPropertyGetResponse)
 
 
 router = SensorThingsRouter(tags=['Observed Properties'])
@@ -18,7 +19,7 @@ id_type = settings.ST_API_ID_TYPE
     url_name='list_observed_property'
 )
 def list_observed_properties(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
 ):
     """
@@ -31,7 +32,7 @@ def list_observed_properties(
     """
 
     return request.engine.list_entities(
-        request=request,
+        component=ObservedProperty,
         query_params=params.dict()
     )
 
@@ -41,7 +42,7 @@ def list_observed_properties(
     response_schemas=(ObservedPropertyGetResponse,)
 )
 def get_observed_property(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         observed_property_id: id_type,
         params: GetQueryParams = Query(...)
 ):
@@ -55,7 +56,7 @@ def get_observed_property(
     """
 
     return request.engine.get_entity(
-        request=request,
+        component=ObservedProperty,
         entity_id=observed_property_id,
         query_params=params.dict()
     )
@@ -63,7 +64,8 @@ def get_observed_property(
 
 @router.st_post('/ObservedProperties')
 def create_observed_property(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
+        response: HttpResponse,
         observed_property: ObservedPropertyPostBody
 ):
     """
@@ -78,15 +80,18 @@ def create_observed_property(
       Create Entity</a>
     """
 
-    return request.engine.create_entity(
-        request=request,
-        entity_body=observed_property
+    request.engine.create_entity(
+        component=ObservedProperty,
+        entity_body=observed_property,
+        response=response
     )
+
+    return 201, None
 
 
 @router.st_patch(f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})')
 def update_observed_property(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         observed_property_id: id_type,
         observed_property: ObservedPropertyPatchBody
 ):
@@ -102,15 +107,17 @@ def update_observed_property(
       Update Entity</a>
     """
 
-    return request.engine.update_entity(
-        request=request,
+    request.engine.update_entity(
+        component=ObservedProperty,
         entity_id=observed_property_id,
         entity_body=observed_property
     )
 
+    return 204, None
+
 
 @router.delete(f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})')
-def delete_observed_property(request: SensorThingsRequest, observed_property_id: id_type):
+def delete_observed_property(request: SensorThingsHttpRequest, observed_property_id: id_type):
     """
     Delete an Observed Property entity.
 
@@ -119,7 +126,9 @@ def delete_observed_property(request: SensorThingsRequest, observed_property_id:
       Delete Entity</a>
     """
 
-    return request.engine.delete_entity(
-        request=request,
+    request.engine.delete_entity(
+        component=ObservedProperty,
         entity_id=observed_property_id
     )
+
+    return 204, None

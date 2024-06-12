@@ -22,19 +22,7 @@ MIDDLEWARE = [
 ]
 ```
 
-Then you may use a prebuilt API backend by adding one of the following to your `INSTALLED_APPS` setting:
-
-```
-INSTALLED_APPS = [
-	# ...
-	'sensorthings.backends.sensorthings',
-	'sensorthings.backends.odm2',
-	'sensorthings.backends.frostserver'
-	# ...
-]
-```
-
-Alternatively, you may initialize a custom SensorThings API using an existing backend as a template and adding it to your urls.py file:
+You may initialize a custom SensorThings API using an existing backend as a template and adding it to your urls.py file:
 
 ```
 from sensorthings import SensorThingsAPI

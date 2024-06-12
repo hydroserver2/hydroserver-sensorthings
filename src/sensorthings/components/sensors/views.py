@@ -1,9 +1,10 @@
 from ninja import Query
+from django.http import HttpResponse
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
-from sensorthings.engine import SensorThingsRequest
+from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
-from .schemas import SensorPostBody, SensorPatchBody, SensorListResponse, SensorGetResponse
+from .schemas import Sensor, SensorPostBody, SensorPatchBody, SensorListResponse, SensorGetResponse
 
 
 router = SensorThingsRouter(tags=['Sensors'])
@@ -26,14 +27,14 @@ def list_sensors(
     """
 
     return request.engine.list_entities(
-        request=request,
+        component=Sensor,
         query_params=params.dict()
     )
 
 
 @router.st_get(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})', response_schemas=(SensorGetResponse,))
 def get_sensor(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         sensor_id: id_type,
         params: GetQueryParams = Query(...)
 ):
@@ -47,7 +48,7 @@ def get_sensor(
     """
 
     return request.engine.get_entity(
-        request=request,
+        component=Sensor,
         entity_id=sensor_id,
         query_params=params.dict()
     )
@@ -55,7 +56,8 @@ def get_sensor(
 
 @router.st_post('/Sensors')
 def create_sensor(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
+        response: HttpResponse,
         sensor: SensorPostBody
 ):
     """
@@ -70,15 +72,18 @@ def create_sensor(
       Create Entity</a>
     """
 
-    return request.engine.create_entity(
-        request=request,
-        entity_body=sensor
+    request.engine.create_entity(
+        component=Sensor,
+        entity_body=sensor,
+        response=response
     )
+
+    return 201, None
 
 
 @router.patch(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})')
 def update_sensor(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         sensor_id: id_type,
         sensor: SensorPatchBody
 ):
@@ -94,16 +99,18 @@ def update_sensor(
       Update Entity</a>
     """
 
-    return request.engine.update_entity(
-        request=request,
+    request.engine.update_entity(
+        component=Sensor,
         entity_id=sensor_id,
         entity_body=sensor
     )
 
+    return 204, None
+
 
 @router.delete(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})')
 def delete_sensor(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         sensor_id: id_type
 ):
     """
@@ -114,7 +121,9 @@ def delete_sensor(
       Delete Entity</a>
     """
 
-    return request.engine.delete_entity(
-        request=request,
+    request.engine.delete_entity(
+        component=Sensor,
         entity_id=sensor_id
     )
+
+    return 204, None

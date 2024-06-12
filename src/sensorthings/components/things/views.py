@@ -1,9 +1,10 @@
 from ninja import Query
+from django.http import HttpResponse
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
-from sensorthings.engine import SensorThingsRequest
+from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
-from .schemas import ThingPostBody, ThingPatchBody, ThingListResponse, ThingGetResponse
+from .schemas import Thing, ThingPostBody, ThingPatchBody, ThingListResponse, ThingGetResponse
 
 
 router = SensorThingsRouter(tags=['Things'])
@@ -13,7 +14,7 @@ id_type = settings.ST_API_ID_TYPE
 
 @router.st_list('/Things', response_schemas=(ThingListResponse,), url_name='list_thing')
 def list_things(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
 ):
     """
@@ -26,14 +27,14 @@ def list_things(
     """
 
     return request.engine.list_entities(
-        request=request,
+        component=Thing,
         query_params=params.dict()
     )
 
 
 @router.st_get(f'/Things({id_qualifier}{{thing_id}}{id_qualifier})', response_schemas=(ThingGetResponse,))
 def get_thing(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         thing_id: id_type,
         params: GetQueryParams = Query(...)
 ):
@@ -47,7 +48,7 @@ def get_thing(
     """
 
     return request.engine.get_entity(
-        request=request,
+        component=Thing,
         entity_id=thing_id,
         query_params=params.dict()
     )
@@ -55,7 +56,8 @@ def get_thing(
 
 @router.st_post('/Things')
 def create_thing(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
+        response: HttpResponse,
         thing: ThingPostBody
 ):
     """
@@ -70,15 +72,18 @@ def create_thing(
       Create Entity</a>
     """
 
-    return request.engine.create_entity(
-        request=request,
-        entity_body=thing
+    request.engine.create_entity(
+        component=Thing,
+        entity_body=thing,
+        response=response
     )
+
+    return 201, None
 
 
 @router.st_patch(f'/Things({id_qualifier}{{thing_id}}{id_qualifier})')
 def update_thing(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         thing_id: id_type,
         thing: ThingPatchBody
 ):
@@ -94,16 +99,18 @@ def update_thing(
       Update Entity</a>
     """
 
-    return request.engine.update_entity(
-        request=request,
+    request.engine.update_entity(
+        component=Thing,
         entity_id=thing_id,
         entity_body=thing
     )
 
+    return 204, None
+
 
 @router.delete(f'/Things({id_qualifier}{{thing_id}}{id_qualifier})')
 def delete_thing(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         thing_id: id_type
 ):
     """
@@ -114,7 +121,9 @@ def delete_thing(
       Delete Entity</a>
     """
 
-    return request.engine.delete_entity(
-        request=request,
+    request.engine.delete_entity(
+        component=Thing,
         entity_id=thing_id
     )
+
+    return 204, None

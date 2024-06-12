@@ -1,13 +1,12 @@
 from ninja import Query
-from typing import Union, List
 from django.http import HttpResponse
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
-from sensorthings.engine import SensorThingsRequest
-from sensorthings.schemas import GetQueryParams
-from .utils import update_related_datastream
-from .schemas import ObservationPostBody, ObservationPatchBody, ObservationListResponse, ObservationGetResponse, \
-    ObservationParams, ObservationDataArrayResponse, ObservationDataArrayBody
+from sensorthings.http import SensorThingsHttpRequest
+from sensorthings.schemas import GetQueryParams, ListQueryParams
+from sensorthings.components.datastreams.schemas import Datastream
+from .schemas import (Observation, ObservationPostBody, ObservationPatchBody, ObservationListResponse,
+                      ObservationGetResponse)
 
 
 router = SensorThingsRouter(tags=['Observations'])
@@ -17,12 +16,12 @@ id_type = settings.ST_API_ID_TYPE
 
 @router.st_list(
     '/Observations',
-    response_schemas=(ObservationListResponse, ObservationDataArrayResponse,),
+    response_schemas=(ObservationListResponse,),
     url_name='list_observation'
 )
 def list_observations(
-        request: SensorThingsRequest,
-        params: ObservationParams = Query(...)
+        request: SensorThingsHttpRequest,
+        params: ListQueryParams = Query(...)
 ):
     """
     Get a collection of Observation entities.
@@ -33,12 +32,10 @@ def list_observations(
       Observation Relations</a>
     """
 
-    response = request.engine.list_entities(
-        request=request,
+    return request.engine.list_entities(
+        component=Observation,
         query_params=params.dict()
     )
-
-    return response
 
 
 @router.st_get(
@@ -46,7 +43,7 @@ def list_observations(
     response_schemas=(ObservationGetResponse,)
 )
 def get_observation(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         observation_id: id_type,
         params: GetQueryParams = Query(...)
 ):
@@ -60,15 +57,15 @@ def get_observation(
     """
 
     return request.engine.get_entity(
-        request=request,
+        component=Observation,
         entity_id=observation_id,
         query_params=params.dict()
     )
 
 
-@router.st_post('/Observations')
+@router.st_post('/Observations', url_name='create_observation')
 def create_observation(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         response: HttpResponse,
         observation: ObservationPostBody
 ):
@@ -85,48 +82,21 @@ def create_observation(
     """
 
     request.engine.create_entity(
-        request=request,
+        component=Observation,
         response=response,
         entity_body=observation
     )
 
-    update_related_datastream(request, observation)
+    request.engine.update_related_components(
+        component=Datastream, related_entity_id=observation.datastream.id
+    )
 
     return 201, None
 
 
-@router.st_post('/CreateObservations')
-def create_observations(
-        request: SensorThingsRequest,
-        response: HttpResponse,
-        observations: List[ObservationDataArrayBody]
-):
-    """
-    Create new Observation entities.
-
-    Links:
-    <a href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/observation/properties" target="_blank">\
-      Observation Properties</a> -
-    <a href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/observation/relations" target="_blank">\
-      Observation Relations</a> -
-    <a href="https://docs.ogc.org/is/18-088/18-088.html#create-observation-dataarray" target="_blank">\
-      Create Entities</a>
-    """
-
-    observation_links = request.engine.create_entity_bulk(
-        request=request,
-        entity_body=observations
-    )
-
-    for observation in observations:
-        update_related_datastream(request, observation)
-
-    return 201, observation_links
-
-
 @router.st_patch(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})')
 def update_observation(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         observation_id: id_type,
         observation: ObservationPatchBody
 ):
@@ -142,16 +112,18 @@ def update_observation(
       Update Entity</a>
     """
 
-    return request.engine.update_entity(
-        request=request,
+    request.engine.update_entity(
+        component=Observation,
         entity_id=observation_id,
         entity_body=observation
     )
 
+    return 204, None
+
 
 @router.st_delete(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})')
 def delete_observation(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         observation_id: id_type
 ):
     """
@@ -162,7 +134,9 @@ def delete_observation(
       Delete Entity</a>
     """
 
-    return request.engine.delete_entity(
-        request=request,
+    request.engine.delete_entity(
+        component=Observation,
         entity_id=observation_id
     )
+
+    return 204, None

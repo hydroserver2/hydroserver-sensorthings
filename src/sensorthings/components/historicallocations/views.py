@@ -1,10 +1,11 @@
 from ninja import Query
+from django.http import HttpResponse
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
-from sensorthings.engine import SensorThingsRequest
+from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
-from .schemas import HistoricalLocationPostBody, HistoricalLocationPatchBody, HistoricalLocationListResponse, \
-    HistoricalLocationGetResponse
+from .schemas import (HistoricalLocation, HistoricalLocationPostBody, HistoricalLocationPatchBody,
+                      HistoricalLocationListResponse, HistoricalLocationGetResponse)
 
 
 router = SensorThingsRouter(tags=['Historical Locations'])
@@ -18,7 +19,7 @@ id_type = settings.ST_API_ID_TYPE
     url_name='list_historical_location'
 )
 def list_historical_locations(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
 ):
     """
@@ -31,7 +32,7 @@ def list_historical_locations(
     """
 
     return request.engine.list_entities(
-        request=request,
+        component=HistoricalLocation,
         query_params=params.dict()
     )
 
@@ -41,7 +42,7 @@ def list_historical_locations(
     response_schemas=(HistoricalLocationGetResponse,)
 )
 def get_historical_location(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         historical_location_id: id_type,
         params: GetQueryParams = Query(...)
 ):
@@ -55,7 +56,7 @@ def get_historical_location(
     """
 
     return request.engine.get_entity(
-        request=request,
+        component=HistoricalLocation,
         entity_id=historical_location_id,
         query_params=params.dict()
     )
@@ -63,7 +64,8 @@ def get_historical_location(
 
 @router.st_post('/HistoricalLocations')
 def create_historical_location(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
+        response: HttpResponse,
         historical_location: HistoricalLocationPostBody
 ):
     """
@@ -78,15 +80,18 @@ def create_historical_location(
       Create Entity</a>
     """
 
-    return request.engine.create_entity(
-        request=request,
-        entity_body=historical_location
+    request.engine.create_entity(
+        component=HistoricalLocation,
+        entity_body=historical_location,
+        response=response
     )
+
+    return 201, None
 
 
 @router.st_patch(f'/HistoricalLocations({id_qualifier}{{historical_location_id}}{id_qualifier})')
 def update_historical_location(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         historical_location_id: id_type,
         historical_location: HistoricalLocationPatchBody
 ):
@@ -102,15 +107,17 @@ def update_historical_location(
       Update Entity</a>
     """
 
-    return request.engine.update_entity(
-        request=request,
+    request.engine.update_entity(
+        component=HistoricalLocation,
         entity_id=historical_location_id,
         entity_body=historical_location
     )
 
+    return 204, None
+
 
 @router.st_delete(f'/HistoricalLocations({id_qualifier}{{historical_location_id}}{id_qualifier})')
-def delete_historical_location(request: SensorThingsRequest, historical_location_id: id_type):
+def delete_historical_location(request: SensorThingsHttpRequest, historical_location_id: id_type):
     """
     Delete a Historical Location entity.
 
@@ -119,7 +126,9 @@ def delete_historical_location(request: SensorThingsRequest, historical_location
       Delete Entity</a>
     """
 
-    return request.engine.delete_entity(
-        request=request,
+    request.engine.delete_entity(
+        component=HistoricalLocation,
         entity_id=historical_location_id
     )
+
+    return 204, None

@@ -1,10 +1,11 @@
 from ninja import Query
+from django.http import HttpResponse
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
-from sensorthings.engine import SensorThingsRequest
+from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
-from .schemas import FeatureOfInterestPostBody, FeatureOfInterestPatchBody, FeatureOfInterestListResponse, \
-    FeatureOfInterestGetResponse
+from .schemas import (FeatureOfInterest, FeatureOfInterestPostBody, FeatureOfInterestPatchBody,
+                      FeatureOfInterestListResponse, FeatureOfInterestGetResponse)
 
 
 router = SensorThingsRouter(tags=['Features Of Interest'])
@@ -14,7 +15,7 @@ id_type = settings.ST_API_ID_TYPE
 
 @router.st_get('/FeaturesOfInterest', response_schemas=(FeatureOfInterestListResponse,))
 def list_features_of_interest(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
 ):
     """
@@ -27,7 +28,7 @@ def list_features_of_interest(
     """
 
     return request.engine.list_entities(
-        request=request,
+        component=FeatureOfInterest,
         query_params=params.dict()
     )
 
@@ -37,7 +38,7 @@ def list_features_of_interest(
     response_schemas=(FeatureOfInterestGetResponse,)
 )
 def get_feature_of_interest(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         feature_of_interest_id: id_type,
         params: GetQueryParams = Query(...)
 ):
@@ -51,7 +52,7 @@ def get_feature_of_interest(
     """
 
     return request.engine.get_entity(
-        request=request,
+        component=FeatureOfInterest,
         entity_id=feature_of_interest_id,
         query_params=params.dict()
     )
@@ -59,7 +60,8 @@ def get_feature_of_interest(
 
 @router.st_post('/FeaturesOfInterest')
 def create_feature_of_interest(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
+        response: HttpResponse,
         feature_of_interest: FeatureOfInterestPostBody
 ):
     """
@@ -74,15 +76,18 @@ def create_feature_of_interest(
       Create Entity</a>
     """
 
-    return request.engine.create_entity(
-        request=request,
-        entity_body=feature_of_interest
+    request.engine.create_entity(
+        component=FeatureOfInterest,
+        entity_body=feature_of_interest,
+        response=response
     )
+
+    return 201, None
 
 
 @router.st_patch(f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})')
 def update_feature_of_interest(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         feature_of_interest_id: id_type,
         feature_of_interest: FeatureOfInterestPatchBody
 ):
@@ -98,16 +103,18 @@ def update_feature_of_interest(
       Update Entity</a>
     """
 
-    return request.engine.update_entity(
-        request=request,
+    request.engine.update_entity(
+        component=FeatureOfInterest,
         entity_id=feature_of_interest_id,
         entity_body=feature_of_interest
     )
 
+    return 204, None
+
 
 @router.st_delete(f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})')
 def delete_feature_of_interest(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         feature_of_interest_id: id_type
 ):
     """
@@ -118,7 +125,9 @@ def delete_feature_of_interest(
       Delete Entity</a>
     """
 
-    return request.engine.delete_entity(
-        request=request,
+    request.engine.delete_entity(
+        component=FeatureOfInterest,
         entity_id=feature_of_interest_id
     )
+
+    return 204, None
