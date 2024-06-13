@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sensorthings.components.things package &mdash; HydroServer SensorThings v0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=19ed39ba"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HydroServer SensorThings
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">sensorthings.components.things package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-sensorthings.components.things.engine">sensorthings.components.things.engine module</a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.engine.ThingBaseEngine"><code class="docutils literal notranslate"><span class="pre">ThingBaseEngine</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.engine.ThingBaseEngine.create_thing"><code class="docutils literal notranslate"><span class="pre">ThingBaseEngine.create_thing()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.engine.ThingBaseEngine.delete_thing"><code class="docutils literal notranslate"><span class="pre">ThingBaseEngine.delete_thing()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.engine.ThingBaseEngine.get_things"><code class="docutils literal notranslate"><span class="pre">ThingBaseEngine.get_things()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.engine.ThingBaseEngine.update_thing"><code class="docutils literal notranslate"><span class="pre">ThingBaseEngine.update_thing()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-sensorthings.components.things.schemas">sensorthings.components.things.schemas module</a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing"><code class="docutils literal notranslate"><span class="pre">Thing</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.Config"><code class="docutils literal notranslate"><span class="pre">Thing.Config</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.Config.json_schema_extra"><code class="docutils literal notranslate"><span class="pre">Thing.Config.json_schema_extra</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.datastreams"><code class="docutils literal notranslate"><span class="pre">Thing.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.description"><code class="docutils literal notranslate"><span class="pre">Thing.description</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.historical_locations"><code class="docutils literal notranslate"><span class="pre">Thing.historical_locations</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.locations"><code class="docutils literal notranslate"><span class="pre">Thing.locations</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.model_config"><code class="docutils literal notranslate"><span class="pre">Thing.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.model_fields"><code class="docutils literal notranslate"><span class="pre">Thing.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.name"><code class="docutils literal notranslate"><span class="pre">Thing.name</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.Thing.properties"><code class="docutils literal notranslate"><span class="pre">Thing.properties</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields"><code class="docutils literal notranslate"><span class="pre">ThingFields</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields.name"><code class="docutils literal notranslate"><span class="pre">ThingFields.name</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields.description"><code class="docutils literal notranslate"><span class="pre">ThingFields.description</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields.properties"><code class="docutils literal notranslate"><span class="pre">ThingFields.properties</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields.Config"><code class="docutils literal notranslate"><span class="pre">ThingFields.Config</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields.Config.populate_by_name"><code class="docutils literal notranslate"><span class="pre">ThingFields.Config.populate_by_name</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">ThingFields.description</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields.model_config"><code class="docutils literal notranslate"><span class="pre">ThingFields.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields.model_fields"><code class="docutils literal notranslate"><span class="pre">ThingFields.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">ThingFields.name</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">ThingFields.properties</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.locations_link"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.locations_link</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.locations_rel"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.locations_rel</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.historical_locations_link"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.historical_locations_link</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.historical_locations_rel"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.historical_locations_rel</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.datastreams_link"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.datastreams_link</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.datastreams_rel"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.datastreams_rel</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.datastreams_link</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.datastreams_rel</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.description"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.description</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.historical_locations_link</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.historical_locations_rel</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.id"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.id</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.locations_link</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.locations_rel</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.model_config"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.model_fields"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.name"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.name</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.properties"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.properties</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse.self_link"><code class="docutils literal notranslate"><span class="pre">ThingGetResponse.self_link</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingListResponse"><code class="docutils literal notranslate"><span class="pre">ThingListResponse</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingListResponse.value"><code class="docutils literal notranslate"><span class="pre">ThingListResponse.value</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingListResponse.model_config"><code class="docutils literal notranslate"><span class="pre">ThingListResponse.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingListResponse.model_fields"><code class="docutils literal notranslate"><span class="pre">ThingListResponse.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">ThingListResponse.value</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPatchBody"><code class="docutils literal notranslate"><span class="pre">ThingPatchBody</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPatchBody.locations"><code class="docutils literal notranslate"><span class="pre">ThingPatchBody.locations</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">ThingPatchBody.locations</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPatchBody.model_config"><code class="docutils literal notranslate"><span class="pre">ThingPatchBody.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPatchBody.model_fields"><code class="docutils literal notranslate"><span class="pre">ThingPatchBody.model_fields</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPostBody"><code class="docutils literal notranslate"><span class="pre">ThingPostBody</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPostBody.locations"><code class="docutils literal notranslate"><span class="pre">ThingPostBody.locations</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPostBody.historical_locations"><code class="docutils literal notranslate"><span class="pre">ThingPostBody.historical_locations</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPostBody.datastreams"><code class="docutils literal notranslate"><span class="pre">ThingPostBody.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">ThingPostBody.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">ThingPostBody.historical_locations</span></code></a></li>
+<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">ThingPostBody.locations</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPostBody.model_config"><code class="docutils literal notranslate"><span class="pre">ThingPostBody.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingPostBody.model_fields"><code class="docutils literal notranslate"><span class="pre">ThingPostBody.model_fields</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingRelations"><code class="docutils literal notranslate"><span class="pre">ThingRelations</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingRelations.locations"><code class="docutils literal notranslate"><span class="pre">ThingRelations.locations</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingRelations.historical_locations"><code class="docutils literal notranslate"><span class="pre">ThingRelations.historical_locations</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingRelations.datastreams"><code class="docutils literal notranslate"><span class="pre">ThingRelations.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">ThingRelations.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">ThingRelations.historical_locations</span></code></a></li>
+<li><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">ThingRelations.locations</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingRelations.model_config"><code class="docutils literal notranslate"><span class="pre">ThingRelations.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.schemas.ThingRelations.model_fields"><code class="docutils literal notranslate"><span class="pre">ThingRelations.model_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-sensorthings.components.things.views">sensorthings.components.things.views module</a><ul>
+<li><a class="reference internal" href="#sensorthings.components.things.views.create_thing"><code class="docutils literal notranslate"><span class="pre">create_thing()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.views.delete_thing"><code class="docutils literal notranslate"><span class="pre">delete_thing()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.views.get_thing"><code class="docutils literal notranslate"><span class="pre">get_thing()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.views.list_things"><code class="docutils literal notranslate"><span class="pre">list_things()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.things.views.update_thing"><code class="docutils literal notranslate"><span class="pre">update_thing()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-sensorthings.components.things">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HydroServer SensorThings</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">sensorthings.components.things package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/sensorthings.components.things.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sensorthings-components-things-package">
+<h1>sensorthings.components.things package<a class="headerlink" href="#sensorthings-components-things-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-sensorthings.components.things.engine">
+<span id="sensorthings-components-things-engine-module"></span><h2>sensorthings.components.things.engine module<a class="headerlink" href="#module-sensorthings.components.things.engine" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.engine.ThingBaseEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.engine.</span></span><span class="sig-name descname"><span class="pre">ThingBaseEngine</span></span><a class="headerlink" href="#sensorthings.components.things.engine.ThingBaseEngine" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract base class for handling Things.</p>
+<p>This class defines the required methods for managing things. These methods must be implemented
+to allow the SensorThings API to interface with an underlying database.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sensorthings.components.things.engine.ThingBaseEngine.create_thing">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_thing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.engine.ThingBaseEngine.create_thing" title="Link to this definition"></a></dt>
+<dd><p>Create a new thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>thing</strong> (<em>dict</em>) – The thing data to be created.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ID of the newly created thing.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sensorthings.components.things.engine.ThingBaseEngine.delete_thing">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_thing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.engine.ThingBaseEngine.delete_thing" title="Link to this definition"></a></dt>
+<dd><p>Delete a thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>thing_id</strong> (<em>str</em>) – The ID of the thing to delete.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sensorthings.components.things.engine.ThingBaseEngine.get_things">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_things</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expanded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.engine.ThingBaseEngine.get_things" title="Link to this definition"></a></dt>
+<dd><p>Retrieve things based on provided parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>thing_ids</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – List of thing IDs to filter the results.</p></li>
+<li><p><strong>location_ids</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – List of location IDs to filter the results.</p></li>
+<li><p><strong>pagination</strong> (<em>dict</em><em>, </em><em>optional</em>) – Pagination information to limit the number of results.</p></li>
+<li><p><strong>ordering</strong> (<em>dict</em><em>, </em><em>optional</em>) – Ordering information to sort the results.</p></li>
+<li><p><strong>filters</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional filters to apply to the query.</p></li>
+<li><p><strong>expanded</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to include expanded information in the results.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type">(<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>Dict[str, dict]</em> – A dictionary of things, keyed by their IDs.</p></li>
+<li><p><em>int</em> – The total number of things matching the query.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sensorthings.components.things.engine.ThingBaseEngine.update_thing">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_thing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thing_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thing</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.engine.ThingBaseEngine.update_thing" title="Link to this definition"></a></dt>
+<dd><p>Update an existing thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>thing_id</strong> (<em>str</em>) – The ID of the thing to update.</p></li>
+<li><p><strong>thing</strong> (<em>dict</em>) – The updated thing data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sensorthings.components.things.schemas">
+<span id="sensorthings-components-things-schemas-module"></span><h2>sensorthings.components.things.schemas module<a class="headerlink" href="#module-sensorthings.components.things.schemas" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.schemas.</span></span><span class="sig-name descname"><span class="pre">Thing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.schemas.Thing" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseComponent</span></code></a>, <a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields" title="sensorthings.components.things.schemas.ThingFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThingFields</span></code></a>, <a class="reference internal" href="#sensorthings.components.things.schemas.ThingRelations" title="sensorthings.components.things.schemas.ThingRelations"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThingRelations</span></code></a></p>
+<p>A schema representing a thing.</p>
+<p>This class combines the fields and relations of a thing, and extends the BaseComponent class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.Config.json_schema_extra">
+<span class="sig-name descname"><span class="pre">json_schema_extra</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'name_ref':</span> <span class="pre">('Things',</span> <span class="pre">'thing',</span> <span class="pre">'things')}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.Config.json_schema_extra" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.datastreams">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List['Datastream']</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.datastreams" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.historical_locations">
+<span class="sig-name descname"><span class="pre">historical_locations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List['HistoricalLocation']</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.historical_locations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.locations">
+<span class="sig-name descname"><span class="pre">locations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List['Location']</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.locations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'json_schema_extra':</span> <span class="pre">{'name_ref':</span> <span class="pre">('Things',</span> <span class="pre">'thing',</span> <span class="pre">'things')},</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'datastreams':</span> <span class="pre">FieldInfo(annotation=List[ForwardRef('Datastream')],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Datastreams',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'relationship':</span> <span class="pre">'one_to_many',</span> <span class="pre">'back_ref':</span> <span class="pre">'thing_id'}),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'historical_locations':</span> <span class="pre">FieldInfo(annotation=List[ForwardRef('HistoricalLocation')],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='HistoricalLocations',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'relationship':</span> <span class="pre">'one_to_many',</span> <span class="pre">'back_ref':</span> <span class="pre">'thing_id'}),</span> <span class="pre">'locations':</span> <span class="pre">FieldInfo(annotation=List[ForwardRef('Location')],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Locations',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'relationship':</span> <span class="pre">'many_to_many',</span> <span class="pre">'back_ref':</span> <span class="pre">'thing_id'}),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2)}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.Thing.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional[dict]</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.Thing.properties" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingFields">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.schemas.</span></span><span class="sig-name descname"><span class="pre">ThingFields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingFields" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Schema</span></code></p>
+<p>A schema representing the fields of a thing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingFields.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingFields.name" title="Link to this definition"></a></dt>
+<dd><p>The name of the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingFields.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingFields.description" title="Link to this definition"></a></dt>
+<dd><p>The description of the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingFields.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingFields.properties" title="Link to this definition"></a></dt>
+<dd><p>Additional properties of the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[dict], optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingFields.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingFields.Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingFields.Config.populate_by_name">
+<span class="sig-name descname"><span class="pre">populate_by_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingFields.Config.populate_by_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingFields.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingFields.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingFields.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2)}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingFields.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.schemas.</span></span><span class="sig-name descname"><span class="pre">ThingGetResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields" title="sensorthings.components.things.schemas.ThingFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThingFields</span></code></a>, <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseGetResponse" title="sensorthings.schemas.BaseGetResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseGetResponse</span></code></a></p>
+<p>A schema for the response of a GET request for a thing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.locations_link">
+<span class="sig-name descname"><span class="pre">locations_link</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.locations_link" title="Link to this definition"></a></dt>
+<dd><p>The navigation link for the locations associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AnyHttpUrlString</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.locations_rel">
+<span class="sig-name descname"><span class="pre">locations_rel</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.locations_rel" title="Link to this definition"></a></dt>
+<dd><p>The relationship details for the locations associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.historical_locations_link">
+<span class="sig-name descname"><span class="pre">historical_locations_link</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.historical_locations_link" title="Link to this definition"></a></dt>
+<dd><p>The navigation link for the historical locations associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AnyHttpUrlString</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.historical_locations_rel">
+<span class="sig-name descname"><span class="pre">historical_locations_rel</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.historical_locations_rel" title="Link to this definition"></a></dt>
+<dd><p>The relationship details for the historical locations associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.datastreams_link">
+<span class="sig-name descname"><span class="pre">datastreams_link</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.datastreams_link" title="Link to this definition"></a></dt>
+<dd><p>The navigation link for the datastreams associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AnyHttpUrlString</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.datastreams_rel">
+<span class="sig-name descname"><span class="pre">datastreams_rel</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.datastreams_rel" title="Link to this definition"></a></dt>
+<dd><p>The relationship details for the datastreams associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">datastreams_link</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Url</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Url</span></code><span class="pre">]</span></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">datastreams_rel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">historical_locations_link</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Url</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Url</span></code><span class="pre">]</span></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">historical_locations_rel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">id_type</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">locations_link</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Url</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Url</span></code><span class="pre">]</span></em><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">locations_rel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'datastreams_link':</span> <span class="pre">FieldInfo(annotation=Url,</span> <span class="pre">required=False,</span> <span class="pre">alias='Datastreams&#64;iot.navigationLink',</span> <span class="pre">alias_priority=2,</span> <span class="pre">metadata=[UrlConstraints(max_length=None,</span> <span class="pre">allowed_schemes=['http',</span> <span class="pre">'https'],</span> <span class="pre">host_required=None,</span> <span class="pre">default_host=None,</span> <span class="pre">default_port=None,</span> <span class="pre">default_path=None),</span> <span class="pre">AfterValidator(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;),</span> <span class="pre">PlainSerializer(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">return_type=None,</span> <span class="pre">when_used='always'),</span> <span class="pre">WithJsonSchema(json_schema={'type':</span> <span class="pre">'string'},</span> <span class="pre">mode='serialization')]),</span> <span class="pre">'datastreams_rel':</span> <span class="pre">FieldInfo(annotation=List[dict],</span> <span class="pre">required=False,</span> <span class="pre">alias='Datastreams',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'nested_class':</span> <span class="pre">'DatastreamGetResponse'}),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'historical_locations_link':</span> <span class="pre">FieldInfo(annotation=Url,</span> <span class="pre">required=False,</span> <span class="pre">alias='HistoricalLocations&#64;iot.navigationLink',</span> <span class="pre">alias_priority=2,</span> <span class="pre">metadata=[UrlConstraints(max_length=None,</span> <span class="pre">allowed_schemes=['http',</span> <span class="pre">'https'],</span> <span class="pre">host_required=None,</span> <span class="pre">default_host=None,</span> <span class="pre">default_port=None,</span> <span class="pre">default_path=None),</span> <span class="pre">AfterValidator(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;),</span> <span class="pre">PlainSerializer(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">return_type=None,</span> <span class="pre">when_used='always'),</span> <span class="pre">WithJsonSchema(json_schema={'type':</span> <span class="pre">'string'},</span> <span class="pre">mode='serialization')]),</span> <span class="pre">'historical_locations_rel':</span> <span class="pre">FieldInfo(annotation=List[dict],</span> <span class="pre">required=False,</span> <span class="pre">alias='HistoricalLocations',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'nested_class':</span> <span class="pre">'HistoricalLocationGetResponse'}),</span> <span class="pre">'id':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='&#64;iot.id',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'locations_link':</span> <span class="pre">FieldInfo(annotation=Url,</span> <span class="pre">required=False,</span> <span class="pre">alias='Locations&#64;iot.navigationLink',</span> <span class="pre">alias_priority=2,</span> <span class="pre">metadata=[UrlConstraints(max_length=None,</span> <span class="pre">allowed_schemes=['http',</span> <span class="pre">'https'],</span> <span class="pre">host_required=None,</span> <span class="pre">default_host=None,</span> <span class="pre">default_port=None,</span> <span class="pre">default_path=None),</span> <span class="pre">AfterValidator(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;),</span> <span class="pre">PlainSerializer(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">return_type=None,</span> <span class="pre">when_used='always'),</span> <span class="pre">WithJsonSchema(json_schema={'type':</span> <span class="pre">'string'},</span> <span class="pre">mode='serialization')]),</span> <span class="pre">'locations_rel':</span> <span class="pre">FieldInfo(annotation=List[dict],</span> <span class="pre">required=False,</span> <span class="pre">alias='Locations',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'nested_class':</span> <span class="pre">'LocationGetResponse'}),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'self_link':</span> <span class="pre">FieldInfo(annotation=Union[Url,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='&#64;iot.selfLink',</span> <span class="pre">alias_priority=2,</span> <span class="pre">metadata=[UrlConstraints(max_length=None,</span> <span class="pre">allowed_schemes=['http',</span> <span class="pre">'https'],</span> <span class="pre">host_required=None,</span> <span class="pre">default_host=None,</span> <span class="pre">default_port=None,</span> <span class="pre">default_path=None),</span> <span class="pre">AfterValidator(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;),</span> <span class="pre">PlainSerializer(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">return_type=None,</span> <span class="pre">when_used='always'),</span> <span class="pre">WithJsonSchema(json_schema={'type':</span> <span class="pre">'string'},</span> <span class="pre">mode='serialization')])}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional[dict]</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.properties" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingGetResponse.self_link">
+<span class="sig-name descname"><span class="pre">self_link</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AnyHttpUrlString</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingGetResponse.self_link" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingListResponse">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.schemas.</span></span><span class="sig-name descname"><span class="pre">ThingListResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingListResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseListResponse" title="sensorthings.schemas.BaseListResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseListResponse</span></code></a></p>
+<p>A schema for the response of a GET request for a list of things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingListResponse.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingListResponse.value" title="Link to this definition"></a></dt>
+<dd><p>The list of things in the response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse" title="sensorthings.components.things.schemas.ThingGetResponse">ThingGetResponse</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingListResponse.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingListResponse.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingListResponse.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='&#64;iot.count',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'next_link':</span> <span class="pre">FieldInfo(annotation=Union[Annotated[pydantic_core._pydantic_core.Url,</span> <span class="pre">UrlConstraints(max_length=None,</span> <span class="pre">allowed_schemes=['http',</span> <span class="pre">'https'],</span> <span class="pre">host_required=None,</span> <span class="pre">default_host=None,</span> <span class="pre">default_port=None,</span> <span class="pre">default_path=None),</span> <span class="pre">AfterValidator(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;),</span> <span class="pre">PlainSerializer(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">return_type=None,</span> <span class="pre">when_used='always'),</span> <span class="pre">WithJsonSchema(json_schema={'type':</span> <span class="pre">'string'},</span> <span class="pre">mode='serialization')],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='&#64;iot.nextLink',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'value':</span> <span class="pre">FieldInfo(annotation=List[sensorthings.components.things.schemas.ThingGetResponse],</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingListResponse.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="#sensorthings.components.things.schemas.ThingGetResponse" title="sensorthings.components.things.schemas.ThingGetResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThingGetResponse</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPatchBody">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.schemas.</span></span><span class="sig-name descname"><span class="pre">ThingPatchBody</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPatchBody" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BasePatchBody" title="sensorthings.schemas.BasePatchBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePatchBody</span></code></a>, <a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields" title="sensorthings.components.things.schemas.ThingFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThingFields</span></code></a></p>
+<p>A schema for the body of a PATCH request to update an existing thing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPatchBody.locations">
+<span class="sig-name descname"><span class="pre">locations</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPatchBody.locations" title="Link to this definition"></a></dt>
+<dd><p>The IDs of the locations associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[List[<a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId">EntityId</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">locations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityId</span></code></a><span class="pre">]]</span></em><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPatchBody.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'extra':</span> <span class="pre">'forbid',</span> <span class="pre">'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPatchBody.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPatchBody.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'locations':</span> <span class="pre">FieldInfo(annotation=Union[List[sensorthings.schemas.EntityId],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Locations',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2)}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPatchBody.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPostBody">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.schemas.</span></span><span class="sig-name descname"><span class="pre">ThingPostBody</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPostBody" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BasePostBody" title="sensorthings.schemas.BasePostBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePostBody</span></code></a>, <a class="reference internal" href="#sensorthings.components.things.schemas.ThingFields" title="sensorthings.components.things.schemas.ThingFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThingFields</span></code></a></p>
+<p>A schema for the body of a POST request to create a new thing.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPostBody.locations">
+<span class="sig-name descname"><span class="pre">locations</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPostBody.locations" title="Link to this definition"></a></dt>
+<dd><p>The IDs of the locations associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Union[<a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId">EntityId</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPostBody.historical_locations">
+<span class="sig-name descname"><span class="pre">historical_locations</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPostBody.historical_locations" title="Link to this definition"></a></dt>
+<dd><p>The IDs of the historical locations associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId">EntityId</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPostBody.datastreams">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPostBody.datastreams" title="Link to this definition"></a></dt>
+<dd><p>The IDs of the datastreams associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId">EntityId</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityId</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">historical_locations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityId</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">locations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityId</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPostBody.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'extra':</span> <span class="pre">'forbid',</span> <span class="pre">'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPostBody.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingPostBody.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'datastreams':</span> <span class="pre">FieldInfo(annotation=List[sensorthings.schemas.EntityId],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Datastreams',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'nested_class':</span> <span class="pre">'DatastreamPostBody'}),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'historical_locations':</span> <span class="pre">FieldInfo(annotation=List[sensorthings.schemas.EntityId],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='HistoricalLocations',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'nested_class':</span> <span class="pre">'HistoricalLocationPostBody'}),</span> <span class="pre">'locations':</span> <span class="pre">FieldInfo(annotation=List[sensorthings.schemas.EntityId],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Locations',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'nested_class':</span> <span class="pre">'LocationPostBody'}),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2)}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingPostBody.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingRelations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.schemas.</span></span><span class="sig-name descname"><span class="pre">ThingRelations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingRelations" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Schema</span></code></p>
+<p>A schema representing the relations of a thing to other components.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingRelations.locations">
+<span class="sig-name descname"><span class="pre">locations</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingRelations.locations" title="Link to this definition"></a></dt>
+<dd><p>The locations associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[‘Location’]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingRelations.historical_locations">
+<span class="sig-name descname"><span class="pre">historical_locations</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingRelations.historical_locations" title="Link to this definition"></a></dt>
+<dd><p>The historical locations associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[‘HistoricalLocation’]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingRelations.datastreams">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><a class="headerlink" href="#sensorthings.components.things.schemas.ThingRelations.datastreams" title="Link to this definition"></a></dt>
+<dd><p>The datastreams associated with the thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[‘Datastream’]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[Datastream]</span></em><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">historical_locations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[HistoricalLocation]</span></em><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">locations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[Location]</span></em><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingRelations.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingRelations.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.things.schemas.ThingRelations.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'datastreams':</span> <span class="pre">FieldInfo(annotation=List[ForwardRef('Datastream')],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Datastreams',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'relationship':</span> <span class="pre">'one_to_many',</span> <span class="pre">'back_ref':</span> <span class="pre">'thing_id'}),</span> <span class="pre">'historical_locations':</span> <span class="pre">FieldInfo(annotation=List[ForwardRef('HistoricalLocation')],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='HistoricalLocations',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'relationship':</span> <span class="pre">'one_to_many',</span> <span class="pre">'back_ref':</span> <span class="pre">'thing_id'}),</span> <span class="pre">'locations':</span> <span class="pre">FieldInfo(annotation=List[ForwardRef('Location')],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Locations',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'relationship':</span> <span class="pre">'many_to_many',</span> <span class="pre">'back_ref':</span> <span class="pre">'thing_id'})}</span></em><a class="headerlink" href="#sensorthings.components.things.schemas.ThingRelations.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sensorthings.components.things.views">
+<span id="sensorthings-components-things-views-module"></span><h2>sensorthings.components.things.views module<a class="headerlink" href="#module-sensorthings.components.things.views" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.things.views.create_thing">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.views.</span></span><span class="sig-name descname"><span class="pre">create_thing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thing</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.views.create_thing" title="Link to this definition"></a></dt>
+<dd><p>Create a new Thing entity.</p>
+<p>Links:
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/properties">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/properties</a>” target=”_blank”&gt;      Thing Properties&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/relations">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/relations</a>” target=”_blank”&gt;      Thing Relations&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/create-entity">http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/create-entity</a>” target=”_blank”&gt;      Create Entity&lt;/a&gt;</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.things.views.delete_thing">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.views.</span></span><span class="sig-name descname"><span class="pre">delete_thing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thing_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.views.delete_thing" title="Link to this definition"></a></dt>
+<dd><p>Delete a Thing entity.</p>
+<p>Links:
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/delete-entity">http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/delete-entity</a>” target=”_blank”&gt;      Delete Entity&lt;/a&gt;</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.things.views.get_thing">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.views.</span></span><span class="sig-name descname"><span class="pre">get_thing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thing_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(annotation=GetQueryParams,</span> <span class="pre">required=True,</span> <span class="pre">json_schema_extra={})</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.views.get_thing" title="Link to this definition"></a></dt>
+<dd><p>Get a Thing entity.</p>
+<p>&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/properties">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/properties</a>” target=”_blank”&gt;      Thing Properties&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/relations">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/relations</a>” target=”_blank”&gt;      Thing Relations&lt;/a&gt;</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.things.views.list_things">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.views.</span></span><span class="sig-name descname"><span class="pre">list_things</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(annotation=ListQueryParams,</span> <span class="pre">required=True,</span> <span class="pre">json_schema_extra={})</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.views.list_things" title="Link to this definition"></a></dt>
+<dd><p>Get a collection of Thing entities.</p>
+<p>&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/properties">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/properties</a>” target=”_blank”&gt;      Thing Properties&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/relations">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/relations</a>” target=”_blank”&gt;      Thing Relations&lt;/a&gt;</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.things.views.update_thing">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.things.views.</span></span><span class="sig-name descname"><span class="pre">update_thing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thing_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thing</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.things.views.update_thing" title="Link to this definition"></a></dt>
+<dd><p>Update an existing Thing entity.</p>
+<p>Links:
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/properties">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/properties</a>” target=”_blank”&gt;      Thing Properties&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/relations">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/thing/relations</a>” target=”_blank”&gt;      Thing Relations&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/update-entity">http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/update-entity</a>” target=”_blank”&gt;      Update Entity&lt;/a&gt;</p>
+</dd></dl>
+
+</section>
+<section id="module-sensorthings.components.things">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-sensorthings.components.things" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Utah State University.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

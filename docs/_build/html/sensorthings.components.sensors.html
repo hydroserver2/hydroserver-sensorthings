@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sensorthings.components.sensors package &mdash; HydroServer SensorThings v0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=19ed39ba"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            HydroServer SensorThings
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">sensorthings.components.sensors package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-sensorthings.components.sensors.engine">sensorthings.components.sensors.engine module</a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.engine.SensorBaseEngine"><code class="docutils literal notranslate"><span class="pre">SensorBaseEngine</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.engine.SensorBaseEngine.create_sensor"><code class="docutils literal notranslate"><span class="pre">SensorBaseEngine.create_sensor()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.engine.SensorBaseEngine.delete_sensor"><code class="docutils literal notranslate"><span class="pre">SensorBaseEngine.delete_sensor()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.engine.SensorBaseEngine.get_sensors"><code class="docutils literal notranslate"><span class="pre">SensorBaseEngine.get_sensors()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.engine.SensorBaseEngine.update_sensor"><code class="docutils literal notranslate"><span class="pre">SensorBaseEngine.update_sensor()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-sensorthings.components.sensors.schemas">sensorthings.components.sensors.schemas module</a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor"><code class="docutils literal notranslate"><span class="pre">Sensor</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.Config"><code class="docutils literal notranslate"><span class="pre">Sensor.Config</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.Config.json_schema_extra"><code class="docutils literal notranslate"><span class="pre">Sensor.Config.json_schema_extra</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.datastreams"><code class="docutils literal notranslate"><span class="pre">Sensor.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.description"><code class="docutils literal notranslate"><span class="pre">Sensor.description</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.encoding_type"><code class="docutils literal notranslate"><span class="pre">Sensor.encoding_type</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.metadata"><code class="docutils literal notranslate"><span class="pre">Sensor.metadata</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.model_config"><code class="docutils literal notranslate"><span class="pre">Sensor.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.model_fields"><code class="docutils literal notranslate"><span class="pre">Sensor.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.name"><code class="docutils literal notranslate"><span class="pre">Sensor.name</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.Sensor.properties"><code class="docutils literal notranslate"><span class="pre">Sensor.properties</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields"><code class="docutils literal notranslate"><span class="pre">SensorFields</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields.name"><code class="docutils literal notranslate"><span class="pre">SensorFields.name</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields.description"><code class="docutils literal notranslate"><span class="pre">SensorFields.description</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields.encoding_type"><code class="docutils literal notranslate"><span class="pre">SensorFields.encoding_type</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields.metadata"><code class="docutils literal notranslate"><span class="pre">SensorFields.metadata</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields.properties"><code class="docutils literal notranslate"><span class="pre">SensorFields.properties</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">SensorFields.description</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">SensorFields.encoding_type</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">SensorFields.metadata</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields.model_config"><code class="docutils literal notranslate"><span class="pre">SensorFields.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields.model_fields"><code class="docutils literal notranslate"><span class="pre">SensorFields.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">SensorFields.name</span></code></a></li>
+<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">SensorFields.properties</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.datastreams_link"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.datastreams_link</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.datastreams_rel"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.datastreams_rel</span></code></a></li>
+<li><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.datastreams_link</span></code></a></li>
+<li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.datastreams_rel</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.description"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.description</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.encoding_type"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.encoding_type</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.id"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.id</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.metadata"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.metadata</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.model_config"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.model_fields"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.name"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.name</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.properties"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.properties</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse.self_link"><code class="docutils literal notranslate"><span class="pre">SensorGetResponse.self_link</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorListResponse"><code class="docutils literal notranslate"><span class="pre">SensorListResponse</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorListResponse.value"><code class="docutils literal notranslate"><span class="pre">SensorListResponse.value</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorListResponse.model_config"><code class="docutils literal notranslate"><span class="pre">SensorListResponse.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorListResponse.model_fields"><code class="docutils literal notranslate"><span class="pre">SensorListResponse.model_fields</span></code></a></li>
+<li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">SensorListResponse.value</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorPatchBody"><code class="docutils literal notranslate"><span class="pre">SensorPatchBody</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorPatchBody.model_config"><code class="docutils literal notranslate"><span class="pre">SensorPatchBody.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorPatchBody.model_fields"><code class="docutils literal notranslate"><span class="pre">SensorPatchBody.model_fields</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorPostBody"><code class="docutils literal notranslate"><span class="pre">SensorPostBody</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorPostBody.datastreams"><code class="docutils literal notranslate"><span class="pre">SensorPostBody.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">SensorPostBody.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorPostBody.model_config"><code class="docutils literal notranslate"><span class="pre">SensorPostBody.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorPostBody.model_fields"><code class="docutils literal notranslate"><span class="pre">SensorPostBody.model_fields</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorRelations"><code class="docutils literal notranslate"><span class="pre">SensorRelations</span></code></a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorRelations.datastreams"><code class="docutils literal notranslate"><span class="pre">SensorRelations.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">SensorRelations.datastreams</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorRelations.model_config"><code class="docutils literal notranslate"><span class="pre">SensorRelations.model_config</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorRelations.model_fields"><code class="docutils literal notranslate"><span class="pre">SensorRelations.model_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-sensorthings.components.sensors.views">sensorthings.components.sensors.views module</a><ul>
+<li><a class="reference internal" href="#sensorthings.components.sensors.views.create_sensor"><code class="docutils literal notranslate"><span class="pre">create_sensor()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.views.delete_sensor"><code class="docutils literal notranslate"><span class="pre">delete_sensor()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.views.get_sensor"><code class="docutils literal notranslate"><span class="pre">get_sensor()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.views.list_sensors"><code class="docutils literal notranslate"><span class="pre">list_sensors()</span></code></a></li>
+<li><a class="reference internal" href="#sensorthings.components.sensors.views.update_sensor"><code class="docutils literal notranslate"><span class="pre">update_sensor()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-sensorthings.components.sensors">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">HydroServer SensorThings</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">sensorthings.components.sensors package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/sensorthings.components.sensors.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sensorthings-components-sensors-package">
+<h1>sensorthings.components.sensors package<a class="headerlink" href="#sensorthings-components-sensors-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-sensorthings.components.sensors.engine">
+<span id="sensorthings-components-sensors-engine-module"></span><h2>sensorthings.components.sensors.engine module<a class="headerlink" href="#module-sensorthings.components.sensors.engine" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.engine.SensorBaseEngine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.engine.</span></span><span class="sig-name descname"><span class="pre">SensorBaseEngine</span></span><a class="headerlink" href="#sensorthings.components.sensors.engine.SensorBaseEngine" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Abstract base class for handling Sensors.</p>
+<p>This class defines the required methods for managing sensors. These methods must be implemented
+to allow the SensorThings API to interface with an underlying database.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.engine.SensorBaseEngine.create_sensor">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.engine.SensorBaseEngine.create_sensor" title="Link to this definition"></a></dt>
+<dd><p>Create a new sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sensor</strong> (<em>dict</em>) – The sensor data to be created.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The ID of the newly created sensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.engine.SensorBaseEngine.delete_sensor">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.engine.SensorBaseEngine.delete_sensor" title="Link to this definition"></a></dt>
+<dd><p>Delete a sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sensor_id</strong> (<em>str</em>) – The ID of the sensor to delete.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.engine.SensorBaseEngine.get_sensors">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_sensors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expanded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.engine.SensorBaseEngine.get_sensors" title="Link to this definition"></a></dt>
+<dd><p>Retrieve sensors based on provided parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensor_ids</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – List of sensor IDs to filter the results.</p></li>
+<li><p><strong>pagination</strong> (<em>dict</em><em>, </em><em>optional</em>) – Pagination information to limit the number of results.</p></li>
+<li><p><strong>ordering</strong> (<em>dict</em><em>, </em><em>optional</em>) – Ordering information to sort the results.</p></li>
+<li><p><strong>filters</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional filters to apply to the query.</p></li>
+<li><p><strong>expanded</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to include expanded information in the results.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type">(<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>Dict[str, dict]</em> – A dictionary of sensors, keyed by their IDs.</p></li>
+<li><p><em>int</em> – The total number of sensors matching the query.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.engine.SensorBaseEngine.update_sensor">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensor_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.engine.SensorBaseEngine.update_sensor" title="Link to this definition"></a></dt>
+<dd><p>Update an existing sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sensor_id</strong> (<em>str</em>) – The ID of the sensor to update.</p></li>
+<li><p><strong>sensor</strong> (<em>dict</em>) – The updated sensor data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sensorthings.components.sensors.schemas">
+<span id="sensorthings-components-sensors-schemas-module"></span><h2>sensorthings.components.sensors.schemas module<a class="headerlink" href="#module-sensorthings.components.sensors.schemas" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.schemas.</span></span><span class="sig-name descname"><span class="pre">Sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseComponent</span></code></a>, <a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields" title="sensorthings.components.sensors.schemas.SensorFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">SensorFields</span></code></a>, <a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorRelations" title="sensorthings.components.sensors.schemas.SensorRelations"><code class="xref py py-class docutils literal notranslate"><span class="pre">SensorRelations</span></code></a></p>
+<p>A schema representing a sensor.</p>
+<p>This class combines the fields and relations of a sensor, and extends the BaseComponent class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Config</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.Config.json_schema_extra">
+<span class="sig-name descname"><span class="pre">json_schema_extra</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'name_ref':</span> <span class="pre">('Sensors',</span> <span class="pre">'sensor',</span> <span class="pre">'sensors')}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.Config.json_schema_extra" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.datastreams">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List['Datastream']</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.datastreams" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.encoding_type">
+<span class="sig-name descname"><span class="pre">encoding_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sensorEncodingTypes</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.encoding_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.metadata" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'json_schema_extra':</span> <span class="pre">{'name_ref':</span> <span class="pre">('Sensors',</span> <span class="pre">'sensor',</span> <span class="pre">'sensors')}}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'datastreams':</span> <span class="pre">FieldInfo(annotation=List[ForwardRef('Datastream')],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Datastreams',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'relationship':</span> <span class="pre">'one_to_many',</span> <span class="pre">'back_ref':</span> <span class="pre">'sensor_id'}),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'encoding_type':</span> <span class="pre">FieldInfo(annotation=Literal['application/pdf',</span> <span class="pre">'http://www.opengis.net/doc/IS/SensorML/2.0',</span> <span class="pre">'text/html'],</span> <span class="pre">required=True,</span> <span class="pre">alias='encodingType',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'metadata':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='metadata',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2)}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.Sensor.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional[dict]</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.Sensor.properties" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorFields">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.schemas.</span></span><span class="sig-name descname"><span class="pre">SensorFields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorFields" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Schema</span></code></p>
+<p>A schema representing the fields of a sensor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorFields.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorFields.name" title="Link to this definition"></a></dt>
+<dd><p>The name of the sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorFields.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorFields.description" title="Link to this definition"></a></dt>
+<dd><p>The description of the sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorFields.encoding_type">
+<span class="sig-name descname"><span class="pre">encoding_type</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorFields.encoding_type" title="Link to this definition"></a></dt>
+<dd><p>The encoding type of the sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>sensorEncodingTypes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorFields.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorFields.metadata" title="Link to this definition"></a></dt>
+<dd><p>The metadata of the sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorFields.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorFields.properties" title="Link to this definition"></a></dt>
+<dd><p>Additional properties of the sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[dict], optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">encoding_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code><span class="pre">[</span><code class="docutils literal notranslate"><span class="pre">'application/pdf'</span></code><span class="pre">,</span> <code class="docutils literal notranslate"><span class="pre">'http://www.opengis.net/doc/IS/SensorML/2.0'</span></code><span class="pre">,</span> <code class="docutils literal notranslate"><span class="pre">'text/html'</span></code><span class="pre">]</span></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorFields.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorFields.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorFields.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'encoding_type':</span> <span class="pre">FieldInfo(annotation=Union[Literal['application/pdf',</span> <span class="pre">'http://www.opengis.net/doc/IS/SensorML/2.0',</span> <span class="pre">'text/html'],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='encodingType',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'metadata':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='metadata',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2)}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorFields.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.schemas.</span></span><span class="sig-name descname"><span class="pre">SensorGetResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields" title="sensorthings.components.sensors.schemas.SensorFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">SensorFields</span></code></a>, <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseGetResponse" title="sensorthings.schemas.BaseGetResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseGetResponse</span></code></a></p>
+<p>A schema for the response of a GET request for a sensor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.datastreams_link">
+<span class="sig-name descname"><span class="pre">datastreams_link</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.datastreams_link" title="Link to this definition"></a></dt>
+<dd><p>The navigation link for the datastreams associated with the sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AnyHttpUrlString</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.datastreams_rel">
+<span class="sig-name descname"><span class="pre">datastreams_rel</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.datastreams_rel" title="Link to this definition"></a></dt>
+<dd><p>The relationship details for the datastreams associated with the sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">datastreams_link</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Url</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Url</span></code><span class="pre">]</span></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">datastreams_rel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.description" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.encoding_type">
+<span class="sig-name descname"><span class="pre">encoding_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">sensorEncodingTypes</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.encoding_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">id_type</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.metadata" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'datastreams_link':</span> <span class="pre">FieldInfo(annotation=Url,</span> <span class="pre">required=False,</span> <span class="pre">alias='Datastreams&#64;iot.navigationLink',</span> <span class="pre">alias_priority=2,</span> <span class="pre">metadata=[UrlConstraints(max_length=None,</span> <span class="pre">allowed_schemes=['http',</span> <span class="pre">'https'],</span> <span class="pre">host_required=None,</span> <span class="pre">default_host=None,</span> <span class="pre">default_port=None,</span> <span class="pre">default_path=None),</span> <span class="pre">AfterValidator(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;),</span> <span class="pre">PlainSerializer(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">return_type=None,</span> <span class="pre">when_used='always'),</span> <span class="pre">WithJsonSchema(json_schema={'type':</span> <span class="pre">'string'},</span> <span class="pre">mode='serialization')]),</span> <span class="pre">'datastreams_rel':</span> <span class="pre">FieldInfo(annotation=List[dict],</span> <span class="pre">required=False,</span> <span class="pre">alias='Datastreams',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'nested_class':</span> <span class="pre">'DatastreamGetResponse'}),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'encoding_type':</span> <span class="pre">FieldInfo(annotation=Union[Literal['application/pdf',</span> <span class="pre">'http://www.opengis.net/doc/IS/SensorML/2.0',</span> <span class="pre">'text/html'],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='encodingType',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'id':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='&#64;iot.id',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'metadata':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='metadata',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'self_link':</span> <span class="pre">FieldInfo(annotation=Union[Url,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='&#64;iot.selfLink',</span> <span class="pre">alias_priority=2,</span> <span class="pre">metadata=[UrlConstraints(max_length=None,</span> <span class="pre">allowed_schemes=['http',</span> <span class="pre">'https'],</span> <span class="pre">host_required=None,</span> <span class="pre">default_host=None,</span> <span class="pre">default_port=None,</span> <span class="pre">default_path=None),</span> <span class="pre">AfterValidator(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;),</span> <span class="pre">PlainSerializer(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">return_type=None,</span> <span class="pre">when_used='always'),</span> <span class="pre">WithJsonSchema(json_schema={'type':</span> <span class="pre">'string'},</span> <span class="pre">mode='serialization')])}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional[dict]</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.properties" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorGetResponse.self_link">
+<span class="sig-name descname"><span class="pre">self_link</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AnyHttpUrlString</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorGetResponse.self_link" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorListResponse">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.schemas.</span></span><span class="sig-name descname"><span class="pre">SensorListResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorListResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseListResponse" title="sensorthings.schemas.BaseListResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseListResponse</span></code></a></p>
+<p>A schema for the response of a GET request for a list of sensors.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorListResponse.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorListResponse.value" title="Link to this definition"></a></dt>
+<dd><p>The list of sensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse" title="sensorthings.components.sensors.schemas.SensorGetResponse">SensorGetResponse</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorListResponse.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorListResponse.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorListResponse.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'count':</span> <span class="pre">FieldInfo(annotation=Union[int,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='&#64;iot.count',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'next_link':</span> <span class="pre">FieldInfo(annotation=Union[Annotated[pydantic_core._pydantic_core.Url,</span> <span class="pre">UrlConstraints(max_length=None,</span> <span class="pre">allowed_schemes=['http',</span> <span class="pre">'https'],</span> <span class="pre">host_required=None,</span> <span class="pre">default_host=None,</span> <span class="pre">default_port=None,</span> <span class="pre">default_path=None),</span> <span class="pre">AfterValidator(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;),</span> <span class="pre">PlainSerializer(func=&lt;function</span> <span class="pre">&lt;lambda&gt;&gt;,</span> <span class="pre">return_type=None,</span> <span class="pre">when_used='always'),</span> <span class="pre">WithJsonSchema(json_schema={'type':</span> <span class="pre">'string'},</span> <span class="pre">mode='serialization')],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='&#64;iot.nextLink',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'value':</span> <span class="pre">FieldInfo(annotation=List[sensorthings.components.sensors.schemas.SensorGetResponse],</span> <span class="pre">required=True)}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorListResponse.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorGetResponse" title="sensorthings.components.sensors.schemas.SensorGetResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">SensorGetResponse</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorPatchBody">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.schemas.</span></span><span class="sig-name descname"><span class="pre">SensorPatchBody</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorPatchBody" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BasePatchBody" title="sensorthings.schemas.BasePatchBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePatchBody</span></code></a>, <a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields" title="sensorthings.components.sensors.schemas.SensorFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">SensorFields</span></code></a></p>
+<p>A schema for the body of a PATCH request to update an existing sensor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorPatchBody.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'extra':</span> <span class="pre">'forbid',</span> <span class="pre">'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorPatchBody.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorPatchBody.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'description':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'encoding_type':</span> <span class="pre">FieldInfo(annotation=Union[Literal['application/pdf',</span> <span class="pre">'http://www.opengis.net/doc/IS/SensorML/2.0',</span> <span class="pre">'text/html'],</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='encodingType',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'metadata':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='metadata',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=Union[str,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2)}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorPatchBody.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorPostBody">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.schemas.</span></span><span class="sig-name descname"><span class="pre">SensorPostBody</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorPostBody" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="sensorthings.html#sensorthings.schemas.BasePostBody" title="sensorthings.schemas.BasePostBody"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePostBody</span></code></a>, <a class="reference internal" href="#sensorthings.components.sensors.schemas.SensorFields" title="sensorthings.components.sensors.schemas.SensorFields"><code class="xref py py-class docutils literal notranslate"><span class="pre">SensorFields</span></code></a></p>
+<p>A schema for the body of a POST request to create a new sensor.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorPostBody.datastreams">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorPostBody.datastreams" title="Link to this definition"></a></dt>
+<dd><p>The IDs of the datastreams associated with the sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId">EntityId</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><a class="reference internal" href="sensorthings.html#sensorthings.schemas.EntityId" title="sensorthings.schemas.EntityId"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityId</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorPostBody.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'extra':</span> <span class="pre">'forbid',</span> <span class="pre">'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'populate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorPostBody.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorPostBody.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'datastreams':</span> <span class="pre">FieldInfo(annotation=List[sensorthings.schemas.EntityId],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Datastreams',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'nested_class':</span> <span class="pre">'DatastreamPostBody'}),</span> <span class="pre">'description':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='description',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'encoding_type':</span> <span class="pre">FieldInfo(annotation=Literal['application/pdf',</span> <span class="pre">'http://www.opengis.net/doc/IS/SensorML/2.0',</span> <span class="pre">'text/html'],</span> <span class="pre">required=True,</span> <span class="pre">alias='encodingType',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'metadata':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='metadata',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'name':</span> <span class="pre">FieldInfo(annotation=str,</span> <span class="pre">required=True,</span> <span class="pre">alias='name',</span> <span class="pre">alias_priority=2),</span> <span class="pre">'properties':</span> <span class="pre">FieldInfo(annotation=Union[dict,</span> <span class="pre">NoneType],</span> <span class="pre">required=False,</span> <span class="pre">alias='properties',</span> <span class="pre">alias_priority=2)}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorPostBody.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorRelations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.schemas.</span></span><span class="sig-name descname"><span class="pre">SensorRelations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorRelations" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Schema</span></code></p>
+<p>A schema representing the relations of a sensor to other components.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorRelations.datastreams">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorRelations.datastreams" title="Link to this definition"></a></dt>
+<dd><p>The datastreams associated with the sensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[‘Datastream’]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">datastreams</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[Datastream]</span></em><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorRelations.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[ConfigDict]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorRelations.model_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.schemas.SensorRelations.model_fields">
+<span class="sig-name descname"><span class="pre">model_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar[dict[str,</span> <span class="pre">FieldInfo]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'datastreams':</span> <span class="pre">FieldInfo(annotation=List[ForwardRef('Datastream')],</span> <span class="pre">required=False,</span> <span class="pre">default=[],</span> <span class="pre">alias='Datastreams',</span> <span class="pre">alias_priority=2,</span> <span class="pre">json_schema_extra={'relationship':</span> <span class="pre">'one_to_many',</span> <span class="pre">'back_ref':</span> <span class="pre">'sensor_id'})}</span></em><a class="headerlink" href="#sensorthings.components.sensors.schemas.SensorRelations.model_fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-sensorthings.components.sensors.views">
+<span id="sensorthings-components-sensors-views-module"></span><h2>sensorthings.components.sensors.views module<a class="headerlink" href="#module-sensorthings.components.sensors.views" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.views.create_sensor">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.views.</span></span><span class="sig-name descname"><span class="pre">create_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.views.create_sensor" title="Link to this definition"></a></dt>
+<dd><p>Create a new Sensor entity.</p>
+<p>Links:
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/properties">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/properties</a>” target=”_blank”&gt;      Sensor Properties&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/relations">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/relations</a>” target=”_blank”&gt;      Sensor Relations&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/create-entity">http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/create-entity</a>” target=”_blank”&gt;      Create Entity&lt;/a&gt;</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.views.delete_sensor">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.views.</span></span><span class="sig-name descname"><span class="pre">delete_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.views.delete_sensor" title="Link to this definition"></a></dt>
+<dd><p>Delete a Sensor entity.</p>
+<p>Links:
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/delete-entity">http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/delete-entity</a>” target=”_blank”&gt;      Delete Entity&lt;/a&gt;</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.views.get_sensor">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.views.</span></span><span class="sig-name descname"><span class="pre">get_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(annotation=GetQueryParams,</span> <span class="pre">required=True,</span> <span class="pre">json_schema_extra={})</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.views.get_sensor" title="Link to this definition"></a></dt>
+<dd><p>Get a Sensor entity.</p>
+<p>&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/properties">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/properties</a>” target=”_blank”&gt;      Sensor Properties&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/relations">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/relations</a>” target=”_blank”&gt;      Sensor Relations&lt;/a&gt;</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.views.list_sensors">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.views.</span></span><span class="sig-name descname"><span class="pre">list_sensors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Query(annotation=ListQueryParams,</span> <span class="pre">required=True,</span> <span class="pre">json_schema_extra={})</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.views.list_sensors" title="Link to this definition"></a></dt>
+<dd><p>Get a collection of Sensor entities.</p>
+<p>&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/properties">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/properties</a>” target=”_blank”&gt;      Sensor Properties&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/relations">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/relations</a>” target=”_blank”&gt;      Sensor Relations&lt;/a&gt;</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sensorthings.components.sensors.views.update_sensor">
+<span class="sig-prename descclassname"><span class="pre">sensorthings.components.sensors.views.</span></span><span class="sig-name descname"><span class="pre">update_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sensorthings.components.sensors.views.update_sensor" title="Link to this definition"></a></dt>
+<dd><p>Update an existing Sensor entity.</p>
+<p>Links:
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/properties">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/properties</a>” target=”_blank”&gt;      Sensor Properties&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/relations">http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/sensor/relations</a>” target=”_blank”&gt;      Sensor Relations&lt;/a&gt; -
+&lt;a href=”<a class="reference external" href="http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/update-entity">http://www.opengis.net/spec/iot_sensing/1.1/req/create-update-delete/update-entity</a>” target=”_blank”&gt;      Update Entity&lt;/a&gt;</p>
+</dd></dl>
+
+</section>
+<section id="module-sensorthings.components.sensors">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-sensorthings.components.sensors" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Utah State University.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
