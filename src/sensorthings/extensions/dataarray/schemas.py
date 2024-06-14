@@ -101,4 +101,4 @@ class ObservationListResponse(BaseListResponse):
         List containing either ObservationDataArrayResponse or ObservationGetResponse objects.
     """
 
-    value: Union[List[ObservationDataArrayResponse], List[ObservationGetResponse]]
+    value: Union[List[ObservationDataArrayResponse]]
