@@ -11,6 +11,9 @@ jobs:
       matrix:
         python-version: ['3.9', '3.10', '3.11', '3.12']
 
+    env:
+      DJANGO_SETTINGS_MODULE: example.settings
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -32,4 +35,4 @@ jobs:
       - name: Run unit tests
         run: |
           cd example
-          python -m pytest --ds=example.settings --pyargs ../tests
+          python -m pytest --pyargs ../tests
