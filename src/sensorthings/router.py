@@ -20,10 +20,6 @@ class SensorThingsRouter(Router):
             The route path for the endpoint.
         response_schemas : tuple
             The tuple of response schemas for a successful response.
-        *args : tuple
-            Additional positional arguments for the route.
-        **kwargs : dict
-            Additional keyword arguments for the route.
 
         Returns
         -------
@@ -52,10 +48,6 @@ class SensorThingsRouter(Router):
             The route path for the endpoint.
         response_schemas : tuple
             The tuple of response schemas for a successful response.
-        *args : tuple
-            Additional positional arguments for the route.
-        **kwargs : dict
-            Additional keyword arguments for the route.
 
         Returns
         -------
@@ -84,10 +76,6 @@ class SensorThingsRouter(Router):
         ----------
         route : str
             The route path for the endpoint.
-        *args : tuple
-            Additional positional arguments for the route.
-        **kwargs : dict
-            Additional keyword arguments for the route. Excludes 'response' and 'response_schemas'.
 
         Returns
         -------
@@ -114,10 +102,6 @@ class SensorThingsRouter(Router):
         ----------
         route : str
             The route path for the endpoint.
-        *args : tuple
-            Additional positional arguments for the route.
-        **kwargs : dict
-            Additional keyword arguments for the route. Excludes 'response' and 'response_schemas'.
 
         Returns
         -------
@@ -145,10 +129,6 @@ class SensorThingsRouter(Router):
         ----------
         route : str
             The route path for the endpoint.
-        *args : tuple
-            Additional positional arguments for the route.
-        **kwargs : dict
-            Additional keyword arguments for the route. Excludes 'response' and 'response_schemas'.
 
         Returns
         -------
