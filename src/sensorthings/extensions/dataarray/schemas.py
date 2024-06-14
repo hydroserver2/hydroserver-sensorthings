@@ -98,7 +98,7 @@ class ObservationGetResponseDA(ObservationGetResponse):
 
     @model_validator(mode='before')
     def check_no_components(cls, values):
-        if 'components' in values:
+        if 'components' in values._obj:
             raise ValueError('Field "components" should not be included outside data array responses.')
         return values
 
