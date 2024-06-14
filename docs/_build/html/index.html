@@ -139,7 +139,7 @@ with SensorThings components and endpoints.</p>
 <dd><p>The HTTP request object used for communication.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="sensorthings.html#sensorthings.SensorThingsHttpRequest" title="sensorthings.SensorThingsHttpRequest">SensorThingsHttpRequest</a></p>
+<dd class="field-odd"><p>SensorThingsHttpRequest</p>
 </dd>
 </dl>
 </dd></dl>
@@ -150,7 +150,7 @@ with SensorThings components and endpoints.</p>
 <dd><p>Mapping of component names to their corresponding response schemas.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict[str, Type[<a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseGetResponse" title="sensorthings.schemas.BaseGetResponse">BaseGetResponse</a>]]</p>
+<dd class="field-odd"><p>Dict[str, Type[BaseGetResponse]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -217,8 +217,8 @@ with SensorThings components and endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>component</strong> (<em>Type</em><em>[</em><a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent"><em>BaseComponent</em></a><em>]</em>) – The type of component to create.</p></li>
-<li><p><strong>entity_body</strong> (<a class="reference internal" href="sensorthings.html#sensorthings.schemas.BasePostBody" title="sensorthings.schemas.BasePostBody"><em>BasePostBody</em></a>) – The body containing the data for creating the entities.</p></li>
+<li><p><strong>component</strong> (<em>Type</em><em>[</em><em>BaseComponent</em><em>]</em>) – The type of component to create.</p></li>
+<li><p><strong>entity_body</strong> (<em>BasePostBody</em>) – The body containing the data for creating the entities.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -237,8 +237,8 @@ with SensorThings components and endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>component</strong> (<em>Type</em><em>[</em><a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent"><em>BaseComponent</em></a><em>]</em>) – The type of component to create.</p></li>
-<li><p><strong>entity_body</strong> (<a class="reference internal" href="sensorthings.html#sensorthings.schemas.BasePostBody" title="sensorthings.schemas.BasePostBody"><em>BasePostBody</em></a>) – The body containing the data for creating the entity.</p></li>
+<li><p><strong>component</strong> (<em>Type</em><em>[</em><em>BaseComponent</em><em>]</em>) – The type of component to create.</p></li>
+<li><p><strong>entity_body</strong> (<em>BasePostBody</em>) – The body containing the data for creating the entity.</p></li>
 <li><p><strong>response</strong> (<em>HttpResponse</em>) – The HTTP response object to populate with the location of the created entity.</p></li>
 </ul>
 </dd>
@@ -252,7 +252,7 @@ with SensorThings components and endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>component</strong> (<em>Type</em><em>[</em><a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent"><em>BaseComponent</em></a><em>]</em>) – The type of component to delete.</p></li>
+<li><p><strong>component</strong> (<em>Type</em><em>[</em><em>BaseComponent</em><em>]</em>) – The type of component to delete.</p></li>
 <li><p><strong>entity_id</strong> (<em>id_type</em>) – The ID of the entity to delete.</p></li>
 </ul>
 </dd>
@@ -266,7 +266,7 @@ with SensorThings components and endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>component</strong> (<em>Type</em><em>[</em><a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent"><em>BaseComponent</em></a><em>]</em>) – The type of component to fetch.</p></li>
+<li><p><strong>component</strong> (<em>Type</em><em>[</em><em>BaseComponent</em><em>]</em>) – The type of component to fetch.</p></li>
 <li><p><strong>query_params</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>optional</em>) – Optional query parameters for filtering, pagination, etc.</p></li>
 <li><p><strong>back_ref_ids</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>optional</em>) – Optional back reference IDs for fetching related entities.</p></li>
 </ul>
@@ -287,7 +287,7 @@ with SensorThings components and endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>component</strong> (<em>Type</em><em>[</em><a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent"><em>BaseComponent</em></a><em>]</em>) – The type of component to retrieve.</p></li>
+<li><p><strong>component</strong> (<em>Type</em><em>[</em><em>BaseComponent</em><em>]</em>) – The type of component to retrieve.</p></li>
 <li><p><strong>entity_id</strong> (<em>id_type</em>) – The ID of the entity to retrieve.</p></li>
 <li><p><strong>query_params</strong> (<em>dict</em>) – Optional query parameters for filtering, pagination, etc.</p></li>
 </ul>
@@ -391,7 +391,7 @@ with SensorThings components and endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>component</strong> (<em>Type</em><em>[</em><a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent"><em>BaseComponent</em></a><em>]</em>) – The type of component to retrieve.</p></li>
+<li><p><strong>component</strong> (<em>Type</em><em>[</em><em>BaseComponent</em><em>]</em>) – The type of component to retrieve.</p></li>
 <li><p><strong>query_params</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>optional</em>) – Optional query parameters for filtering, pagination, etc.</p></li>
 </ul>
 </dd>
@@ -523,9 +523,9 @@ with SensorThings components and endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>component</strong> (<em>Type</em><em>[</em><a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent"><em>BaseComponent</em></a><em>]</em>) – The type of component to update.</p></li>
+<li><p><strong>component</strong> (<em>Type</em><em>[</em><em>BaseComponent</em><em>]</em>) – The type of component to update.</p></li>
 <li><p><strong>entity_id</strong> (<em>id_type</em>) – The ID of the entity to update.</p></li>
-<li><p><strong>entity_body</strong> (<a class="reference internal" href="sensorthings.html#sensorthings.schemas.BasePatchBody" title="sensorthings.schemas.BasePatchBody"><em>BasePatchBody</em></a>) – The body containing the data for updating the entity.</p></li>
+<li><p><strong>entity_body</strong> (<em>BasePatchBody</em>) – The body containing the data for updating the entity.</p></li>
 </ul>
 </dd>
 </dl>
@@ -656,7 +656,7 @@ specific to SensorThings API requests.</p>
 <dd><p>The engine instance for SensorThings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="sensorthings.html#sensorthings.SensorThingsBaseEngine" title="sensorthings.SensorThingsBaseEngine">SensorThingsBaseEngine</a></p>
+<dd class="field-odd"><p>SensorThingsBaseEngine</p>
 </dd>
 </dl>
 </dd></dl>
@@ -667,7 +667,7 @@ specific to SensorThings API requests.</p>
 <dd><p>The nested path as a list of tuples, each containing a BaseComponent and an optional ID.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List[Tuple[<a class="reference internal" href="sensorthings.html#sensorthings.schemas.BaseComponent" title="sensorthings.schemas.BaseComponent">BaseComponent</a>, Optional[ST_API_ID_TYPE]]]</p>
+<dd class="field-odd"><p>List[Tuple[BaseComponent, Optional[ST_API_ID_TYPE]]]</p>
 </dd>
 </dl>
 </dd></dl>

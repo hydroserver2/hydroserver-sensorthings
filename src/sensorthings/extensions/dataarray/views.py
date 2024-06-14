@@ -43,15 +43,11 @@ def list_observations(
         query_params=params.dict()
     )
 
-    print(response)
-
     if params.result_format == 'dataArray':
         response = request.engine.convert_to_data_array( # noqa
             response=response,
             select=params.select
         )
-
-    print(response)
 
     return response
 

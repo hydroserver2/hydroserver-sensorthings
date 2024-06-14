@@ -1,5 +1,5 @@
 from typing import List, Literal, Optional, Union
-from pydantic import Field
+from pydantic import Field, model_validator
 from ninja import Schema
 from sensorthings.schemas import BaseListResponse, EntityId, ListQueryParams
 from sensorthings.types import AnyHttpUrlString
@@ -91,6 +91,18 @@ class ObservationQueryParams(ListQueryParams):
         populate_by_name = True
 
 
+class ObservationGetResponseDA(ObservationGetResponse):
+    """
+    Response schema for an observation that can be used in conjunction with a data array response format.
+    """
+
+    @model_validator(mode='before')
+    def check_no_components(cls, values):
+        if 'components' in values:
+            raise ValueError('Field "components" should not be included outside data array responses.')
+        return values
+
+
 class ObservationListResponse(BaseListResponse):
     """
     Response schema for a list of observations.
@@ -101,4 +113,4 @@ class ObservationListResponse(BaseListResponse):
         List containing either ObservationDataArrayResponse or ObservationGetResponse objects.
     """
 
-    value: Union[List[ObservationDataArrayResponse]]
+    value: Union[List[ObservationGetResponseDA], List[ObservationDataArrayResponse]]
