@@ -31,4 +31,5 @@ jobs:
 
       - name: Run unit tests
         run: |
-          python -m pytest --import-mode=append src/tests/
+          cd example
+          python -m pytest --ds=example.settings --pyargs ../tests
