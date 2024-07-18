@@ -12,7 +12,7 @@ id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_get('/Locations', response_schemas=(LocationListResponse,), url_name='list_location')
+@router.st_get('/Locations', response_schema=LocationListResponse, url_name='list_location')
 def list_locations(
         request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
@@ -32,7 +32,7 @@ def list_locations(
     )
 
 
-@router.st_get(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})', response_schemas=(LocationGetResponse,))
+@router.st_get(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})', response_schema=LocationGetResponse)
 def get_location(
         request: SensorThingsHttpRequest,
         location_id: id_type,

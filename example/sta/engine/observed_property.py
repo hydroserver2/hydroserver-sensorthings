@@ -1,4 +1,5 @@
 from sensorthings.components.observedproperties.engine import ObservedPropertyBaseEngine
+from sensorthings.components.observedproperties.schemas import ObservedPropertyPostBody, ObservedPropertyPatchBody
 from .utils import SensorThingsUtils
 from ..data import observed_properties
 
@@ -30,7 +31,7 @@ class ObservedPropertyEngine(ObservedPropertyBaseEngine, SensorThingsUtils):
 
     def create_observed_property(
             self,
-            observed_property,
+            observed_property: ObservedPropertyPostBody,
     ) -> int:
 
         return 1
@@ -38,7 +39,7 @@ class ObservedPropertyEngine(ObservedPropertyBaseEngine, SensorThingsUtils):
     def update_observed_property(
             self,
             observed_property_id: int,
-            observed_property
+            observed_property: ObservedPropertyPatchBody
     ) -> None:
 
         return None

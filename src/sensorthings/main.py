@@ -169,18 +169,10 @@ class SensorThingsAPI(NinjaAPI):
                 view_func = deepcopy(operation.view_func)
                 operation_method = operation.view_func.__name__.split('_')[0]
 
-                response_schema = getattr(operation.response_models.get(200), '__annotations__', {}).get('response')
-                custom_response_schema = getattr(endpoint_settings.get(operation_method, None), 'response_schema', None)
-                if isinstance(custom_response_schema, list):
-                    custom_response_schema = custom_response_schema[0]
-                if custom_response_schema:
-                    response_schemas = tuple([custom_response_schema, *response_schema.__args__[1:-1]])
-                elif hasattr(response_schema, '__args__'):
-                    response_schemas = tuple([*response_schema.__args__[:-1]])
-                elif response_schema:
-                    response_schemas = (response_schema,)
-                else:
-                    response_schemas = None
+                response_schema = getattr(endpoint_settings.get(operation_method, None), 'response_schema', None) or \
+                    getattr(
+                        operation.response_models.get(200), '__annotations__', {}
+                    ).get('response')
 
                 if getattr(endpoint_settings.get(operation_method, None), 'body_schema', None) is not None:
                     view_func.__annotations__[component] = endpoint_settings[operation_method].body_schema
@@ -194,7 +186,7 @@ class SensorThingsAPI(NinjaAPI):
 
                 (getattr(st_router, f'st_{operation.methods[0].lower()}')(
                     path,
-                    response_schemas=response_schemas,
+                    response_schema=response_schema,
                     deprecated=getattr(endpoint_settings.get(operation_method), 'deprecated', False),
                     **{
                         'auth': endpoint_settings[operation_method].authentication

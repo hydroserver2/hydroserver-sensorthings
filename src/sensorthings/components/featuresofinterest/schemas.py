@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Literal, List
+from typing import TYPE_CHECKING, Literal, List, Optional
 from pydantic import Field
 from geojson_pydantic import Feature
 from ninja import Schema
@@ -34,7 +34,7 @@ class FeatureOfInterestFields(Schema):
     description: str = Field(..., alias='description')
     encoding_type: featureEncodingTypes = Field(..., alias='encodingType')
     feature: Feature = Field(..., alias='feature')
-    properties: dict = {}
+    properties: Optional[dict] = Field(None, alias='properties')
 
 
 class FeatureOfInterestRelations(Schema):
@@ -84,7 +84,6 @@ class FeatureOfInterestPatchBody(FeatureOfInterestFields, BasePatchBody):
     """
     A schema for the body of a PATCH request to update an existing feature of interest.
     """
-
     pass
 
 

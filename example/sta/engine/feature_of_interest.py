@@ -1,4 +1,5 @@
 from sensorthings.components.featuresofinterest.engine import FeatureOfInterestBaseEngine
+from sensorthings.components.featuresofinterest.schemas import FeatureOfInterestPostBody, FeatureOfInterestPatchBody
 from .utils import SensorThingsUtils
 from ..data import features_of_interest
 
@@ -31,7 +32,7 @@ class FeatureOfInterestEngine(FeatureOfInterestBaseEngine, SensorThingsUtils):
 
     def create_feature_of_interest(
             self,
-            feature_of_interest,
+            feature_of_interest: FeatureOfInterestPostBody,
     ) -> int:
 
         return 1
@@ -39,7 +40,7 @@ class FeatureOfInterestEngine(FeatureOfInterestBaseEngine, SensorThingsUtils):
     def update_feature_of_interest(
             self,
             feature_of_interest_id: int,
-            feature_of_interest
+            feature_of_interest: FeatureOfInterestPatchBody
     ) -> None:
 
         return None

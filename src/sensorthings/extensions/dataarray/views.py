@@ -1,7 +1,6 @@
 from typing import List, Union
 from ninja import Query
 from pydantic import AnyHttpUrl
-from django.http import HttpResponse
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.http import SensorThingsHttpRequest
@@ -22,7 +21,7 @@ id_type = settings.ST_API_ID_TYPE
 
 @router.st_list(
     '/Observations',
-    response_schemas=(ObservationListResponse,),
+    response_schema=ObservationListResponse,
     url_name='list_observation'
 )
 def list_observations(
@@ -101,7 +100,6 @@ router.add_api_operation(
 @router.st_post('/CreateObservations')
 def create_observations(
         request: SensorThingsHttpRequest,
-        response: HttpResponse,
         observations: List[ObservationDataArrayPostBody]
 ):
     """
@@ -116,9 +114,8 @@ def create_observations(
       Create Entities</a>
     """
 
-    observation_links = request.engine.create_observations( # noqa
-        response=response,
-        entity_body=observations
+    observation_ids = request.engine.create_observations( # noqa
+        observations=request.engine.convert_from_data_array(observations) # noqa
     )
 
     datastream_ids = list(set([
@@ -129,5 +126,10 @@ def create_observations(
         request.engine.update_related_components(
             component=Datastream, related_entity_id=datastream_id
         )
+
+    observation_links = [
+        request.engine.build_ref_link(Observation, observation_id)
+        for observation_id in observation_ids
+    ]
 
     return 201, observation_links

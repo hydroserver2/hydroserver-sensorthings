@@ -1,4 +1,6 @@
 from sensorthings.components.historicallocations.engine import HistoricalLocationBaseEngine
+from sensorthings.components.historicallocations.schemas import HistoricalLocationPostBody, HistoricalLocationPatchBody
+
 from .utils import SensorThingsUtils
 from ..data import historical_locations
 
@@ -32,7 +34,7 @@ class HistoricalLocationEngine(HistoricalLocationBaseEngine, SensorThingsUtils):
 
     def create_historical_location(
             self,
-            historical_location,
+            historical_location: HistoricalLocationPostBody,
     ) -> int:
 
         return 1
@@ -40,7 +42,7 @@ class HistoricalLocationEngine(HistoricalLocationBaseEngine, SensorThingsUtils):
     def update_historical_location(
             self,
             historical_location_id: int,
-            historical_location
+            historical_location: HistoricalLocationPatchBody
     ) -> None:
 
         return None

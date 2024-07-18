@@ -1,21 +1,3 @@
-# import os
-# import sys
-# from pathlib import Path
-#
-# ROOT = Path(__file__).parent.parent.resolve()
-#
-# print(ROOT)
-#
-# # sys.path.insert(0, str(ROOT))
-# # sys.path.insert(0, str(ROOT / 'tests/test_project'))
-#
-# # os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'example.settings')
-#
-# import django
-#
-#
-# django.setup()
-
 import os
 import sys
 import django

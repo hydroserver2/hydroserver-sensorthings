@@ -67,10 +67,10 @@ class DatastreamFields(Schema):
     description: str = Field(..., alias='description')
     unit_of_measurement: UnitOfMeasurement = Field(..., alias='unitOfMeasurement')
     observation_type: observationTypes = Field(..., alias='observationType')
-    observed_area: dict = Field(None, alias='observedArea')
-    phenomenon_time: Union[ISOTimeString, ISOIntervalString, None] = Field(None, alias='phenomenonTime')
-    result_time: Union[ISOTimeString, ISOIntervalString, None] = Field(None, alias='resultTime')
-    properties: dict = Field({}, alias='properties')
+    observed_area: Optional[dict] = Field(None, alias='observedArea')
+    phenomenon_time: Optional[Union[ISOTimeString, ISOIntervalString]] = Field(None, alias='phenomenonTime')
+    result_time: Optional[Union[ISOTimeString, ISOIntervalString]] = Field(None, alias='resultTime')
+    properties: Optional[dict] = Field(None, alias='properties')
 
 
 class DatastreamRelations(Schema):

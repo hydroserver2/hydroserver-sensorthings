@@ -1,4 +1,5 @@
 from sensorthings.components.observations.engine import ObservationBaseEngine
+from sensorthings.components.observations.schemas import ObservationPostBody, ObservationPatchBody
 from .utils import SensorThingsUtils
 from ..data import observations
 
@@ -32,7 +33,7 @@ class ObservationEngine(ObservationBaseEngine, SensorThingsUtils):
 
     def create_observation(
             self,
-            observation,
+            observation: ObservationPostBody,
     ) -> int:
 
         return 1
@@ -40,7 +41,7 @@ class ObservationEngine(ObservationBaseEngine, SensorThingsUtils):
     def update_observation(
             self,
             observation_id: int,
-            observation
+            observation: ObservationPatchBody
     ) -> None:
 
         return None

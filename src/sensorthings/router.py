@@ -1,7 +1,7 @@
 from ninja import Router
-from pydantic import AnyHttpUrl
-from typing import Union, List, Tuple
+from typing import Union, List, Type
 from sensorthings.schemas import PermissionDenied, EntityNotFound
+from sensorthings.types import AnyHttpUrlString
 
 
 class SensorThingsRouter(Router):
@@ -10,7 +10,7 @@ class SensorThingsRouter(Router):
     It provides methods for common HTTP operations with standardized response schemas.
     """
 
-    def st_list(self, route, response_schemas: Tuple, *args, **kwargs):
+    def st_list(self, route, response_schema: Type, *args, **kwargs):
         """
         Define a GET endpoint for listing resources.
 
@@ -18,7 +18,7 @@ class SensorThingsRouter(Router):
         ----------
         route : str
             The route path for the endpoint.
-        response_schemas : tuple
+        response_schema : Schema
             The tuple of response schemas for a successful response.
 
         Returns
@@ -31,14 +31,14 @@ class SensorThingsRouter(Router):
             route,
             *args,
             response={
-                200: Union[(*response_schemas,)]
+                200: Union[(response_schema,)]
             },
             by_alias=True,
             exclude_unset=True,
             **kwargs
         )
 
-    def st_get(self, route, response_schemas: Tuple, *args, **kwargs):
+    def st_get(self, route, response_schema, *args, **kwargs):
         """
         Define a GET endpoint for retrieving a single resource.
 
@@ -46,7 +46,7 @@ class SensorThingsRouter(Router):
         ----------
         route : str
             The route path for the endpoint.
-        response_schemas : tuple
+        response_schema : Schema
             The tuple of response schemas for a successful response.
 
         Returns
@@ -59,7 +59,7 @@ class SensorThingsRouter(Router):
             route,
             *args,
             response={
-                200: Union[(*response_schemas, str,)],
+                200: Union[(response_schema, str,)],
                 403: PermissionDenied,
                 404: EntityNotFound
             },
@@ -83,12 +83,12 @@ class SensorThingsRouter(Router):
             The endpoint decorated as a POST operation.
         """
 
-        kwargs = {k: v for k, v in kwargs.items() if k not in ['response', 'response_schemas']}
+        kwargs = {k: v for k, v in kwargs.items() if k not in ['response', 'response_schema']}
         return super(SensorThingsRouter, self).post(
             route,
             *args,
             response={
-                201: Union[None, List[AnyHttpUrl]],
+                201: Union[None, List[AnyHttpUrlString]],
                 403: PermissionDenied
             },
             **kwargs
@@ -109,7 +109,7 @@ class SensorThingsRouter(Router):
             The endpoint decorated as a PATCH operation.
         """
 
-        kwargs = {k: v for k, v in kwargs.items() if k not in ['response', 'response_schemas']}
+        kwargs = {k: v for k, v in kwargs.items() if k not in ['response', 'response_schema']}
         return super(SensorThingsRouter, self).patch(
             route,
             *args,
@@ -136,7 +136,7 @@ class SensorThingsRouter(Router):
             The endpoint decorated as a DELETE operation.
         """
 
-        kwargs = {k: v for k, v in kwargs.items() if k not in ['response', 'response_schemas']}
+        kwargs = {k: v for k, v in kwargs.items() if k not in ['response', 'response_schema']}
         return super(SensorThingsRouter, self).delete(
             route,
             *args,

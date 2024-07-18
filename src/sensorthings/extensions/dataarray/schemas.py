@@ -2,14 +2,16 @@ from typing import List, Literal, Optional, Union
 from pydantic import Field, model_validator
 from ninja import Schema
 from sensorthings.schemas import BaseListResponse, EntityId, ListQueryParams
-from sensorthings.types import AnyHttpUrlString
-from sensorthings.components.observations.schemas import (ObservationFields, ObservationGetResponse,
+from sensorthings.types import ISOTimeString, ISOIntervalString, AnyHttpUrlString
+from sensorthings.components.observations.schemas import (ObservationFields,
+                                                          ObservationGetResponse as CoreObservationGetResponse,
                                                           observationComponents)
 from sensorthings import settings
 
 
 id_type = settings.ST_API_ID_TYPE
 observationResultFormats = Literal['dataArray']
+dataArray = List[List[Union[id_type, float, ISOTimeString, ISOIntervalString, dict]]]
 
 
 class ObservationDataArrayFields(ObservationFields, EntityId):
@@ -47,7 +49,7 @@ class ObservationDataArrayResponse(Schema):
 
     datastream: AnyHttpUrlString = Field(None, alias='Datastream@iot.navigationLink')
     components: List[observationComponents]
-    data_array: List[list] = Field(..., alias='dataArray')
+    data_array: dataArray = Field(..., alias='dataArray')
 
     class Config:
         populate_by_name = True
@@ -69,7 +71,7 @@ class ObservationDataArrayPostBody(Schema):
 
     datastream: EntityId = Field(..., alias='Datastream')
     components: List[observationComponents]
-    data_array: List[list] = Field(..., alias='dataArray')
+    data_array: dataArray = Field(..., alias='dataArray')
 
     class Config:
         populate_by_name = True
@@ -91,14 +93,14 @@ class ObservationQueryParams(ListQueryParams):
         populate_by_name = True
 
 
-class ObservationGetResponseDA(ObservationGetResponse):
+class ObservationGetResponse(CoreObservationGetResponse):
     """
     Response schema for an observation that can be used in conjunction with a data array response format.
     """
 
     @model_validator(mode='before')
     def check_no_components(cls, values):
-        if 'components' in values._obj:
+        if 'components' in values._obj:  # noqa
             raise ValueError('Field "components" should not be included outside data array responses.')
         return values
 
@@ -113,4 +115,4 @@ class ObservationListResponse(BaseListResponse):
         List containing either ObservationDataArrayResponse or ObservationGetResponse objects.
     """
 
-    value: Union[List[ObservationGetResponseDA], List[ObservationDataArrayResponse]]
+    value: Union[List[ObservationGetResponse], List[ObservationDataArrayResponse]]

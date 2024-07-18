@@ -1,5 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from typing import List, Dict
+from .schemas import SensorPostBody, SensorPatchBody
+from sensorthings import settings
+
+
+id_type = settings.ST_API_ID_TYPE
 
 
 class SensorBaseEngine(metaclass=ABCMeta):
@@ -13,18 +18,18 @@ class SensorBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def get_sensors(
             self,
-            sensor_ids: List[str] = None,
+            sensor_ids: List[id_type] = None,
             pagination: dict = None,
             ordering: dict = None,
             filters: dict = None,
             expanded: bool = False
-    ) -> (Dict[str, dict], int):
+    ) -> (Dict[id_type, dict], int):
         """
         Retrieve sensors based on provided parameters.
 
         Parameters
         ----------
-        sensor_ids : List[str], optional
+        sensor_ids : List[id_type], optional
             List of sensor IDs to filter the results.
         pagination : dict, optional
             Pagination information to limit the number of results.
@@ -37,7 +42,7 @@ class SensorBaseEngine(metaclass=ABCMeta):
 
         Returns
         -------
-        Dict[str, dict]
+        Dict[id_type, dict]
             A dictionary of sensors, keyed by their IDs.
         int
             The total number of sensors matching the query.
@@ -48,19 +53,19 @@ class SensorBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def create_sensor(
             self,
-            sensor
-    ) -> str:
+            sensor: SensorPostBody
+    ) -> id_type:
         """
         Create a new sensor.
 
         Parameters
         ----------
-        sensor : dict
+        sensor : SensorPostBody
             The sensor data to be created.
 
         Returns
         -------
-        str
+        id_type
             The ID of the newly created sensor.
         """
 
@@ -69,17 +74,17 @@ class SensorBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def update_sensor(
             self,
-            sensor_id: str,
-            sensor
+            sensor_id: id_type,
+            sensor: SensorPostBody
     ) -> None:
         """
         Update an existing sensor.
 
         Parameters
         ----------
-        sensor_id : str
+        sensor_id : id_type
             The ID of the sensor to update.
-        sensor : dict
+        sensor : SensorPatchBody
             The updated sensor data.
 
         Returns
@@ -92,14 +97,14 @@ class SensorBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def delete_sensor(
             self,
-            sensor_id: str
+            sensor_id: id_type
     ) -> None:
         """
         Delete a sensor.
 
         Parameters
         ----------
-        sensor_id : str
+        sensor_id : id_type
             The ID of the sensor to delete.
 
         Returns

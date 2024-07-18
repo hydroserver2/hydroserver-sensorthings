@@ -1,5 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from typing import List, Dict
+from .schemas import FeatureOfInterestPostBody, FeatureOfInterestPatchBody
+from sensorthings import settings
+
+
+id_type = settings.ST_API_ID_TYPE
 
 
 class FeatureOfInterestBaseEngine(metaclass=ABCMeta):
@@ -13,21 +18,21 @@ class FeatureOfInterestBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def get_features_of_interest(
             self,
-            feature_of_interest_ids: List[str] = None,
-            observation_ids: List[str] = None,
+            feature_of_interest_ids: List[id_type] = None,
+            observation_ids: List[id_type] = None,
             pagination: dict = None,
             ordering: dict = None,
             filters: dict = None,
             expanded: bool = False
-    ) -> (Dict[str, dict], int):
+    ) -> (Dict[id_type, dict], int):
         """
         Retrieve features of interest based on the given criteria.
 
         Parameters
         ----------
-        feature_of_interest_ids : List[str], optional
+        feature_of_interest_ids : List[id_type], optional
             List of feature of interest IDs to filter by.
-        observation_ids : List[str], optional
+        observation_ids : List[id_type], optional
             List of observation IDs to filter by.
         pagination : dict, optional
             Pagination options.
@@ -49,19 +54,19 @@ class FeatureOfInterestBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def create_feature_of_interest(
             self,
-            feature_of_interest
-    ) -> str:
+            feature_of_interest: FeatureOfInterestPostBody
+    ) -> id_type:
         """
         Create a new feature of interest.
 
         Parameters
         ----------
-        feature_of_interest : Any
+        feature_of_interest : FeatureOfInterestPostBody
             The feature of interest object to create.
 
         Returns
         -------
-        str
+        id_type
             The ID of the newly created feature of interest.
         """
 
@@ -70,17 +75,17 @@ class FeatureOfInterestBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def update_feature_of_interest(
             self,
-            feature_of_interest_id: str,
-            feature_of_interest
+            feature_of_interest_id: id_type,
+            feature_of_interest: FeatureOfInterestPatchBody
     ) -> None:
         """
         Update an existing feature of interest.
 
         Parameters
         ----------
-        feature_of_interest_id : str
+        feature_of_interest_id : id_type
             The ID of the feature of interest to update.
-        feature_of_interest : Any
+        feature_of_interest : FeatureOfInterestPatchBody
             The updated feature of interest object.
 
         Returns
@@ -93,14 +98,14 @@ class FeatureOfInterestBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def delete_feature_of_interest(
             self,
-            feature_of_interest_id: str
+            feature_of_interest_id: id_type
     ) -> None:
         """
         Delete an existing feature of interest.
 
         Parameters
         ----------
-        feature_of_interest_id : str
+        feature_of_interest_id : id_type
             The ID of the feature of interest to delete.
 
         Returns

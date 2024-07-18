@@ -13,7 +13,7 @@ id_type = settings.ST_API_ID_TYPE
 
 
 @router.st_get(
-    '/Datastreams', response_schemas=(DatastreamListResponse,), url_name='list_datastream'
+    '/Datastreams', response_schema=DatastreamListResponse, url_name='list_datastream'
 )
 def list_datastreams(
         request: SensorThingsHttpRequest,
@@ -36,7 +36,7 @@ def list_datastreams(
 
 @router.st_get(
     f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})',
-    response_schemas=(DatastreamGetResponse,)
+    response_schema=DatastreamGetResponse
 )
 def get_datastream(
         request: SensorThingsHttpRequest,

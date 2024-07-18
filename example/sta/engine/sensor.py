@@ -1,4 +1,5 @@
 from sensorthings.components.sensors.engine import SensorBaseEngine
+from sensorthings.components.sensors.schemas import SensorPostBody, SensorPatchBody
 from .utils import SensorThingsUtils
 from ..data import sensors
 
@@ -30,7 +31,7 @@ class SensorEngine(SensorBaseEngine, SensorThingsUtils):
 
     def create_sensor(
             self,
-            sensor
+            sensor: SensorPostBody
     ) -> int:
 
         return 1
@@ -38,7 +39,7 @@ class SensorEngine(SensorBaseEngine, SensorThingsUtils):
     def update_sensor(
             self,
             sensor_id: int,
-            sensor
+            sensor: SensorPatchBody
     ) -> None:
 
         return None

@@ -1,4 +1,5 @@
 from sensorthings.components.datastreams.engine import DatastreamBaseEngine
+from sensorthings.components.datastreams.schemas import DatastreamPostBody, DatastreamPatchBody
 from .utils import SensorThingsUtils
 from ..data import datastreams
 
@@ -33,7 +34,7 @@ class DatastreamEngine(DatastreamBaseEngine, SensorThingsUtils):
 
     def create_datastream(
             self,
-            datastream,
+            datastream: DatastreamPostBody,
     ) -> int:
 
         return 1
@@ -41,7 +42,7 @@ class DatastreamEngine(DatastreamBaseEngine, SensorThingsUtils):
     def update_datastream(
             self,
             datastream_id: int,
-            datastream
+            datastream: DatastreamPatchBody
     ) -> None:
 
         return None

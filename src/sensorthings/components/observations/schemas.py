@@ -47,10 +47,10 @@ class ObservationFields(Schema):
 
     phenomenon_time: Union[ISOTimeString, ISOIntervalString] = Field(..., alias='phenomenonTime')
     result: float = Field(..., alias='result')
-    result_time: Union[ISOTimeString, None] = Field(None, alias='resultTime')
-    result_quality: dict = Field({}, alias='resultQuality')
-    valid_time: Union[ISOIntervalString, None] = Field(None, alias='validTime')
-    parameters: dict = Field({}, alias='parameters')
+    result_time: Optional[ISOTimeString] = Field(None, alias='resultTime')
+    result_quality: Optional[dict] = Field(None, alias='resultQuality')
+    valid_time: Optional[ISOIntervalString] = Field(None, alias='validTime')
+    parameters: Optional[dict] = Field(None, alias='parameters')
 
     class Config:
         populate_by_name = True

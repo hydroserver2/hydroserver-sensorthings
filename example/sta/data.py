@@ -95,13 +95,15 @@ sensors = {
         'id': 1,
         'name': 'SENSOR_1',
         'description': 'Sensor 1',
-        'metadata': None,
+        'encoding_type': 'text/html',
+        'metadata': 'TEST',
         'properties': {}
     },
     2: {
         'id': 2,
         'name': 'SENSOR_2',
         'description': 'Sensor 2',
+        'encoding_type': 'text/html',
         'metadata': 'TEST',
         'properties': {
             'code': 'SENSOR'

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 from pydantic import Field
 from ninja import Schema
 from sensorthings.schemas import EntityId, BaseComponent, BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody
@@ -27,7 +27,7 @@ class ObservedPropertyFields(Schema):
     name: str = Field(..., alias='name')
     definition: AnyHttpUrlString = Field(..., alias='definition')
     description: str = Field(..., alias='description')
-    properties: dict = Field({}, alias='properties')
+    properties: Optional[dict] = Field(None, alias='properties')
 
 
 class ObservedPropertyRelations(Schema):

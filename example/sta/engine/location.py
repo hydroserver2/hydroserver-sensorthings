@@ -1,4 +1,5 @@
 from sensorthings.components.locations.engine import LocationBaseEngine
+from sensorthings.components.locations.schemas import LocationPostBody, LocationPatchBody
 from .utils import SensorThingsUtils
 from ..data import locations
 
@@ -32,7 +33,7 @@ class LocationEngine(LocationBaseEngine, SensorThingsUtils):
 
     def create_location(
             self,
-            location,
+            location: LocationPostBody,
     ) -> int:
 
         return 1
@@ -40,7 +41,7 @@ class LocationEngine(LocationBaseEngine, SensorThingsUtils):
     def update_location(
             self,
             location_id: int,
-            location
+            location: LocationPatchBody
     ) -> None:
 
         return None

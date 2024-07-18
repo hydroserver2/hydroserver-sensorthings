@@ -16,7 +16,7 @@ id_type = settings.ST_API_ID_TYPE
 
 @router.st_list(
     '/Observations',
-    response_schemas=(ObservationListResponse,),
+    response_schema=ObservationListResponse,
     url_name='list_observation'
 )
 def list_observations(
@@ -40,7 +40,7 @@ def list_observations(
 
 @router.st_get(
     f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})',
-    response_schemas=(ObservationGetResponse,)
+    response_schema=ObservationGetResponse
 )
 def get_observation(
         request: SensorThingsHttpRequest,

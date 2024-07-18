@@ -1,13 +1,14 @@
 from abc import ABCMeta, abstractmethod
-from typing import Type, List, Union, TYPE_CHECKING
+from typing import List, Union, Dict
 from itertools import groupby
+from sensorthings.schemas import EntityId
+from sensorthings.components.observations.schemas import ObservationPostBody
 from sensorthings.extensions.dataarray.schemas import ObservationDataArrayFields
+from .schemas import ObservationDataArrayPostBody
 from sensorthings import settings
 
-if TYPE_CHECKING:
-    from sensorthings.schemas import BaseComponent, BasePostBody
 
-
+id_type = settings.ST_API_ID_TYPE
 id_qualifier = settings.ST_API_ID_QUALIFIER
 
 
@@ -16,27 +17,53 @@ class DataArrayBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def create_observations(
             self,
-            component: Type['BaseComponent'],
-            entity_body: 'BasePostBody',
-    ) -> List[str]:
+            observations: ObservationDataArrayPostBody,
+    ) -> List[id_type]:
         """
         Create Observations using data array format.
 
         Parameters:
         - component (Type['BaseComponent']): The type of component.
-        - entity_body ('BasePostBody'): The entity body.
+        - observations ('ObservationDataArrayPostBody'): The entity body.
 
         Returns:
-        - List[str]: The list of observation IDs.
+        - List[id_type]: The list of observation IDs.
         """
 
         pass
+
+    @ staticmethod
+    def convert_from_data_array(
+            observations: List[ObservationDataArrayPostBody],
+    ) -> Dict[id_type, List[ObservationPostBody]]:
+        """
+        Convert Observations data array to dict of Observations grouped by Datastream.
+
+        Parameters:
+        - observations ('ObservationDataArrayPostBody'): The entity body.
+
+        Returns:
+        - dict: The Observations grouped by Datastream.
+        """
+
+        return {
+            data_array.datastream.id: [
+                ObservationPostBody(
+                    datastream=EntityId(id=data_array.datastream.id),
+                    **{
+                        (field if field != 'FeatureOfInterest/id' else 'feature_of_interest'):
+                        (observation[i] if field != 'FeatureOfInterest/id' else EntityId(id=observation[i]))
+                        for i, field in enumerate(data_array.components)
+                    },
+                ) for observation in data_array.data_array
+            ] for data_array in observations
+        }
 
     def convert_to_data_array(
             self,
             response: dict,
             select: Union[str, None] = None
-    ):
+    ) -> dict:
         """
         Convert Observations response to a data array.
 

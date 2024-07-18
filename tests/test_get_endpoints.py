@@ -36,7 +36,7 @@ from django.test import Client
     (  # Test Things endpoint with multiple expanded components.
         'Things(1)',
         {'$expand': 'Locations/HistoricalLocations,Datastreams/Sensor,Datastreams/ObservedProperty'},
-        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Things(1)", "name": "THING_1", "description": "Thing 1", "properties": {}, "Locations": [{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Locations(1)", "name": "LOCATION_1", "description": "Location 1", "encodingType": "application/geo+json", "location": {"type": "Feature", "geometry": {"type": "Point", "coordinates": [41.740004, -111.793743]}, "properties": {}}, "properties": {}, "HistoricalLocations": []}], "HistoricalLocations@iot.navigationLink": "http://testserver/sensorthings/v1.1/Things(1)/HistoricalLocations", "Datastreams": [{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "name": "DATASTREAM_1", "description": "Datastream 1", "unitOfMeasurement": {"name": "Unit 1", "symbol": "U", "definition": "https://www.example.com/units/1"}, "observationType": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", "phenomenonTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "resultTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "properties": {}, "Sensor": {"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "metadata": null, "properties": {}}, "ObservedProperty": {"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/ObservedProperties(1)", "name": "OBSERVED_PROPERTY_1", "definition": "https://www.example.com/observed-properties/1", "description": "Observed Property 1", "properties": {}}}]}'
+        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Things(1)", "name": "THING_1", "description": "Thing 1", "properties": {}, "Locations": [{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Locations(1)", "name": "LOCATION_1", "description": "Location 1", "encodingType": "application/geo+json", "location": {"type": "Feature", "geometry": {"type": "Point", "coordinates": [41.740004, -111.793743]}, "properties": {}}, "properties": {}, "HistoricalLocations": []}], "HistoricalLocations@iot.navigationLink": "http://testserver/sensorthings/v1.1/Things(1)/HistoricalLocations", "Datastreams": [{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "name": "DATASTREAM_1", "description": "Datastream 1", "unitOfMeasurement": {"name": "Unit 1", "symbol": "U", "definition": "https://www.example.com/units/1"}, "observationType": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", "phenomenonTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "resultTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "properties": {}, "Sensor": {"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "encodingType": "text/html", "metadata": "TEST", "properties": {}}, "ObservedProperty": {"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/ObservedProperties(1)", "name": "OBSERVED_PROPERTY_1", "definition": "https://www.example.com/observed-properties/1", "description": "Observed Property 1", "properties": {}}}]}'
     ),
     (  # Test Things value
         'Things(1)/name',
@@ -136,7 +136,7 @@ from django.test import Client
     (  # Test Sensors endpoint with no query parameters.
         'Sensors(1)',
         {},
-        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "metadata": null, "properties": {}, "Datastreams@iot.navigationLink": "http://testserver/sensorthings/v1.1/Sensors(1)/Datastreams"}'
+        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "encodingType": "text/html", "metadata": "TEST", "properties": {}, "Datastreams@iot.navigationLink": "http://testserver/sensorthings/v1.1/Sensors(1)/Datastreams"}'
     ),
     (  # Test Sensors endpoint select parameter.
         'Sensors(1)',
@@ -151,7 +151,7 @@ from django.test import Client
     (  # Test Sensors endpoint with Datastreams expanded.
         'Sensors(1)',
         {'$expand': 'Datastreams'},
-        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "metadata": null, "properties": {}, "Datastreams": [{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "name": "DATASTREAM_1", "description": "Datastream 1", "unitOfMeasurement": {"name": "Unit 1", "symbol": "U", "definition": "https://www.example.com/units/1"}, "observationType": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", "phenomenonTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "resultTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "properties": {}}]}'
+        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "encodingType": "text/html", "metadata": "TEST", "properties": {}, "Datastreams": [{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "name": "DATASTREAM_1", "description": "Datastream 1", "unitOfMeasurement": {"name": "Unit 1", "symbol": "U", "definition": "https://www.example.com/units/1"}, "observationType": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", "phenomenonTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "resultTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "properties": {}}]}'
     ),
     (  # Test Sensors value
         'Sensors(1)/name',
@@ -211,7 +211,7 @@ from django.test import Client
     (  # Test Datastreams endpoint with metadata expanded.
         'Datastreams(1)',
         {'$expand': 'Sensor,ObservedProperty'},
-        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "name": "DATASTREAM_1", "description": "Datastream 1", "unitOfMeasurement": {"name": "Unit 1", "symbol": "U", "definition": "https://www.example.com/units/1"}, "observationType": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", "phenomenonTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "resultTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "properties": {}, "Thing@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)/Thing", "Sensor": {"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "metadata": null, "properties": {}}, "ObservedProperty": {"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/ObservedProperties(1)", "name": "OBSERVED_PROPERTY_1", "definition": "https://www.example.com/observed-properties/1", "description": "Observed Property 1", "properties": {}}, "Observations@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)/Observations"}'
+        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "name": "DATASTREAM_1", "description": "Datastream 1", "unitOfMeasurement": {"name": "Unit 1", "symbol": "U", "definition": "https://www.example.com/units/1"}, "observationType": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement", "phenomenonTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "resultTime": "2024-01-01T00:00:00Z/2024-01-02T00:00:00Z", "properties": {}, "Thing@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)/Thing", "Sensor": {"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "encodingType": "text/html", "metadata": "TEST", "properties": {}}, "ObservedProperty": {"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/ObservedProperties(1)", "name": "OBSERVED_PROPERTY_1", "definition": "https://www.example.com/observed-properties/1", "description": "Observed Property 1", "properties": {}}, "Observations@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)/Observations"}'
     ),
     (  # Test Datastreams endpoint with Things expanded.
         'Datastreams(1)',
@@ -241,7 +241,7 @@ from django.test import Client
     (  # Test Datastream's Sensor endpoint.
         'Datastreams(1)/Sensor',
         {},
-        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "metadata": null, "properties": {}, "Datastreams@iot.navigationLink": "http://testserver/sensorthings/v1.1/Sensors(1)/Datastreams"}'
+        '{"@iot.id": 1, "@iot.selfLink": "http://testserver/sensorthings/v1.1/Sensors(1)", "name": "SENSOR_1", "description": "Sensor 1", "encodingType": "text/html", "metadata": "TEST", "properties": {}, "Datastreams@iot.navigationLink": "http://testserver/sensorthings/v1.1/Sensors(1)/Datastreams"}'
     ),
     (  # Test Datastream's ObservedProperty endpoint.
         'Datastreams(1)/ObservedProperty',
@@ -357,5 +357,7 @@ def test_sensorthings_get_endpoints_404(endpoint):
         f'http://127.0.0.1:8000/sensorthings/core/v1.1/{endpoint}',
         {}
     )
+
+    print(response.content)
 
     assert response.status_code == 404

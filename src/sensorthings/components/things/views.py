@@ -12,7 +12,7 @@ id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_list('/Things', response_schemas=(ThingListResponse,), url_name='list_thing')
+@router.st_list('/Things', response_schema=ThingListResponse, url_name='list_thing')
 def list_things(
         request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
@@ -32,7 +32,7 @@ def list_things(
     )
 
 
-@router.st_get(f'/Things({id_qualifier}{{thing_id}}{id_qualifier})', response_schemas=(ThingGetResponse,))
+@router.st_get(f'/Things({id_qualifier}{{thing_id}}{id_qualifier})', response_schema=ThingGetResponse)
 def get_thing(
         request: SensorThingsHttpRequest,
         thing_id: id_type,
@@ -47,11 +47,13 @@ def get_thing(
       Thing Relations</a>
     """
 
-    return request.engine.get_entity(
+    response = request.engine.get_entity(
         component=Thing,
         entity_id=thing_id,
         query_params=params.dict()
     )
+
+    return response
 
 
 @router.st_post('/Things')

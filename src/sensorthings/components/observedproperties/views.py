@@ -15,7 +15,7 @@ id_type = settings.ST_API_ID_TYPE
 
 @router.st_list(
     '/ObservedProperties',
-    response_schemas=(ObservedPropertyListResponse,),
+    response_schema=ObservedPropertyListResponse,
     url_name='list_observed_property'
 )
 def list_observed_properties(
@@ -39,7 +39,7 @@ def list_observed_properties(
 
 @router.st_get(
     f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})',
-    response_schemas=(ObservedPropertyGetResponse,)
+    response_schema=ObservedPropertyGetResponse
 )
 def get_observed_property(
         request: SensorThingsHttpRequest,

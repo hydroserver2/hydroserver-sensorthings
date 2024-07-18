@@ -1,5 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from typing import List, Dict
+from .schemas import ObservedPropertyPostBody, ObservedPropertyPatchBody
+from sensorthings import settings
+
+
+id_type = settings.ST_API_ID_TYPE
 
 
 class ObservedPropertyBaseEngine(metaclass=ABCMeta):
@@ -13,18 +18,18 @@ class ObservedPropertyBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def get_observed_properties(
             self,
-            observed_property_ids: List[str] = None,
+            observed_property_ids: List[id_type] = None,
             pagination: dict = None,
             ordering: dict = None,
             filters: dict = None,
             expanded: bool = False
-    ) -> (Dict[str, dict], int):
+    ) -> (Dict[id_type, dict], int):
         """
         Retrieve observed properties based on provided parameters.
 
         Parameters
         ----------
-        observed_property_ids : List[str], optional
+        observed_property_ids : List[id_type], optional
             List of observed property IDs to filter the results.
         pagination : dict, optional
             Pagination information to limit the number of results.
@@ -37,7 +42,7 @@ class ObservedPropertyBaseEngine(metaclass=ABCMeta):
 
         Returns
         -------
-        Dict[str, dict]
+        Dict[id_type, dict]
             A dictionary of observed properties, keyed by their IDs.
         int
             The total number of observed properties matching the query.
@@ -48,19 +53,19 @@ class ObservedPropertyBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def create_observed_property(
             self,
-            observed_property
-    ) -> str:
+            observed_property: ObservedPropertyPostBody
+    ) -> id_type:
         """
         Create a new observed property.
 
         Parameters
         ----------
-        observed_property : dict
+        observed_property : ObservedPropertyPostBody
             The observed property data to be created.
 
         Returns
         -------
-        str
+        id_type
             The ID of the newly created observed property.
         """
 
@@ -69,17 +74,17 @@ class ObservedPropertyBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def update_observed_property(
             self,
-            observed_property_id: str,
-            observed_property
+            observed_property_id: id_type,
+            observed_property: ObservedPropertyPatchBody
     ) -> None:
         """
         Update an existing observed property.
 
         Parameters
         ----------
-        observed_property_id : str
+        observed_property_id : id_type
             The ID of the observed property to update.
-        observed_property : dict
+        observed_property : ObservedPropertyPatchBody
             The updated observed property data.
 
         Returns
@@ -92,14 +97,14 @@ class ObservedPropertyBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def delete_observed_property(
             self,
-            observed_property_id: str
+            observed_property_id: id_type
     ) -> None:
         """
         Delete an observed property.
 
         Parameters
         ----------
-        observed_property_id : str
+        observed_property_id : id_type
             The ID of the observed property to delete.
 
         Returns

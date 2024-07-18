@@ -1,9 +1,9 @@
 import urllib.parse
-from pydantic import Field, Extra, field_validator, model_validator, model_serializer
-from typing import Union, Optional, Any, Dict
+from pydantic import Field, Extra, field_validator, model_validator
+from typing import Union, Optional, Any
 from ninja import Schema
 from sensorthings.types import AnyHttpUrlString
-from sensorthings.validators import remove_whitespace
+from sensorthings.validators import PartialSchema, remove_whitespace
 from sensorthings import settings
 
 id_type = settings.ST_API_ID_TYPE
@@ -51,24 +51,7 @@ class PermissionDenied(Schema):
     detail: str
 
 
-class DisableRequiredFieldValidation(type(Schema)):
-    """
-    Metaclass to disable required field validation for schemas.
-
-    Sets all fields to optional and defaults them to None.
-    """
-
-    def __new__(cls, name, bases, attrs, **kwargs):
-        for base in bases:
-            if issubclass(base, Schema):
-                for field_name, field_value in base.model_fields.items():
-                    field_value.default = None
-                    field_value.annotation = Optional[field_value.annotation]
-
-        return super().__new__(cls, name, bases, attrs, **kwargs)
-
-
-class BaseGetResponse(EntityId, Schema, metaclass=DisableRequiredFieldValidation):
+class BaseGetResponse(EntityId, Schema, metaclass=PartialSchema):
     """
     Base schema for a GET response, including a self-link.
 
@@ -111,14 +94,17 @@ class BasePostBody(Schema):
     Includes a validator to remove leading and trailing whitespace from all fields.
     """
 
-    _whitespace_validator = field_validator('*', check_fields=False)(remove_whitespace)
+    _whitespace_validator = field_validator(
+        '*',
+        check_fields=False
+    )(remove_whitespace)
 
     class Config:
         extra = Extra.forbid
         populate_by_name = True
 
 
-class BasePatchBody(Schema, metaclass=DisableRequiredFieldValidation):
+class BasePatchBody(Schema, metaclass=PartialSchema):
     """
     Base schema for a PATCH request body.
 

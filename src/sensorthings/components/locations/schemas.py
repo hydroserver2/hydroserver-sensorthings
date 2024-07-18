@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Literal, List, Union
+from typing import TYPE_CHECKING, Literal, List, Union, Optional
 from pydantic import Field
 from geojson_pydantic import Feature
 from ninja import Schema
@@ -36,7 +36,7 @@ class LocationFields(Schema):
     description: str = Field(..., alias='description')
     encoding_type: locationEncodingTypes = Field(..., alias='encodingType')
     location: Feature = Field(..., alias='location')
-    properties: dict = Field({}, alias='properties')
+    properties: Optional[dict] = Field(None, alias='properties')
 
 
 class LocationRelations(Schema):

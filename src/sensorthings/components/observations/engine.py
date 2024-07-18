@@ -1,5 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from typing import List, Dict
+from .schemas import ObservationPostBody, ObservationPatchBody
+from sensorthings import settings
+
+
+id_type = settings.ST_API_ID_TYPE
 
 
 class ObservationBaseEngine(metaclass=ABCMeta):
@@ -13,24 +18,24 @@ class ObservationBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def get_observations(
             self,
-            observation_ids: List[str] = None,
-            datastream_ids: List[str] = None,
-            feature_of_interest_ids: List[str] = None,
+            observation_ids: List[id_type] = None,
+            datastream_ids: List[id_type] = None,
+            feature_of_interest_ids: List[id_type] = None,
             pagination: dict = None,
             ordering: dict = None,
             filters: dict = None,
             expanded: bool = False
-    ) -> (Dict[str, dict], int):
+    ) -> (Dict[id_type, dict], int):
         """
         Retrieve observations based on provided parameters.
 
         Parameters
         ----------
-        observation_ids : List[str], optional
+        observation_ids : List[id_type], optional
             List of observation IDs to filter the results.
-        datastream_ids : List[str], optional
+        datastream_ids : List[id_type], optional
             List of datastream IDs to filter the results.
-        feature_of_interest_ids : List[str], optional
+        feature_of_interest_ids : List[id_type], optional
             List of feature of interest IDs to filter the results.
         pagination : dict, optional
             Pagination information to limit the number of results.
@@ -43,7 +48,7 @@ class ObservationBaseEngine(metaclass=ABCMeta):
 
         Returns
         -------
-        Dict[str, dict]
+        Dict[id_type, dict]
             A dictionary of observations, keyed by their IDs.
         int
             The total number of observations matching the query.
@@ -54,19 +59,19 @@ class ObservationBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def create_observation(
             self,
-            observation
-    ) -> str:
+            observation: ObservationPostBody
+    ) -> id_type:
         """
         Create a new observation.
 
         Parameters
         ----------
-        observation : dict
+        observation : ObservationPostBody
             The observation data to be created.
 
         Returns
         -------
-        str
+        id_type
             The ID of the newly created observation.
         """
 
@@ -75,17 +80,17 @@ class ObservationBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def update_observation(
             self,
-            observation_id: str,
-            observation
+            observation_id: id_type,
+            observation: ObservationPatchBody
     ) -> None:
         """
         Update an existing observation.
 
         Parameters
         ----------
-        observation_id : str
+        observation_id : id_type
             The ID of the observation to update.
-        observation : dict
+        observation : ObservationPatchBody
             The updated observation data.
 
         Returns
@@ -98,14 +103,14 @@ class ObservationBaseEngine(metaclass=ABCMeta):
     @abstractmethod
     def delete_observation(
             self,
-            observation_id: str
+            observation_id: id_type
     ) -> None:
         """
         Delete an observation.
 
         Parameters
         ----------
-        observation_id : str
+        observation_id : id_type
             The ID of the observation to delete.
 
         Returns
