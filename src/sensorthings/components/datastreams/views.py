@@ -2,9 +2,9 @@ from ninja import Query
 from django.http import HttpResponse
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
-from sensorthings.engine import SensorThingsRequest
+from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
-from .schemas import DatastreamPostBody, DatastreamPatchBody, DatastreamListResponse, DatastreamGetResponse
+from .schemas import Datastream, DatastreamPostBody, DatastreamPatchBody, DatastreamListResponse, DatastreamGetResponse
 
 
 router = SensorThingsRouter(tags=['Datastreams'])
@@ -12,9 +12,11 @@ id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_get('/Datastreams', response_schemas=(DatastreamListResponse,), url_name='list_datastream')
+@router.st_get(
+    '/Datastreams', response_schema=DatastreamListResponse, url_name='list_datastream'
+)
 def list_datastreams(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
 ):
     """
@@ -27,17 +29,17 @@ def list_datastreams(
     """
 
     return request.engine.list_entities(
-        request=request,
+        component=Datastream,
         query_params=params.dict()
     )
 
 
 @router.st_get(
     f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})',
-    response_schemas=(DatastreamGetResponse,)
+    response_schema=DatastreamGetResponse
 )
 def get_datastream(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         datastream_id: id_type,
         params: GetQueryParams = Query(...)
 ):
@@ -51,7 +53,7 @@ def get_datastream(
     """
 
     return request.engine.get_entity(
-        request=request,
+        component=Datastream,
         entity_id=datastream_id,
         query_params=params.dict()
     )
@@ -59,7 +61,7 @@ def get_datastream(
 
 @router.st_post('/Datastreams')
 def create_datastream(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         response: HttpResponse,
         datastream: DatastreamPostBody
 ):
@@ -75,16 +77,18 @@ def create_datastream(
       Create Entity</a>
     """
 
-    return request.engine.create_entity(
-        request=request,
-        response=response,
-        entity_body=datastream
+    request.engine.create_entity(
+        component=Datastream,
+        entity_body=datastream,
+        response=response
     )
+
+    return 201, None
 
 
 @router.patch(f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})')
 def update_datastream(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         datastream_id: id_type,
         datastream: DatastreamPatchBody
 ):
@@ -100,16 +104,18 @@ def update_datastream(
       Update Entity</a>
     """
 
-    return request.engine.update_entity(
-        request=request,
+    request.engine.update_entity(
+        component=Datastream,
         entity_id=datastream_id,
         entity_body=datastream
     )
 
+    return 204, None
+
 
 @router.delete(f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})')
 def delete_datastream(
-        request: SensorThingsRequest,
+        request: SensorThingsHttpRequest,
         datastream_id: id_type
 ):
     """
@@ -120,7 +126,9 @@ def delete_datastream(
       Delete Entity</a>
     """
 
-    return request.engine.delete_entity(
-        request=request,
+    request.engine.delete_entity(
+        component=Datastream,
         entity_id=datastream_id
     )
+
+    return 204, None
