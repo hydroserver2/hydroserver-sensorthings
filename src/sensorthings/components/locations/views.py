@@ -4,15 +4,14 @@ from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
+from sensorthings.factories import SensorThingsRouterFactory, SensorThingsEndpointFactory
 from .schemas import Location, LocationPostBody, LocationPatchBody, LocationListResponse, LocationGetResponse
 
 
-router = SensorThingsRouter(tags=['Locations'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_get('/Locations', response_schema=LocationListResponse, url_name='list_location')
 def list_locations(
         request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
@@ -32,7 +31,15 @@ def list_locations(
     )
 
 
-@router.st_get(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})', response_schema=LocationGetResponse)
+list_locations_endpoint = SensorThingsEndpointFactory(
+    router_name='location',
+    endpoint_route='/Locations',
+    view_function=list_locations,
+    view_method=SensorThingsRouter.st_list,
+    view_response_schema=LocationListResponse,
+)
+
+
 def get_location(
         request: SensorThingsHttpRequest,
         location_id: id_type,
@@ -54,7 +61,15 @@ def get_location(
     )
 
 
-@router.post('/Locations')
+get_location_endpoint = SensorThingsEndpointFactory(
+    router_name='location',
+    endpoint_route=f'/Locations({id_qualifier}{{location_id}}{id_qualifier})',
+    view_function=get_location,
+    view_method=SensorThingsRouter.st_get,
+    view_response_schema=LocationGetResponse,
+)
+
+
 def create_location(
         request: SensorThingsHttpRequest,
         response: HttpResponse,
@@ -81,7 +96,14 @@ def create_location(
     return 201, None
 
 
-@router.patch(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})')
+create_location_endpoint = SensorThingsEndpointFactory(
+    router_name='location',
+    endpoint_route='/Locations',
+    view_function=create_location,
+    view_method=SensorThingsRouter.st_post,
+)
+
+
 def update_location(
         request: SensorThingsHttpRequest,
         location_id: id_type,
@@ -108,7 +130,14 @@ def update_location(
     return 204, None
 
 
-@router.delete(f'/Locations({id_qualifier}{{location_id}}{id_qualifier})')
+update_location_endpoint = SensorThingsEndpointFactory(
+    router_name='location',
+    endpoint_route=f'/Locations({id_qualifier}{{location_id}}{id_qualifier})',
+    view_function=update_location,
+    view_method=SensorThingsRouter.st_patch,
+)
+
+
 def delete_location(
         request: SensorThingsHttpRequest,
         location_id: id_type
@@ -127,3 +156,24 @@ def delete_location(
     )
 
     return 204, None
+
+
+delete_location_endpoint = SensorThingsEndpointFactory(
+    router_name='location',
+    endpoint_route=f'/Locations({id_qualifier}{{location_id}}{id_qualifier})',
+    view_function=delete_location,
+    view_method=SensorThingsRouter.st_delete,
+)
+
+
+location_router_factory = SensorThingsRouterFactory(
+    name='location',
+    tags=['Locations'],
+    endpoints=[
+        list_locations_endpoint,
+        get_location_endpoint,
+        create_location_endpoint,
+        update_location_endpoint,
+        delete_location_endpoint
+    ]
+)

@@ -4,16 +4,15 @@ from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
+from sensorthings.factories import SensorThingsRouterFactory, SensorThingsEndpointFactory
 from .schemas import (FeatureOfInterest, FeatureOfInterestPostBody, FeatureOfInterestPatchBody,
                       FeatureOfInterestListResponse, FeatureOfInterestGetResponse)
 
 
-router = SensorThingsRouter(tags=['Features Of Interest'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_get('/FeaturesOfInterest', response_schema=FeatureOfInterestListResponse)
 def list_features_of_interest(
         request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
@@ -33,10 +32,15 @@ def list_features_of_interest(
     )
 
 
-@router.st_get(
-    f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})',
-    response_schema=FeatureOfInterestGetResponse
+list_features_of_interest_endpoint = SensorThingsEndpointFactory(
+    router_name='feature_of_interest',
+    endpoint_route='/FeaturesOfInterest',
+    view_function=list_features_of_interest,
+    view_method=SensorThingsRouter.st_list,
+    view_response_schema=FeatureOfInterestListResponse
 )
+
+
 def get_feature_of_interest(
         request: SensorThingsHttpRequest,
         feature_of_interest_id: id_type,
@@ -58,7 +62,15 @@ def get_feature_of_interest(
     )
 
 
-@router.st_post('/FeaturesOfInterest')
+get_feature_of_interest_endpoint = SensorThingsEndpointFactory(
+    router_name='feature_of_interest',
+    endpoint_route=f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})',
+    view_function=get_feature_of_interest,
+    view_method=SensorThingsRouter.st_get,
+    view_response_schema=FeatureOfInterestGetResponse
+)
+
+
 def create_feature_of_interest(
         request: SensorThingsHttpRequest,
         response: HttpResponse,
@@ -85,7 +97,14 @@ def create_feature_of_interest(
     return 201, None
 
 
-@router.st_patch(f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})')
+create_feature_of_interest_endpoint = SensorThingsEndpointFactory(
+    router_name='feature_of_interest',
+    endpoint_route='/FeaturesOfInterest',
+    view_function=create_feature_of_interest,
+    view_method=SensorThingsRouter.st_post,
+)
+
+
 def update_feature_of_interest(
         request: SensorThingsHttpRequest,
         feature_of_interest_id: id_type,
@@ -112,7 +131,14 @@ def update_feature_of_interest(
     return 204, None
 
 
-@router.st_delete(f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})')
+update_feature_of_interest_endpoint = SensorThingsEndpointFactory(
+    router_name='feature_of_interest',
+    endpoint_route=f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})',
+    view_function=update_feature_of_interest,
+    view_method=SensorThingsRouter.st_patch,
+)
+
+
 def delete_feature_of_interest(
         request: SensorThingsHttpRequest,
         feature_of_interest_id: id_type
@@ -131,3 +157,24 @@ def delete_feature_of_interest(
     )
 
     return 204, None
+
+
+delete_feature_of_interest_endpoint = SensorThingsEndpointFactory(
+    router_name='feature_of_interest',
+    endpoint_route=f'/FeaturesOfInterest({id_qualifier}{{feature_of_interest_id}}{id_qualifier})',
+    view_function=delete_feature_of_interest,
+    view_method=SensorThingsRouter.st_delete,
+)
+
+
+feature_of_interest_router_factory = SensorThingsRouterFactory(
+    name='feature_of_interest',
+    tags=['Features Of Interest'],
+    endpoints=[
+        list_features_of_interest_endpoint,
+        get_feature_of_interest_endpoint,
+        create_feature_of_interest_endpoint,
+        update_feature_of_interest_endpoint,
+        delete_feature_of_interest_endpoint
+    ]
+)

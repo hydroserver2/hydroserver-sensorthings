@@ -1,5 +1,6 @@
 from django.urls import path
 from sensorthings import SensorThingsAPI
+from sensorthings.extensions.dataarray import data_array_extension
 from .engine import TestSensorThingsEngine, TestDataArraySensorThingsEngine
 
 
@@ -16,7 +17,8 @@ sta_data_array = SensorThingsAPI(
     version='1.1',
     urls_namespace='da',
     description='This is a test SensorThings API.',
-    engine=TestDataArraySensorThingsEngine
+    engine=TestDataArraySensorThingsEngine,
+    extensions=[data_array_extension]
 )
 
 

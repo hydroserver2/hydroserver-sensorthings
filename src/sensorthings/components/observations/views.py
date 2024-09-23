@@ -5,20 +5,15 @@ from sensorthings.router import SensorThingsRouter
 from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import GetQueryParams, ListQueryParams
 from sensorthings.components.datastreams.schemas import Datastream
+from sensorthings.factories import SensorThingsRouterFactory, SensorThingsEndpointFactory
 from .schemas import (Observation, ObservationPostBody, ObservationPatchBody, ObservationListResponse,
                       ObservationGetResponse)
 
 
-router = SensorThingsRouter(tags=['Observations'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_list(
-    '/Observations',
-    response_schema=ObservationListResponse,
-    url_name='list_observation'
-)
 def list_observations(
         request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
@@ -38,10 +33,15 @@ def list_observations(
     )
 
 
-@router.st_get(
-    f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})',
-    response_schema=ObservationGetResponse
+list_observations_endpoint = SensorThingsEndpointFactory(
+    router_name='observation',
+    endpoint_route='/Observations',
+    view_function=list_observations,
+    view_method=SensorThingsRouter.st_list,
+    view_response_schema=ObservationListResponse,
 )
+
+
 def get_observation(
         request: SensorThingsHttpRequest,
         observation_id: id_type,
@@ -63,7 +63,15 @@ def get_observation(
     )
 
 
-@router.st_post('/Observations', url_name='create_observation')
+get_observation_endpoint = SensorThingsEndpointFactory(
+    router_name='observation',
+    endpoint_route=f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})',
+    view_function=get_observation,
+    view_method=SensorThingsRouter.st_get,
+    view_response_schema=ObservationGetResponse,
+)
+
+
 def create_observation(
         request: SensorThingsHttpRequest,
         response: HttpResponse,
@@ -94,7 +102,14 @@ def create_observation(
     return 201, None
 
 
-@router.st_patch(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})')
+create_observation_endpoint = SensorThingsEndpointFactory(
+    router_name='observation',
+    endpoint_route='/Observations',
+    view_function=create_observation,
+    view_method=SensorThingsRouter.st_post,
+)
+
+
 def update_observation(
         request: SensorThingsHttpRequest,
         observation_id: id_type,
@@ -121,7 +136,14 @@ def update_observation(
     return 204, None
 
 
-@router.st_delete(f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})')
+update_observation_endpoint = SensorThingsEndpointFactory(
+    router_name='observation',
+    endpoint_route=f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})',
+    view_function=update_observation,
+    view_method=SensorThingsRouter.st_patch,
+)
+
+
 def delete_observation(
         request: SensorThingsHttpRequest,
         observation_id: id_type
@@ -140,3 +162,24 @@ def delete_observation(
     )
 
     return 204, None
+
+
+delete_observation_endpoint = SensorThingsEndpointFactory(
+    router_name='observation',
+    endpoint_route=f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})',
+    view_function=delete_observation,
+    view_method=SensorThingsRouter.st_delete,
+)
+
+
+observation_router_factory = SensorThingsRouterFactory(
+    name='observation',
+    tags=['Observations'],
+    endpoints=[
+        list_observations_endpoint,
+        get_observation_endpoint,
+        create_observation_endpoint,
+        update_observation_endpoint,
+        delete_observation_endpoint
+    ]
+)
