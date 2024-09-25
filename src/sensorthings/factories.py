@@ -24,6 +24,7 @@ class SensorThingsEndpointFactory:
     view_authentication: Optional[Callable] = None
     view_authorization: Optional[Callable] = None
     view_response_schema: Optional[Type[Schema]] = None
+    view_response_override: Optional[dict] = None
 
 
 @dataclass
@@ -36,3 +37,4 @@ class SensorThingsEndpointHookFactory:
     view_query_params: Optional[Type[Schema]] = None
     view_body_schema: Optional[Type[Schema]] = None
     view_response_schema: Optional[Type[Schema]] = None
+    view_response_override: Optional[dict] = None

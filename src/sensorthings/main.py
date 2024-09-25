@@ -1,4 +1,5 @@
 import functools
+import types
 from copy import deepcopy
 from dataclasses import dataclass
 from typing import Type, NewType, List, Optional
@@ -32,7 +33,7 @@ class SensorThingsAPI(NinjaAPI):
         if kwargs['version'] not in ['1.1']:
             raise ValueError('Unsupported SensorThings version. Supported versions are: 1.1')
 
-        kwargs['urls_namespace'] = kwargs.get('urls_namespace', '') + f'sensorthings-v{kwargs["version"]}-api'
+        kwargs['urls_namespace'] = kwargs.get('urls_namespace', '') + '-' + f'sensorthings-v{kwargs["version"]}-api'
 
         super().__init__(renderer=SensorThingsRenderer(), **kwargs)
 
@@ -40,11 +41,11 @@ class SensorThingsAPI(NinjaAPI):
         self.engine = engine
         self.get_response_schemas = {}
         self.extensions = extensions or []
+        self.handle_advanced_path = self._copy_view(handle_advanced_path)
 
         self._stage_routers()
         self._initialize_default_routers()
-
-        handle_advanced_path.__api__ = self
+        self.handle_advanced_path.__api__ = self
 
     def _stage_routers(self):
         """
@@ -55,8 +56,9 @@ class SensorThingsAPI(NinjaAPI):
 
         # Add extension routers and endpoints
         for extension in self.extensions:
-            self._add_extension_routers(extension)
-            self._add_extension_endpoints(extension)
+            extension_copy = deepcopy(extension)
+            self._add_extension_routers(extension_copy)
+            self._add_extension_endpoints(extension_copy)
 
     @staticmethod
     def _get_default_routers():
@@ -65,14 +67,14 @@ class SensorThingsAPI(NinjaAPI):
         """
 
         return {
-            'datastream': datastream_router_factory,
-            'feature_of_interest': feature_of_interest_router_factory,
-            'historical_location': historical_location_router_factory,
-            'location': location_router_factory,
-            'observation': observation_router_factory,
-            'observed_property': observed_property_router_factory,
-            'sensor': sensor_router_factory,
-            'thing': thing_router_factory,
+            'datastream': deepcopy(datastream_router_factory),
+            'feature_of_interest': deepcopy(feature_of_interest_router_factory),
+            'historical_location': deepcopy(historical_location_router_factory),
+            'location': deepcopy(location_router_factory),
+            'observation': deepcopy(observation_router_factory),
+            'observed_property': deepcopy(observed_property_router_factory),
+            'sensor': deepcopy(sensor_router_factory),
+            'thing': deepcopy(thing_router_factory),
         }
 
     def _add_extension_routers(self, extension):
@@ -129,6 +131,7 @@ class SensorThingsAPI(NinjaAPI):
             endpoint.endpoint_route,
             url_name=endpoint.view_function.__name__,
             response_schema=endpoint.view_response_schema,
+            response_dict=endpoint.view_response_override,
             deprecated=not endpoint.enabled,
             auth=endpoint.view_authentication
         )(self._apply_authorization(endpoint.view_function, endpoint.view_authorization or []))
@@ -140,10 +143,11 @@ class SensorThingsAPI(NinjaAPI):
 
         endpoint_hook = next((
             hook for hook in extension.endpoint_hooks if hook.endpoint_name == endpoint.view_function.__name__
-        ), None)
+        ), None) if extension.endpoint_hooks else None
 
         if endpoint_hook:
             endpoint.view_response_schema = endpoint_hook.view_response_schema or endpoint.view_response_schema
+            endpoint.view_response_override = endpoint_hook.view_response_override or endpoint.view_response_override
             endpoint.enabled = endpoint_hook.enabled and endpoint.enabled
             endpoint.view_authorization = endpoint_hook.view_authorization or endpoint.view_authorization
             endpoint.view_authentication = endpoint_hook.view_authentication or endpoint.view_authentication
@@ -184,7 +188,7 @@ class SensorThingsAPI(NinjaAPI):
         """
 
         urls = super()._get_urls()
-        urls.append(re_path(r'^.*', handle_advanced_path, name='advanced_path_handler'))
+        urls.append(re_path(r'^.*', self.handle_advanced_path, name='advanced_path_handler'))
         return urls
 
     @staticmethod
@@ -201,6 +205,19 @@ class SensorThingsAPI(NinjaAPI):
             return view_func(*args, **kwargs)
 
         return auth_wrapper
+
+    @staticmethod
+    def _copy_view(view):
+        fn = types.FunctionType(
+            view.__code__,
+            view.__globals__,
+            view.__name__,
+            view.__defaults__,
+            view.__closure__
+        )
+        fn.__dict__.update(view.__dict__)
+
+        return fn
 
 
 @dataclass
