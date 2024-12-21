@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List, Optional
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from ninja import Schema
 from sensorthings.schemas import EntityId, BaseComponent, BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody
 from sensorthings.types import AnyHttpUrlString
@@ -50,7 +50,9 @@ class SensorRelations(Schema):
         The datastreams associated with the sensor.
     """
 
-    datastreams: List['Datastream'] = Field([], alias='Datastreams', relationship='one_to_many', back_ref='sensor_id')
+    datastreams: List['Datastream'] = Field(
+        [], alias='Datastreams', json_schema_extra={'relationship': 'one_to_many', 'back_ref': 'sensor_id'}
+    )
 
 
 class Sensor(BaseComponent, SensorFields, SensorRelations):
@@ -60,10 +62,7 @@ class Sensor(BaseComponent, SensorFields, SensorRelations):
     This class combines the fields and relations of a sensor, and extends the BaseComponent class.
     """
 
-    class Config:
-        json_schema_extra = {
-            'name_ref': ('Sensors', 'sensor', 'sensors')
-        }
+    model_config = ConfigDict(json_schema_extra={'name_ref': ('Sensors', 'sensor', 'sensors')})
 
 
 class SensorPostBody(BasePostBody, SensorFields):
@@ -77,7 +76,7 @@ class SensorPostBody(BasePostBody, SensorFields):
     """
 
     datastreams: List[EntityId] = Field(
-        [], alias='Datastreams', nested_class='DatastreamPostBody'
+        [], alias='Datastreams', json_schema_extra={'nested_class': 'DatastreamPostBody'}
     )
 
 
@@ -102,7 +101,9 @@ class SensorGetResponse(SensorFields, BaseGetResponse):
     """
 
     datastreams_link: AnyHttpUrlString = Field(None, alias='Datastreams@iot.navigationLink')
-    datastreams_rel: List[dict] = Field(None, alias='Datastreams', nested_class='DatastreamGetResponse')
+    datastreams_rel: List[dict] = Field(
+        None, alias='Datastreams', json_schema_extra={'nested_class': 'DatastreamGetResponse'}
+    )
 
 
 class SensorListResponse(BaseListResponse):

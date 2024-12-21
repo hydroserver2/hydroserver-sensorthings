@@ -1,5 +1,5 @@
 import urllib.parse
-from pydantic import Field, Extra, field_validator, model_validator
+from pydantic import Field, ConfigDict, field_validator, model_validator
 from typing import Union, Optional, Any
 from ninja import Schema
 from sensorthings.types import AnyHttpUrlString
@@ -19,10 +19,9 @@ class EntityId(Schema):
         The identifier for the entity, aliased as '@iot.id'.
     """
 
-    id: id_type = Field(..., alias='@iot.id')
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        populate_by_name = True
+    id: id_type = Field(..., alias='@iot.id')
 
 
 class EntityNotFound(Schema):
@@ -61,6 +60,8 @@ class BaseGetResponse(EntityId, Schema, metaclass=PartialSchema):
         The self-link for the entity, aliased as '@iot.selfLink'.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     self_link: AnyHttpUrlString = Field(..., alias='@iot.selfLink')
 
     @model_validator(mode='before')
@@ -83,9 +84,6 @@ class BaseGetResponse(EntityId, Schema, metaclass=PartialSchema):
         assert isinstance(data._obj, dict)  # noqa
         return data
 
-    class Config:
-        populate_by_name = True
-
 
 class BasePostBody(Schema):
     """
@@ -94,14 +92,12 @@ class BasePostBody(Schema):
     Includes a validator to remove leading and trailing whitespace from all fields.
     """
 
+    model_config = ConfigDict(populate_by_name=True, extra='forbid')
+
     _whitespace_validator = field_validator(
         '*',
         check_fields=False
     )(remove_whitespace)
-
-    class Config:
-        extra = Extra.forbid
-        populate_by_name = True
 
 
 class BasePatchBody(Schema, metaclass=PartialSchema):
@@ -112,14 +108,12 @@ class BasePatchBody(Schema, metaclass=PartialSchema):
     required field validation.
     """
 
+    model_config = ConfigDict(populate_by_name=True, extra='forbid')
+
     _whitespace_validator = field_validator(
         '*',
         check_fields=False
     )(remove_whitespace)
-
-    class Config:
-        extra = Extra.forbid
-        populate_by_name = True
 
 
 class BaseComponent(Schema):
@@ -163,12 +157,11 @@ class BaseListResponse(Schema):
         The next link for pagination, aliased as '@iot.nextLink'.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     count: Union[int, None] = Field(None, alias='@iot.count')
     value: list = []
     next_link: Optional[AnyHttpUrlString] = Field(None, alias='@iot.nextLink')
-
-    class Config:
-        populate_by_name = True
 
 
 class GetQueryParams(Schema):
@@ -207,15 +200,14 @@ class ListQueryParams(GetQueryParams):
         The select parameter, aliased as '$select'.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     filters: Optional[str] = Field(None, alias='$filter')
     count: Optional[bool] = Field(None, alias='$count')
     order_by: Optional[str] = Field(None, alias='$orderby')
     skip: Optional[int] = Field(0, alias='$skip')
     top: Optional[int] = Field(None, alias='$top')
     select: Optional[str] = Field(None, alias='$select')
-
-    class Config:
-        populate_by_name = True
 
     def get_query_string(self):
         """

@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, List, Optional
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from ninja import Schema
 from sensorthings.schemas import EntityId, BaseComponent, BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody
 from sensorthings.types import AnyHttpUrlString
@@ -41,7 +41,7 @@ class ObservedPropertyRelations(Schema):
     """
 
     datastreams: List['Datastream'] = Field(
-        [], alias='Datastreams', relationship='one_to_many', back_ref='observed_property_id'
+        [], alias='Datastreams', json_schema_extra={'relationship': 'one_to_many', 'back_ref': 'observed_property_id'}
     )
 
 
@@ -52,10 +52,7 @@ class ObservedProperty(BaseComponent, ObservedPropertyFields, ObservedPropertyRe
     This class combines the fields and relations of an observed property, and extends the BaseComponent class.
     """
 
-    class Config:
-        json_schema_extra = {
-            'name_ref': ('ObservedProperties', 'observed_property', 'observed_properties')
-        }
+    model_config = ConfigDict(json_schema_extra={'name_ref': ('ObservedProperties', 'observed_property', 'observed_properties')})
 
 
 class ObservedPropertyPostBody(BasePostBody, ObservedPropertyFields):
@@ -69,7 +66,7 @@ class ObservedPropertyPostBody(BasePostBody, ObservedPropertyFields):
     """
 
     datastreams: List[EntityId] = Field(
-        [], alias='Datastreams', nested_class='DatastreamPostBody'
+        [], alias='Datastreams', json_schema_extra={'nested_class': 'DatastreamPostBody'}
     )
 
 
@@ -94,7 +91,9 @@ class ObservedPropertyGetResponse(ObservedPropertyFields, BaseGetResponse):
     """
 
     datastreams_link: AnyHttpUrlString = Field(None, alias='Datastreams@iot.navigationLink')
-    datastreams_rel: List[dict] = Field(None, alias='Datastreams', nested_class='DatastreamGetResponse')
+    datastreams_rel: List[dict] = Field(
+        None, alias='Datastreams', json_schema_extra={'nested_class': 'DatastreamGetResponse'}
+    )
 
 
 class ObservedPropertyListResponse(BaseListResponse):

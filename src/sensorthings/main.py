@@ -2,7 +2,7 @@ import functools
 import types
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Type, NewType, List, Optional
+from typing import Type, NewType, List, Optional, Literal
 from django.urls import re_path
 from ninja import NinjaAPI, Router
 from sensorthings.engine import SensorThingsBaseEngine
@@ -24,16 +24,17 @@ from sensorthings.components.things.views import thing_router_factory
 class SensorThingsAPI(NinjaAPI):
     def __init__(
             self,
+            version: Literal["1.1"] = "1.1",
             engine: Optional[Type[NewType('SensorThingsEngine', SensorThingsBaseEngine)]] = None,
             extensions: Optional[List['SensorThingsExtension']] = None,
             **kwargs
     ):
-        kwargs['version'] = kwargs.get('version', '1.1')
+        if kwargs.get('urls_namespace'):
+            kwargs['urls_namespace'] = f'{kwargs.get("urls_namespace")}-sensorthings-v{version}-api'
+        else:
+            kwargs['urls_namespace'] = f'sensorthings-v{version}-api'
 
-        if kwargs['version'] not in ['1.1']:
-            raise ValueError('Unsupported SensorThings version. Supported versions are: 1.1')
-
-        kwargs['urls_namespace'] = kwargs.get('urls_namespace', '') + '-' + f'sensorthings-v{kwargs["version"]}-api'
+        kwargs['version'] = version
 
         super().__init__(renderer=SensorThingsRenderer(), **kwargs)
 
@@ -89,7 +90,7 @@ class SensorThingsAPI(NinjaAPI):
         Add endpoints from an extension to the appropriate routers.
         """
 
-        for endpoint in extension.endpoints:
+        for endpoint in extension.endpoints or []:
             if endpoint.router_name in self.routers:
                 self.routers[endpoint.router_name].endpoints.append(endpoint)
 

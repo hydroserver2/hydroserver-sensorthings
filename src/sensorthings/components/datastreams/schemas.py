@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List, Union, Dict, Optional
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from ninja import Schema
 from sensorthings.schemas import (BaseComponent, BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody,
                                   EntityId)
@@ -89,13 +89,18 @@ class DatastreamRelations(Schema):
         The list of observations related to the datastream.
     """
 
-    thing: 'Thing' = Field(..., alias='Thing', relationship='many_to_one', back_ref='thing_id')
-    sensor: 'Sensor' = Field(..., alias='Sensor', relationship='many_to_one', back_ref='sensor_id')
+    thing: 'Thing' = Field(
+        ..., alias='Thing', json_schema_extra={'relationship': 'many_to_one', 'back_ref': 'thing_id'}
+    )
+    sensor: 'Sensor' = Field(
+        ..., alias='Sensor', json_schema_extra={'relationship': 'many_to_one', 'back_ref': 'sensor_id'}
+    )
     observed_property: 'ObservedProperty' = Field(
-        ..., alias='ObservedProperty', relationship='many_to_one', back_ref='observed_property_id'
+        ..., alias='ObservedProperty',
+        json_schema_extra={'relationship': 'many_to_one', 'back_ref': 'observed_property_id'}
     )
     observations: List['Observation'] = Field(
-        [], alias='Observations', relationship='one_to_many', back_ref='datastream_id'
+        [], alias='Observations', json_schema_extra={'relationship': 'one_to_many', 'back_ref': 'datastream_id'}
     )
 
 
@@ -106,10 +111,7 @@ class Datastream(BaseComponent, DatastreamFields, DatastreamRelations):
     This class combines the fields and relations of a datastream, and extends the BaseComponent class.
     """
 
-    class Config:
-        json_schema_extra = {
-            'name_ref': ('Datastreams', 'datastream', 'datastreams')
-        }
+    model_config = ConfigDict(json_schema_extra={'name_ref': ('Datastreams', 'datastream', 'datastreams')})
 
 
 class DatastreamPostBody(BasePostBody, DatastreamFields):
@@ -127,13 +129,13 @@ class DatastreamPostBody(BasePostBody, DatastreamFields):
     """
 
     thing: Union[EntityId] = Field(
-        ..., alias='Thing', nested_class='ThingPostBody'
+        ..., alias='Thing', json_schema_extra={'nested_class': 'ThingPostBody'}
     )
     sensor: Union[EntityId] = Field(
-        ..., alias='Sensor', nested_class='SensorPostBody'
+        ..., alias='Sensor', json_schema_extra={'nested_class': 'SensorPostBody'}
     )
     observed_property: Union[EntityId] = Field(
-        ..., alias='ObservedProperty', nested_class='ObservedPropertyPostBody'
+        ..., alias='ObservedProperty', json_schema_extra={'nested_class': 'ObservedPropertyPostBody'}
     )
 
 
@@ -181,17 +183,17 @@ class DatastreamGetResponse(DatastreamFields, BaseGetResponse):
     """
 
     thing_link: AnyHttpUrlString = Field(None, alias='Thing@iot.navigationLink')
-    thing_rel: Dict = Field(None, alias='Thing', nested_class='ThingGetResponse')
+    thing_rel: Dict = Field(None, alias='Thing', json_schema_extra={'nested_class': 'ThingGetResponse'})
     sensor_link: AnyHttpUrlString = Field(None, alias='Sensor@iot.navigationLink')
-    sensor_rel: Dict = Field(None, alias='Sensor', nested_class='SensorGetResponse')
+    sensor_rel: Dict = Field(None, alias='Sensor', json_schema_extra={'nested_class': 'SensorGetResponse'})
     observed_property_link: AnyHttpUrlString = Field(None, alias='ObservedProperty@iot.navigationLink')
     observed_property_rel: Dict = Field(
         None, alias='ObservedProperty',
-        nested_class='ObservedPropertyGetResponse'
+        json_schema_extra={'nested_class': 'ObservedPropertyGetResponse'}
     )
     observations_link: AnyHttpUrlString = Field(None, alias='Observations@iot.navigationLink')
     observations_rel: Union[List[dict], dict] = Field(
-        None, alias='Observations', nested_class='ObservationGetResponse'
+        None, alias='Observations', json_schema_extra={'nested_class': 'ObservationGetResponse'}
     )
 
 
