@@ -32,8 +32,8 @@ class SensorThingsEndpointHookFactory:
     endpoint_name: str
     view_wrapper: Optional[Callable] = None
     enabled: Optional[bool] = True
-    view_authentication: Optional[Callable] = None
-    view_authorization: Optional[Callable] = None
+    view_authentication: Optional[Union[Callable, List[Callable]]] = None
+    view_authorization: Optional[Union[Callable, List[Callable]]] = None
     view_query_params: Optional[Type[Schema]] = None
     view_body_schema: Optional[Type[Schema]] = None
     view_response_schema: Optional[Type[Schema]] = None
