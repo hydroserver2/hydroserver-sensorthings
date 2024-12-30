@@ -5,6 +5,7 @@ from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.factories import SensorThingsEndpointFactory
 from sensorthings.components.datastreams.schemas import Datastream
 from sensorthings.extensions.qualitycontrol.schemas import DeleteObservationsPostBody
+from sensorthings.types.iso_string import parse_iso_interval
 from sensorthings.schemas import PermissionDenied
 
 
@@ -21,10 +22,14 @@ def delete_observations(
     """
 
     for datastream in datastreams:
+        start_time, end_time = (
+            parse_iso_interval(datastream.phenomenon_time)
+            if datastream.phenomenon_time else (None, None)
+        )
         request.engine.delete_observations( # noqa
             datastream_id=datastream.datastream.id,
-            start_time=None,
-            end_time=None
+            start_time=start_time,
+            end_time=end_time
         )
 
     datastream_ids = list(set([
