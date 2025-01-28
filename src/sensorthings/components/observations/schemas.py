@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, Union, List, Dict, Optional
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from ninja import Schema
 from sensorthings.schemas import (BaseComponent, BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody,
                                   EntityId)
@@ -45,15 +45,14 @@ class ObservationFields(Schema):
         Additional parameters for the observation.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     phenomenon_time: Union[ISOTimeString, ISOIntervalString] = Field(..., alias='phenomenonTime')
     result: float = Field(..., alias='result')
     result_time: Optional[ISOTimeString] = Field(None, alias='resultTime')
     result_quality: Optional[dict] = Field(None, alias='resultQuality')
     valid_time: Optional[ISOIntervalString] = Field(None, alias='validTime')
     parameters: Optional[dict] = Field(None, alias='parameters')
-
-    class Config:
-        populate_by_name = True
 
 
 class ObservationRelations(Schema):
@@ -68,13 +67,15 @@ class ObservationRelations(Schema):
         The feature of interest associated with the observation.
     """
 
-    datastream: 'Datastream' = Field(..., alias='Datastream', relationship='many_to_one', back_ref='datastream_id')
-    feature_of_interest: 'FeatureOfInterest' = Field(
-        ..., alias='FeatureOfInterest', relationship='many_to_one', back_ref='feature_of_interest_id'
-    )
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        populate_by_name = True
+    datastream: 'Datastream' = Field(
+        ..., alias='Datastream', json_schema_extra={'relationship': 'many_to_one', 'back_ref': 'datastream_id'}
+    )
+    feature_of_interest: 'FeatureOfInterest' = Field(
+        ..., alias='FeatureOfInterest',
+        json_schema_extra={'relationship': 'many_to_one', 'back_ref': 'feature_of_interest_id'}
+    )
 
 
 class Observation(BaseComponent, ObservationFields, ObservationRelations):
@@ -84,10 +85,7 @@ class Observation(BaseComponent, ObservationFields, ObservationRelations):
     This class combines the fields and relations of an observation, and extends the BaseComponent class.
     """
 
-    class Config:
-        json_schema_extra = {
-            'name_ref': ('Observations', 'observation', 'observations')
-        }
+    model_config = ConfigDict(json_schema_extra={'name_ref': ('Observations', 'observation', 'observations')})
 
 
 class ObservationPostBody(BasePostBody, ObservationFields):
@@ -102,15 +100,14 @@ class ObservationPostBody(BasePostBody, ObservationFields):
         The ID of the feature of interest associated with the observation.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     datastream: Union[EntityId] = Field(
-        ..., alias='Datastream', nested_class='DatastreamPostBody'
+        ..., alias='Datastream', json_schema_extra={'nested_class': 'DatastreamPostBody'}
     )
     feature_of_interest: Union[EntityId, None] = Field(
-        None, alias='FeatureOfInterest', nested_class='FeatureOfInterestPostBody'
+        None, alias='FeatureOfInterest', json_schema_extra={'nested_class': 'FeatureOfInterestPostBody'}
     )
-
-    class Config:
-        populate_by_name = True
 
 
 class ObservationPatchBody(BasePatchBody, ObservationFields):
@@ -125,11 +122,10 @@ class ObservationPatchBody(BasePatchBody, ObservationFields):
         The ID of the feature of interest associated with the observation.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     datastream: Optional[EntityId] = Field(None, alias='Datastream')
     feature_of_interest: Optional[EntityId] = Field(None, alias='FeatureOfInterest')
-
-    class Config:
-        populate_by_name = True
 
 
 class ObservationGetResponse(ObservationFields, BaseGetResponse):
@@ -148,17 +144,17 @@ class ObservationGetResponse(ObservationFields, BaseGetResponse):
         The relationship details for the feature of interest associated with the observation.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     datastream_link: AnyHttpUrlString = Field(None, alias='Datastream@iot.navigationLink')
-    datastream_rel: Dict = Field(None, alias='Datastream', nested_class='DatastreamGetResponse')
+    datastream_rel: Dict = Field(
+        None, alias='Datastream', json_schema_extra={'nested_class': 'DatastreamGetResponse'}
+    )
     feature_of_interest_link: AnyHttpUrlString = Field(None, alias='FeatureOfInterest@iot.navigationLink')
     feature_of_interest_rel: Dict = Field(
-        None,
-        alias='FeatureOfInterest',
-        nested_class='FeatureOfInterestGetResponse'
+        None, alias='FeatureOfInterest',
+        json_schema_extra={'nested_class': 'FeatureOfInterestGetResponse'}
     )
-
-    class Config:
-        populate_by_name = True
 
 
 class ObservationListResponse(BaseListResponse):

@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Union, List, Optional
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from ninja import Schema
 from sensorthings.schemas import BaseComponent, BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody, \
     EntityId
@@ -25,12 +25,11 @@ class ThingFields(Schema):
         Additional properties of the thing.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     name: str = Field(..., alias='name')
     description: str = Field(..., alias='description')
     properties: Optional[dict] = Field(None, alias='properties')
-
-    class Config:
-        populate_by_name = True
 
 
 class ThingRelations(Schema):
@@ -47,11 +46,15 @@ class ThingRelations(Schema):
         The datastreams associated with the thing.
     """
 
-    locations: List['Location'] = Field([], alias='Locations', relationship='many_to_many', back_ref='thing_id')
-    historical_locations: List['HistoricalLocation'] = Field(
-        [], alias='HistoricalLocations', relationship='one_to_many', back_ref='thing_id'
+    locations: List['Location'] = Field(
+        [], alias='Locations', json_schema_extra={'relationship': 'many_to_many', 'back_ref': 'thing_id'}
     )
-    datastreams: List['Datastream'] = Field([], alias='Datastreams', relationship='one_to_many', back_ref='thing_id')
+    historical_locations: List['HistoricalLocation'] = Field(
+        [], alias='HistoricalLocations', json_schema_extra={'relationship': 'one_to_many', 'back_ref': 'thing_id'}
+    )
+    datastreams: List['Datastream'] = Field(
+        [], alias='Datastreams', json_schema_extra={'relationship': 'one_to_many', 'back_ref': 'thing_id'}
+    )
 
 
 class Thing(BaseComponent, ThingFields, ThingRelations):
@@ -61,10 +64,7 @@ class Thing(BaseComponent, ThingFields, ThingRelations):
     This class combines the fields and relations of a thing, and extends the BaseComponent class.
     """
 
-    class Config:
-        json_schema_extra = {
-            'name_ref': ('Things', 'thing', 'things')
-        }
+    model_config = ConfigDict(json_schema_extra={'name_ref': ('Things', 'thing', 'things')})
 
 
 class ThingPostBody(BasePostBody, ThingFields):
@@ -82,13 +82,13 @@ class ThingPostBody(BasePostBody, ThingFields):
     """
 
     locations: List[Union[EntityId]] = Field(
-        [], alias='Locations', nested_class='LocationPostBody'
+        [], alias='Locations', json_schema_extra={'nested_class': 'LocationPostBody'}
     )
     historical_locations: List[EntityId] = Field(
-        [], alias='HistoricalLocations', nested_class='HistoricalLocationPostBody'
+        [], alias='HistoricalLocations', json_schema_extra={'nested_class': 'HistoricalLocationPostBody'}
     )
     datastreams: List[EntityId] = Field(
-        [], alias='Datastreams', nested_class='DatastreamPostBody'
+        [], alias='Datastreams', json_schema_extra={'nested_class': 'DatastreamPostBody'}
     )
 
 
@@ -126,15 +126,18 @@ class ThingGetResponse(ThingFields, BaseGetResponse):
     """
 
     locations_link: AnyHttpUrlString = Field(None, alias='Locations@iot.navigationLink')
-    locations_rel: List[dict] = Field(None, alias='Locations', nested_class='LocationGetResponse')
+    locations_rel: List[dict] = Field(
+        None, alias='Locations', json_schema_extra={'nested_class': 'LocationGetResponse'}
+    )
     historical_locations_link: AnyHttpUrlString = Field(None, alias='HistoricalLocations@iot.navigationLink')
     historical_locations_rel: List[dict] = Field(
-        None,
-        alias='HistoricalLocations',
-        nested_class='HistoricalLocationGetResponse'
+        None, alias='HistoricalLocations',
+        json_schema_extra={'nested_class': 'HistoricalLocationGetResponse'}
     )
     datastreams_link: AnyHttpUrlString = Field(None, alias='Datastreams@iot.navigationLink')
-    datastreams_rel: List[dict] = Field(None, alias='Datastreams', nested_class='DatastreamGetResponse')
+    datastreams_rel: List[dict] = Field(
+        None, alias='Datastreams', json_schema_extra={'nested_class': 'DatastreamGetResponse'}
+    )
 
 
 class ThingListResponse(BaseListResponse):

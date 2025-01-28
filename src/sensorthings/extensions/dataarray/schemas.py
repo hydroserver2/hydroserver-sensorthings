@@ -1,5 +1,5 @@
 from typing import List, Literal, Optional, Union
-from pydantic import Field, model_validator
+from pydantic import Field, ConfigDict, model_validator
 from ninja import Schema
 from sensorthings.schemas import BaseListResponse, EntityId, ListQueryParams
 from sensorthings.types import ISOTimeString, ISOIntervalString, AnyHttpUrlString
@@ -26,11 +26,10 @@ class ObservationDataArrayFields(ObservationFields, EntityId):
         ID of the Feature of Interest associated with the observation.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     datastream_id: id_type = Field(..., alias='Datastream/id')
     feature_of_interest_id: Optional[id_type] = Field(None, alias='FeatureOfInterest/id')
-
-    class Config:
-        populate_by_name = True
 
 
 class ObservationDataArrayResponse(Schema):
@@ -47,12 +46,11 @@ class ObservationDataArrayResponse(Schema):
         List of lists representing the data array structure.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     datastream: AnyHttpUrlString = Field(None, alias='Datastream@iot.navigationLink')
     components: List[observationComponents]
     data_array: dataArray = Field(..., alias='dataArray')
-
-    class Config:
-        populate_by_name = True
 
 
 class ObservationDataArrayPostBody(Schema):
@@ -69,12 +67,11 @@ class ObservationDataArrayPostBody(Schema):
         List of lists representing the data array structure.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     datastream: EntityId = Field(..., alias='Datastream')
     components: List[observationComponents]
     data_array: dataArray = Field(..., alias='dataArray')
-
-    class Config:
-        populate_by_name = True
 
 
 class ObservationQueryParams(ListQueryParams):
@@ -87,10 +84,9 @@ class ObservationQueryParams(ListQueryParams):
         Result format for the query, defaults to None.
     """
 
-    result_format: Optional[observationResultFormats] = Field(None, alias='$resultFormat')
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        populate_by_name = True
+    result_format: Optional[observationResultFormats] = Field(None, alias='$resultFormat')
 
 
 class ObservationGetResponse(CoreObservationGetResponse):

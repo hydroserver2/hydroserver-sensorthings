@@ -1,5 +1,6 @@
 import pytz
-from typing import Annotated
+from typing import Annotated, Tuple
+from datetime import datetime
 from dateutil.parser import isoparse
 from pydantic import AfterValidator, WithJsonSchema
 
@@ -83,6 +84,34 @@ def validate_iso_interval(value: str) -> str:
         raise ValueError('invalid ISO interval format')
 
     return '/'.join(split_value)
+
+
+def parse_iso_interval(interval: str) -> Tuple[datetime, datetime]:
+    """
+    Parse an ISO interval string into a tuple of two datetime objects.
+
+    Parameters
+    ----------
+    interval : str
+        The ISO interval string to parse.
+
+    Returns
+    -------
+    Tuple[datetime, datetime]
+        A tuple containing the start and end datetime objects.
+
+    Raises
+    ------
+    ValueError
+        If the interval string is not valid.
+    """
+
+    validated_interval = validate_iso_interval(interval)
+    start, end = validated_interval.split('/')
+    start_datetime = isoparse(start)
+    end_datetime = isoparse(end)
+
+    return start_datetime, end_datetime
 
 
 ISOIntervalString = Annotated[

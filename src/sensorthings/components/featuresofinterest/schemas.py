@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List, Optional
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from geojson_pydantic import Feature
 from ninja import Schema
 from sensorthings.schemas import EntityId, BaseComponent, BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody
@@ -48,7 +48,8 @@ class FeatureOfInterestRelations(Schema):
     """
 
     observations: List['Observation'] = Field(
-        [], alias='Observations', relationship='one_to_many', back_ref='feature_of_interest_id'
+        [], alias='Observations',
+        json_schema_extra={'relationship': 'one_to_many', 'back_ref': 'feature_of_interest_id'}
     )
 
 
@@ -59,10 +60,9 @@ class FeatureOfInterest(BaseComponent, FeatureOfInterestFields, FeatureOfInteres
     This class combines the fields and relations of a feature of interest, and extends the BaseComponent class.
     """
 
-    class Config:
-        json_schema_extra = {
-            'name_ref': ('FeaturesOfInterest', 'feature_of_interest', 'features_of_interest')
-        }
+    model_config = ConfigDict(
+        json_schema_extra={'name_ref': ('FeaturesOfInterest', 'feature_of_interest', 'features_of_interest')}
+    )
 
 
 class FeatureOfInterestPostBody(BasePostBody, FeatureOfInterestFields):
@@ -76,7 +76,7 @@ class FeatureOfInterestPostBody(BasePostBody, FeatureOfInterestFields):
     """
 
     observations: List[EntityId] = Field(
-        [], alias='Observations', nested_class='ObservationPostBody'
+        [], alias='Observations', json_schema_extra={'nested_class': 'ObservationPostBody'}
     )
 
 
@@ -100,7 +100,9 @@ class FeatureOfInterestGetResponse(FeatureOfInterestFields, BaseGetResponse):
     """
 
     observations_link: AnyHttpUrlString = Field(None, alias='Observations@iot.navigationLink')
-    observations_rel: List[dict] = Field(None, alias='Observations', nested_class='ObservationGetResponse')
+    observations_rel: List[dict] = Field(
+        None, alias='Observations', json_schema_extra={'nested_class': 'ObservationGetResponse'}
+    )
 
 
 class FeatureOfInterestListResponse(BaseListResponse):

@@ -1,134 +1,201 @@
 import functools
-from ninja import NinjaAPI
+import types
 from copy import deepcopy
+from dataclasses import dataclass
+from typing import Type, NewType, List, Optional, Literal
 from django.urls import re_path
-from pydantic import BaseModel
-from typing import Union, Type, NewType, List, Sequence, Optional, Callable
+from ninja import NinjaAPI, Router
 from sensorthings.engine import SensorThingsBaseEngine
 from sensorthings.renderer import SensorThingsRenderer
 from sensorthings.router import SensorThingsRouter
-from sensorthings.components.root.views import router as root_router
-from sensorthings.components.root.views import handle_advanced_path
-from sensorthings.components.datastreams.views import router as datastreams_router
-from sensorthings.components.featuresofinterest.views import router as featuresofinterest_router
-from sensorthings.components.historicallocations.views import router as historicallocations_router
-from sensorthings.components.locations.views import router as locations_router
-from sensorthings.components.observations.views import router as observations_router
-from sensorthings.components.observedproperties.views import router as observedproperties_router
-from sensorthings.components.sensors.views import router as sensors_router
-from sensorthings.components.things.views import router as things_router
-from sensorthings.components import get_response_schemas
-from sensorthings.extensions.dataarray.engine import DataArrayBaseEngine
-from sensorthings.extensions.dataarray.views import router as data_array_router
+from sensorthings.factories import (SensorThingsRouterFactory, SensorThingsEndpointFactory,
+                                    SensorThingsEndpointHookFactory)
+from sensorthings.components.root.views import router as root_router, handle_advanced_path
+from sensorthings.components.datastreams.views import datastream_router_factory
+from sensorthings.components.featuresofinterest.views import feature_of_interest_router_factory
+from sensorthings.components.historicallocations.views import historical_location_router_factory
+from sensorthings.components.locations.views import location_router_factory
+from sensorthings.components.observations.views import observation_router_factory
+from sensorthings.components.observedproperties.views import observed_property_router_factory
+from sensorthings.components.sensors.views import sensor_router_factory
+from sensorthings.components.things.views import thing_router_factory
 
 
 class SensorThingsAPI(NinjaAPI):
-    """
-    Custom API class for SensorThings, extending NinjaAPI.
-
-    This class initializes the API, sets up routing, and integrates
-    with SensorThings components and endpoints.
-    """
-
     def __init__(
             self,
-            engine: Union[Type[NewType('SensorThingsEngine', SensorThingsBaseEngine)], None] = None,
-            endpoints: Union[List['SensorThingsEndpoint'], None] = None,
+            version: Literal["1.1"] = "1.1",
+            engine: Optional[Type[NewType('SensorThingsEngine', SensorThingsBaseEngine)]] = None,
+            extensions: Optional[List['SensorThingsExtension']] = None,
             **kwargs
     ):
-        """
-        Initialize the SensorThingsAPI.
-
-        Parameters
-        ----------
-        engine : Type, optional
-            The engine class for SensorThings. Default is None.
-        endpoints : List[SensorThingsEndpoint], optional
-            A list of endpoints for the API. Default is None.
-
-        Raises
-        ------
-        ValueError
-            If an unsupported SensorThings version is provided.
-        """
-
-        if not kwargs.get('version'):
-            kwargs['version'] = '1.1'
-
-        if kwargs.get('version') not in ['1.0', '1.1']:
-            raise ValueError('Unsupported SensorThings version. Supported versions are: 1.0, 1.1')
-
-        if 'urls_namespace' not in kwargs:
-            kwargs['urls_namespace'] = f'sensorthings-v{kwargs["version"]}-api'
+        if kwargs.get('urls_namespace'):
+            kwargs['urls_namespace'] = f'{kwargs.get("urls_namespace")}-sensorthings-v{version}-api'
         else:
-            kwargs['urls_namespace'] += f'sensorthings-v{kwargs["version"]}-api'
+            kwargs['urls_namespace'] = f'sensorthings-v{version}-api'
 
-        super().__init__(
-            renderer=SensorThingsRenderer(),
-            **kwargs
-        )
+        kwargs['version'] = version
 
-        self.endpoints = endpoints if endpoints is not None else []
+        super().__init__(renderer=SensorThingsRenderer(), **kwargs)
+
+        self.routers = {}
         self.engine = engine
+        self.get_response_schemas = {}
+        self.extensions = extensions or []
+        self.handle_advanced_path = self._copy_view(handle_advanced_path)
 
-        self.add_router('', deepcopy(root_router))
-        self.add_router('', self._build_sensorthings_router('thing', things_router))
-        self.add_router('', self._build_sensorthings_router('location', locations_router))
-        self.add_router('', self._build_sensorthings_router('historical_location', historicallocations_router))
-        self.add_router('', self._build_sensorthings_router('observed_property', observedproperties_router))
-        self.add_router('', self._build_sensorthings_router('sensor', sensors_router))
-        self.add_router('', self._build_sensorthings_router('datastream', datastreams_router))
-        self.add_router('', self._build_sensorthings_router('feature_of_interest', featuresofinterest_router))
+        self._stage_routers()
+        self._initialize_default_routers()
+        self.handle_advanced_path.__api__ = self
 
-        if issubclass(self.engine, DataArrayBaseEngine):
-            self.add_router('', self._build_sensorthings_router('observation', data_array_router))
-        else:
-            self.add_router('', self._build_sensorthings_router('observation', observations_router))
+    def _stage_routers(self):
+        """
+        Stage routers for SensorThings components and extensions.
+        """
 
-        self.get_response_schemas = {
-            get_response_schema_name: next((
-                endpoint.response_schema for endpoint in self.endpoints
-                if hasattr(endpoint.response_schema, '__name__')
-                and endpoint.response_schema.__name__ == get_response_schema_name
-            ), None)
-            or getattr(get_response_schemas, get_response_schema_name)
-            for get_response_schema_name in dir(get_response_schemas)
-            if get_response_schema_name.endswith('GetResponse')
+        self.routers = self._get_default_routers()
+
+        # Add extension routers and endpoints
+        for extension in self.extensions:
+            extension_copy = deepcopy(extension)
+            self._add_extension_routers(extension_copy)
+            self._add_extension_endpoints(extension_copy)
+
+    @staticmethod
+    def _get_default_routers():
+        """
+        Return the default routers for SensorThings components.
+        """
+
+        return {
+            'datastream': deepcopy(datastream_router_factory),
+            'feature_of_interest': deepcopy(feature_of_interest_router_factory),
+            'historical_location': deepcopy(historical_location_router_factory),
+            'location': deepcopy(location_router_factory),
+            'observation': deepcopy(observation_router_factory),
+            'observed_property': deepcopy(observed_property_router_factory),
+            'sensor': deepcopy(sensor_router_factory),
+            'thing': deepcopy(thing_router_factory),
         }
 
-        handle_advanced_path.__api__ = self
+    def _add_extension_routers(self, extension):
+        """
+        Add routers from an extension to the main routers.
+        """
+
+        self.routers.update(extension.routers or {})
+
+    def _add_extension_endpoints(self, extension):
+        """
+        Add endpoints from an extension to the appropriate routers.
+        """
+
+        for endpoint in extension.endpoints or []:
+            if endpoint.router_name in self.routers:
+                self.routers[endpoint.router_name].endpoints.append(endpoint)
+
+    def _initialize_default_routers(self):
+        """
+        Add default and staged routers to the API.
+        """
+
+        self.add_router('', deepcopy(root_router))
+        for name, router in self.routers.items():
+            self.add_router('', self._build_router(name, router))
+
+    def _build_router(self, name: str, router: SensorThingsRouterFactory) -> Router:
+        """
+        Build a SensorThings router with endpoints.
+        """
+
+        st_router = SensorThingsRouter(tags=router.tags)
+
+        for endpoint in router.endpoints:
+            self._configure_endpoint(st_router, name, endpoint)
+
+        return st_router
+
+    def _configure_endpoint(self, st_router, name, endpoint):
+        """
+        Configure a single endpoint with authentication, authorization, and response schemas.
+        """
+
+        # Apply extensions to the endpoint
+        for extension in self.extensions:
+            self._apply_endpoint_hook(extension, name, endpoint)
+
+        # Store response schemas for GET requests
+        self._store_get_response_schema(endpoint.view_response_schema)
+
+        # Add endpoint to the router
+        getattr(st_router, endpoint.view_method.__name__)(
+            endpoint.endpoint_route,
+            url_name=endpoint.view_function.__name__,
+            response_schema=endpoint.view_response_schema,
+            response_dict=endpoint.view_response_override,
+            deprecated=not endpoint.enabled,
+            auth=endpoint.view_authentication
+        )(self._apply_authorization(endpoint.view_function, endpoint.view_authorization or []))
+
+    def _apply_endpoint_hook(self, extension, name, endpoint):
+        """
+        Apply hooks from extensions to modify the endpoint's behavior.
+        """
+
+        endpoint_hook = next((
+            hook for hook in extension.endpoint_hooks if hook.endpoint_name == endpoint.view_function.__name__
+        ), None) if extension.endpoint_hooks else None
+
+        if endpoint_hook:
+            endpoint.view_response_schema = endpoint_hook.view_response_schema or endpoint.view_response_schema
+            endpoint.view_response_override = endpoint_hook.view_response_override or endpoint.view_response_override
+            endpoint.enabled = endpoint_hook.enabled and endpoint.enabled
+            endpoint.view_authorization = endpoint_hook.view_authorization or endpoint.view_authorization
+            endpoint.view_authentication = endpoint_hook.view_authentication or endpoint.view_authentication
+
+            # Apply query params and body schema if provided by the hook
+            if endpoint_hook.view_query_params:
+                endpoint.view_function.__annotations__['params'] = endpoint_hook.view_query_params
+            if endpoint_hook.view_body_schema:
+                endpoint.view_function.__annotations__[name] = endpoint_hook.view_body_schema
+
+            # Apply view wrapper if present
+            if endpoint_hook.view_wrapper:
+                endpoint.view_function = self._wrap_view_function(endpoint_hook.view_wrapper, endpoint.view_function)
+
+    @staticmethod
+    def _wrap_view_function(wrapper, view_function):
+        """
+        Wrap the view function with the provided wrapper.
+        """
+
+        @functools.wraps(view_function)
+        def wrapped_view(*args, **kwargs):
+            return wrapper(view_function)(*args, **kwargs)
+
+        return wrapped_view
+
+    def _store_get_response_schema(self, response_schema):
+        """
+        Store GET response schemas for later use.
+        """
+
+        if response_schema and response_schema.__name__.endswith('GetResponse'):
+            self.get_response_schemas[response_schema.__name__] = response_schema
 
     def _get_urls(self):
         """
-        Override the method to include advanced path handling URL.
-
-        Returns
-        -------
-        list
-            List of URL patterns.
+        Override to include advanced path handling.
         """
 
         urls = super()._get_urls()
-        urls.append(re_path(r'^.*', handle_advanced_path, name='advanced_path_handler'))
-
+        urls.append(re_path(r'^.*', self.handle_advanced_path, name='advanced_path_handler'))
         return urls
 
     @staticmethod
     def _apply_authorization(view_func, auth_callbacks):
         """
-        Apply authorization callbacks to the view function.
-
-        Parameters
-        ----------
-        view_func : Callable
-            The view function to wrap with authorization.
-        auth_callbacks : list of Callable
-            List of authorization callback functions.
-
-        Returns
-        -------
-        Callable
-            The wrapped view function with authorization checks.
+        Wrap view function with authorization checks.
         """
 
         @functools.wraps(view_func)
@@ -137,89 +204,25 @@ class SensorThingsAPI(NinjaAPI):
                 if auth_callback(*args, **kwargs) is not True:
                     return 403, {'detail': 'Forbidden'}
             return view_func(*args, **kwargs)
+
         return auth_wrapper
 
-    def _build_sensorthings_router(self, component, router):
-        """
-        Build a SensorThings router for a specific component.
+    @staticmethod
+    def _copy_view(view):
+        fn = types.FunctionType(
+            view.__code__,
+            view.__globals__,
+            view.__name__,
+            view.__defaults__,
+            view.__closure__
+        )
+        fn.__dict__.update(view.__dict__)
 
-        Parameters
-        ----------
-        component : str
-            The component name.
-        router : Router
-            The router instance for the component.
-
-        Returns
-        -------
-        SensorThingsRouter
-            The built router with paths and operations.
-        """
-
-        endpoint_settings = {
-            endpoint.name.split('_')[0]: endpoint
-            for endpoint in self.endpoints
-            if '_'.join(endpoint.name.split('_')[1:]) == component
-        } if self.endpoints else {}
-
-        st_router = SensorThingsRouter(tags=router.tags)
-
-        for path, path_operation in router.path_operations.items():
-            for operation in path_operation.operations:
-                view_func = deepcopy(operation.view_func)
-                operation_method = operation.view_func.__name__.split('_')[0]
-
-                response_schema = getattr(endpoint_settings.get(operation_method, None), 'response_schema', None) or \
-                    getattr(
-                        operation.response_models.get(200), '__annotations__', {}
-                    ).get('response')
-
-                if getattr(endpoint_settings.get(operation_method, None), 'body_schema', None) is not None:
-                    view_func.__annotations__[component] = endpoint_settings[operation_method].body_schema
-
-                authorization_callbacks = getattr(endpoint_settings.get(operation_method), 'authorization', [])
-
-                if isinstance(authorization_callbacks, Callable):
-                    authorization_callbacks = [authorization_callbacks]
-                else:
-                    authorization_callbacks = []
-
-                (getattr(st_router, f'st_{operation.methods[0].lower()}')(
-                    path,
-                    response_schema=response_schema,
-                    deprecated=getattr(endpoint_settings.get(operation_method), 'deprecated', False),
-                    **{
-                        'auth': endpoint_settings[operation_method].authentication
-                        for _ in range(1) if getattr(endpoint_settings.get(operation_method), 'authentication', None)
-                    }
-                ))(self._apply_authorization(view_func, authorization_callbacks))
-
-        return st_router
+        return fn
 
 
-class SensorThingsEndpoint(BaseModel):
-    """
-    Data model for defining a SensorThings API endpoint.
-
-    Attributes
-    ----------
-    name : str
-        The name of the endpoint.
-    deprecated : bool, optional
-        Whether the endpoint is deprecated. Default is False.
-    authentication : Optional[Union[Sequence[Callable], Callable]], optional
-        Authentication callbacks. Default is None.
-    authorization : Optional[Union[Sequence[Callable], Callable]], optional
-        Authorization callbacks. Default is None.
-    body_schema : Optional[Type], optional
-        The schema for the request body. Default is None.
-    response_schema : Union[List[Type], Type, None], optional
-        The schema for the response. Default is None.
-    """
-
-    name: str
-    deprecated: bool = False
-    authentication: Optional[Union[Sequence[Callable], Callable]] = None
-    authorization: Optional[Union[Sequence[Callable], Callable]] = None
-    body_schema: Optional[Type] = None
-    response_schema: Union[List[Type], Type, None] = None
+@dataclass
+class SensorThingsExtension:
+    routers: Optional[dict[str, 'SensorThingsRouterFactory']] = None
+    endpoints: Optional[dict[str, 'SensorThingsEndpointFactory']] = None
+    endpoint_hooks: Optional[List['SensorThingsEndpointHookFactory']] = None

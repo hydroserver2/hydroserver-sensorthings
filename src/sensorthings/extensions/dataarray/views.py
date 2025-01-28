@@ -1,103 +1,18 @@
-from typing import List, Union
-from ninja import Query
-from pydantic import AnyHttpUrl
+from typing import List
 from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.http import SensorThingsHttpRequest
-from sensorthings.schemas import PermissionDenied, EntityNotFound
+from sensorthings.factories import SensorThingsEndpointFactory, SensorThingsEndpointHookFactory
 from sensorthings.components.datastreams.schemas import Datastream
-from sensorthings.components.observations.views import (get_observation, create_observation, update_observation,
-                                                        delete_observation)
 from sensorthings.components.observations.schemas import Observation
 from sensorthings.extensions.dataarray.schemas import (ObservationDataArrayPostBody, ObservationQueryParams,
-                                                       ObservationGetResponse,
                                                        ObservationListResponse)
 
 
-router = SensorThingsRouter(tags=['Observations'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_list(
-    '/Observations',
-    response_schema=ObservationListResponse,
-    url_name='list_observation'
-)
-def list_observations(
-        request: SensorThingsHttpRequest,
-        params: ObservationQueryParams = Query(...)
-):
-    """
-    Get a collection of Observation entities.
-
-    <a href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/observation/properties" target="_blank">\
-      Observation Properties</a> -
-    <a href="http://www.opengis.net/spec/iot_sensing/1.1/req/datamodel/observation/relations" target="_blank">\
-      Observation Relations</a>
-    """
-
-    response = request.engine.list_entities(
-        component=Observation,
-        query_params=params.dict()
-    )
-
-    if params.result_format == 'dataArray':
-        response = request.engine.convert_to_data_array( # noqa
-            response=response,
-            select=params.select
-        )
-
-    return response
-
-
-router.add_api_operation(
-    f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})',
-    methods=['GET'],
-    response={
-        200: Union[(ObservationGetResponse, str,)],
-        403: PermissionDenied,
-        404: EntityNotFound
-    },
-    view_func=get_observation,
-    by_alias=True,
-    exclude_unset=True,
-)
-
-router.add_api_operation(
-    f'/Observations',
-    methods=['POST'],
-    response={
-        201: Union[None, List[AnyHttpUrl]],
-        403: PermissionDenied
-    },
-    view_func=create_observation
-)
-
-router.add_api_operation(
-    f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})',
-    methods=['PATCH'],
-    response={
-        204: None,
-        403: PermissionDenied,
-        404: EntityNotFound
-    },
-    view_func=update_observation
-)
-
-router.add_api_operation(
-    f'/Observations({id_qualifier}{{observation_id}}{id_qualifier})',
-    methods=['DELETE'],
-    response={
-        204: None,
-        403: PermissionDenied,
-        404: EntityNotFound
-    },
-    view_func=delete_observation
-)
-
-
-@router.st_post('/CreateObservations')
 def create_observations(
         request: SensorThingsHttpRequest,
         observations: List[ObservationDataArrayPostBody]
@@ -133,3 +48,30 @@ def create_observations(
     ]
 
     return 201, observation_links
+
+
+def serialize_data_array(view_function):
+    def wrapper(*args, **kwargs):
+        response = view_function(*args, **kwargs)
+        if getattr(kwargs['params'], 'result_format', None) == 'dataArray':
+            response = args[0].engine.convert_to_data_array( # noqa
+                response=response,
+                select=getattr(kwargs['params'], 'select', None)
+            )
+        return response
+    return wrapper
+
+
+data_array_endpoints = [SensorThingsEndpointFactory(
+    router_name='observation',
+    endpoint_route='/CreateObservations',
+    view_function=create_observations,
+    view_method=SensorThingsRouter.st_post
+)]
+
+data_array_endpoint_hooks = [SensorThingsEndpointHookFactory(
+    endpoint_name='list_observations',
+    view_query_params=ObservationQueryParams,
+    view_response_schema=ObservationListResponse,
+    view_wrapper=serialize_data_array
+)]

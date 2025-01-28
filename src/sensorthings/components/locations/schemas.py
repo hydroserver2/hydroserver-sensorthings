@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Literal, List, Union, Optional
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from geojson_pydantic import Feature
 from ninja import Schema
 from sensorthings.schemas import (BaseComponent, BaseListResponse, BaseGetResponse, BasePostBody, BasePatchBody,
@@ -51,9 +51,13 @@ class LocationRelations(Schema):
         The list of historical locations associated with the location.
     """
 
-    things: List['Thing'] = Field([], alias='Things', relationship='many_to_many', back_ref='location_id')
+    things: List['Thing'] = Field(
+        [], alias='Things',
+        json_schema_extra={'relationship': 'many_to_many', 'back_ref': 'location_id'}
+    )
     historical_locations: List['HistoricalLocation'] = Field(
-        [], alias='HistoricalLocations', relationship='many_to_many', back_ref='location_id'
+        [], alias='HistoricalLocations',
+        json_schema_extra={'relationship': 'many_to_many', 'back_ref': 'location_id'}
     )
 
 
@@ -64,10 +68,7 @@ class Location(BaseComponent, LocationFields, LocationRelations):
     This class combines the fields and relations of a location, and extends the BaseComponent class.
     """
 
-    class Config:
-        json_schema_extra = {
-            'name_ref': ('Locations', 'location', 'locations')
-        }
+    model_config = ConfigDict(json_schema_extra={'name_ref': ('Locations', 'location', 'locations')})
 
 
 class LocationPostBody(BasePostBody, LocationFields):
@@ -83,10 +84,10 @@ class LocationPostBody(BasePostBody, LocationFields):
     """
 
     things: List[Union[EntityId]] = Field(
-        [], alias='Things', nested_class='ThingPostBody'
+        [], alias='Things', json_schema_extra={'nested_class': 'ThingPostBody'}
     )
     historical_locations: List[Union[EntityId]] = Field(
-        [], alias='HistoricalLocations', nested_class='HistoricalLocationPostBody'
+        [], alias='HistoricalLocations', json_schema_extra={'nested_class': 'HistoricalLocationPostBody'}
     )
 
 
@@ -123,12 +124,11 @@ class LocationGetResponse(LocationFields, BaseGetResponse):
     """
 
     things_link: AnyHttpUrlString = Field(None, alias='Things@iot.navigationLink')
-    things_rel: List[dict] = Field(None, alias='Things', nested_class='ThingGetResponse')
+    things_rel: List[dict] = Field(None, alias='Things', json_schema_extra={'nested_class': 'ThingGetResponse'})
     historical_locations_link: AnyHttpUrlString = Field(None, alias='HistoricalLocations@iot.navigationLink')
     historical_locations_rel: List[dict] = Field(
-        None,
-        alias='HistoricalLocations',
-        nested_class='HistoricalLocationGetResponse'
+        None, alias='HistoricalLocations',
+        json_schema_extra={'nested_class': 'HistoricalLocationGetResponse'}
     )
 
 

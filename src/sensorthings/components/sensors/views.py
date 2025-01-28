@@ -4,15 +4,14 @@ from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
+from sensorthings.factories import SensorThingsRouterFactory, SensorThingsEndpointFactory
 from .schemas import Sensor, SensorPostBody, SensorPatchBody, SensorListResponse, SensorGetResponse
 
 
-router = SensorThingsRouter(tags=['Sensors'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_list('/Sensors', response_schema=SensorListResponse, url_name='list_sensor')
 def list_sensors(
         request,
         params: ListQueryParams = Query(...)
@@ -32,7 +31,15 @@ def list_sensors(
     )
 
 
-@router.st_get(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})', response_schema=SensorGetResponse)
+list_sensors_endpoint = SensorThingsEndpointFactory(
+    router_name='sensor',
+    endpoint_route='/Sensors',
+    view_function=list_sensors,
+    view_method=SensorThingsRouter.st_list,
+    view_response_schema=SensorListResponse,
+)
+
+
 def get_sensor(
         request: SensorThingsHttpRequest,
         sensor_id: id_type,
@@ -54,7 +61,15 @@ def get_sensor(
     )
 
 
-@router.st_post('/Sensors')
+get_sensor_endpoint = SensorThingsEndpointFactory(
+    router_name='sensor',
+    endpoint_route=f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})',
+    view_function=get_sensor,
+    view_method=SensorThingsRouter.st_get,
+    view_response_schema=SensorGetResponse,
+)
+
+
 def create_sensor(
         request: SensorThingsHttpRequest,
         response: HttpResponse,
@@ -81,7 +96,14 @@ def create_sensor(
     return 201, None
 
 
-@router.patch(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})')
+create_sensor_endpoint = SensorThingsEndpointFactory(
+    router_name='sensor',
+    endpoint_route='/Sensors',
+    view_function=create_sensor,
+    view_method=SensorThingsRouter.st_post,
+)
+
+
 def update_sensor(
         request: SensorThingsHttpRequest,
         sensor_id: id_type,
@@ -108,7 +130,14 @@ def update_sensor(
     return 204, None
 
 
-@router.delete(f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})')
+update_sensor_endpoint = SensorThingsEndpointFactory(
+    router_name='sensor',
+    endpoint_route=f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})',
+    view_function=update_sensor,
+    view_method=SensorThingsRouter.st_patch,
+)
+
+
 def delete_sensor(
         request: SensorThingsHttpRequest,
         sensor_id: id_type
@@ -127,3 +156,24 @@ def delete_sensor(
     )
 
     return 204, None
+
+
+delete_sensor_endpoint = SensorThingsEndpointFactory(
+    router_name='sensor',
+    endpoint_route=f'/Sensors({id_qualifier}{{sensor_id}}{id_qualifier})',
+    view_function=delete_sensor,
+    view_method=SensorThingsRouter.st_delete,
+)
+
+
+sensor_router_factory = SensorThingsRouterFactory(
+    name='sensor',
+    tags=['Sensors'],
+    endpoints=[
+        list_sensors_endpoint,
+        get_sensor_endpoint,
+        create_sensor_endpoint,
+        update_sensor_endpoint,
+        delete_sensor_endpoint
+    ]
+)

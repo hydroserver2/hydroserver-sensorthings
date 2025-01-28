@@ -4,17 +4,14 @@ from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
+from sensorthings.factories import SensorThingsRouterFactory, SensorThingsEndpointFactory
 from .schemas import Datastream, DatastreamPostBody, DatastreamPatchBody, DatastreamListResponse, DatastreamGetResponse
 
 
-router = SensorThingsRouter(tags=['Datastreams'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_get(
-    '/Datastreams', response_schema=DatastreamListResponse, url_name='list_datastream'
-)
 def list_datastreams(
         request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
@@ -34,10 +31,15 @@ def list_datastreams(
     )
 
 
-@router.st_get(
-    f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})',
-    response_schema=DatastreamGetResponse
+list_datastreams_endpoint = SensorThingsEndpointFactory(
+    router_name='datastream',
+    endpoint_route='/Datastreams',
+    view_function=list_datastreams,
+    view_method=SensorThingsRouter.st_list,
+    view_response_schema=DatastreamListResponse
 )
+
+
 def get_datastream(
         request: SensorThingsHttpRequest,
         datastream_id: id_type,
@@ -59,7 +61,15 @@ def get_datastream(
     )
 
 
-@router.st_post('/Datastreams')
+get_datastream_endpoint = SensorThingsEndpointFactory(
+    router_name='datastream',
+    endpoint_route=f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})',
+    view_function=get_datastream,
+    view_method=SensorThingsRouter.st_get,
+    view_response_schema=DatastreamGetResponse
+)
+
+
 def create_datastream(
         request: SensorThingsHttpRequest,
         response: HttpResponse,
@@ -86,7 +96,14 @@ def create_datastream(
     return 201, None
 
 
-@router.patch(f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})')
+create_datastream_endpoint = SensorThingsEndpointFactory(
+    router_name='datastream',
+    endpoint_route='/Datastreams',
+    view_function=create_datastream,
+    view_method=SensorThingsRouter.st_post,
+)
+
+
 def update_datastream(
         request: SensorThingsHttpRequest,
         datastream_id: id_type,
@@ -113,7 +130,14 @@ def update_datastream(
     return 204, None
 
 
-@router.delete(f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})')
+update_datastream_endpoint = SensorThingsEndpointFactory(
+    router_name='datastream',
+    endpoint_route=f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})',
+    view_function=update_datastream,
+    view_method=SensorThingsRouter.st_patch,
+)
+
+
 def delete_datastream(
         request: SensorThingsHttpRequest,
         datastream_id: id_type
@@ -132,3 +156,24 @@ def delete_datastream(
     )
 
     return 204, None
+
+
+delete_datastream_endpoint = SensorThingsEndpointFactory(
+    router_name='datastream',
+    endpoint_route=f'/Datastreams({id_qualifier}{{datastream_id}}{id_qualifier})',
+    view_function=delete_datastream,
+    view_method=SensorThingsRouter.st_delete,
+)
+
+
+datastream_router_factory = SensorThingsRouterFactory(
+    name='datastream',
+    tags=['Datastreams'],
+    endpoints=[
+        list_datastreams_endpoint,
+        get_datastream_endpoint,
+        create_datastream_endpoint,
+        update_datastream_endpoint,
+        delete_datastream_endpoint
+    ]
+)

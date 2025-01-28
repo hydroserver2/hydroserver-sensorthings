@@ -1,5 +1,5 @@
 from typing import List
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from ninja import Schema
 
 
@@ -44,8 +44,7 @@ class ServerRootResponse(Schema):
         The server capabilities.
     """
 
+    model_config = ConfigDict(populate_by_name=True)
+
     server_settings: ServerSettings = Field(None, alias='serverSettings')
     server_capabilities: List[ServerCapabilities] = Field(None, alias='value')
-
-    class Config:
-        populate_by_name = True

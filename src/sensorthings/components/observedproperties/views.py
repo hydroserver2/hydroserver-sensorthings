@@ -4,20 +4,15 @@ from sensorthings import settings
 from sensorthings.router import SensorThingsRouter
 from sensorthings.http import SensorThingsHttpRequest
 from sensorthings.schemas import ListQueryParams, GetQueryParams
+from sensorthings.factories import SensorThingsRouterFactory, SensorThingsEndpointFactory
 from .schemas import (ObservedProperty, ObservedPropertyPostBody, ObservedPropertyPatchBody,
                       ObservedPropertyListResponse, ObservedPropertyGetResponse)
 
 
-router = SensorThingsRouter(tags=['Observed Properties'])
 id_qualifier = settings.ST_API_ID_QUALIFIER
 id_type = settings.ST_API_ID_TYPE
 
 
-@router.st_list(
-    '/ObservedProperties',
-    response_schema=ObservedPropertyListResponse,
-    url_name='list_observed_property'
-)
 def list_observed_properties(
         request: SensorThingsHttpRequest,
         params: ListQueryParams = Query(...)
@@ -37,10 +32,15 @@ def list_observed_properties(
     )
 
 
-@router.st_get(
-    f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})',
-    response_schema=ObservedPropertyGetResponse
+list_observed_properties_endpoint = SensorThingsEndpointFactory(
+    router_name='observed_property',
+    endpoint_route='/ObservedProperties',
+    view_function=list_observed_properties,
+    view_method=SensorThingsRouter.st_list,
+    view_response_schema=ObservedPropertyListResponse,
 )
+
+
 def get_observed_property(
         request: SensorThingsHttpRequest,
         observed_property_id: id_type,
@@ -62,7 +62,15 @@ def get_observed_property(
     )
 
 
-@router.st_post('/ObservedProperties')
+get_observed_property_endpoint = SensorThingsEndpointFactory(
+    router_name='observed_property',
+    endpoint_route=f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})',
+    view_function=get_observed_property,
+    view_method=SensorThingsRouter.st_get,
+    view_response_schema=ObservedPropertyGetResponse,
+)
+
+
 def create_observed_property(
         request: SensorThingsHttpRequest,
         response: HttpResponse,
@@ -89,7 +97,14 @@ def create_observed_property(
     return 201, None
 
 
-@router.st_patch(f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})')
+create_observed_property_endpoint = SensorThingsEndpointFactory(
+    router_name='observed_property',
+    endpoint_route='/ObservedProperties',
+    view_function=create_observed_property,
+    view_method=SensorThingsRouter.st_post,
+)
+
+
 def update_observed_property(
         request: SensorThingsHttpRequest,
         observed_property_id: id_type,
@@ -116,7 +131,14 @@ def update_observed_property(
     return 204, None
 
 
-@router.delete(f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})')
+update_observed_property_endpoint = SensorThingsEndpointFactory(
+    router_name='observed_property',
+    endpoint_route=f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})',
+    view_function=update_observed_property,
+    view_method=SensorThingsRouter.st_patch,
+)
+
+
 def delete_observed_property(request: SensorThingsHttpRequest, observed_property_id: id_type):
     """
     Delete an Observed Property entity.
@@ -132,3 +154,24 @@ def delete_observed_property(request: SensorThingsHttpRequest, observed_property
     )
 
     return 204, None
+
+
+delete_observed_property_endpoint = SensorThingsEndpointFactory(
+    router_name='observed_property',
+    endpoint_route=f'/ObservedProperties({id_qualifier}{{observed_property_id}}{id_qualifier})',
+    view_function=delete_observed_property,
+    view_method=SensorThingsRouter.st_delete,
+)
+
+
+observed_property_router_factory = SensorThingsRouterFactory(
+    name='observed_property',
+    tags=['Observed Properties'],
+    endpoints=[
+        list_observed_properties_endpoint,
+        get_observed_property_endpoint,
+        create_observed_property_endpoint,
+        update_observed_property_endpoint,
+        delete_observed_property_endpoint
+    ]
+)

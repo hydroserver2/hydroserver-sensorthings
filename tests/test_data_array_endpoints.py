@@ -81,4 +81,3 @@ def test_sensorthings_create_endpoints(endpoint, post_body):
     )
 
     assert response.status_code == 201
-
