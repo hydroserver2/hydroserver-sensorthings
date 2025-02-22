@@ -38,7 +38,7 @@ def validate_iso_time(value: str) -> str:
     except TypeError:
         raise ValueError('invalid ISO time format')
 
-    return parsed_value.isoformat(sep='T', timespec='seconds').replace('+00:00', 'Z')
+    return parsed_value.isoformat(sep='T', timespec='seconds')
 
 
 ISOTimeString = Annotated[
