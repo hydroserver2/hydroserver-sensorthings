@@ -1,5 +1,5 @@
 import pytest
-import json
+import orjson
 from django.test import Client
 
 
@@ -29,7 +29,7 @@ def test_sensorthings_delete_endpoints(endpoint, post_body):
     client = Client()
 
     response = client.post(
-        f'http://127.0.0.1:8000/sensorthings/quality-control/v1.1/{endpoint}',  json.dumps(post_body),
+        f'http://127.0.0.1:8000/sensorthings/quality-control/v1.1/{endpoint}',  orjson.dumps(post_body),
         content_type='application/json'
     )
 

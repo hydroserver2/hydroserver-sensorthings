@@ -1,5 +1,5 @@
 import pytest
-import json
+import orjson
 from django.test import Client
 
 
@@ -34,7 +34,7 @@ def test_sensorthings_update_endpoints(endpoint, patch_body):
     client = Client()
 
     response = client.patch(
-        f'http://127.0.0.1:8000/sensorthings/core/v1.1/{endpoint}',  json.dumps(patch_body)
+        f'http://127.0.0.1:8000/sensorthings/core/v1.1/{endpoint}',  orjson.dumps(patch_body)
     )
 
     print(response.content)

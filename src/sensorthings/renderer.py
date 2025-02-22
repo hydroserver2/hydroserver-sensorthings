@@ -1,13 +1,16 @@
-from ninja.renderers import JSONRenderer
+import orjson
+from ninja.renderers import BaseRenderer
 
 
-class SensorThingsRenderer(JSONRenderer):
+class SensorThingsRenderer(BaseRenderer):
     """
     A custom JSON renderer for the SensorThings API.
 
     This renderer checks if the request object has a pre-defined 'response_string' attribute.
     If so, it uses this string as the response. Otherwise, it defaults to the standard JSON rendering.
     """
+
+    media_type = "application/json"
 
     def render(self, request, data, *, response_status):
         """
@@ -31,5 +34,5 @@ class SensorThingsRenderer(JSONRenderer):
         return getattr(
             request,
             'response_string',
-            JSONRenderer.render(self, request, data, response_status=response_status)
+            orjson.dumps(data)
         )
