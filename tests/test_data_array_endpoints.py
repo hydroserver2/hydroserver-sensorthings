@@ -7,17 +7,17 @@ from django.test import Client
     (  # Test Observations data array collection endpoint.
         'Observations',
         {'$resultFormat': 'dataArray'},
-        '{"value": [{"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "components": ["phenomenonTime", "result"], "dataArray": [["2024-01-01T00:00:00+00:00", 10.0], ["2024-01-02T00:00:00+00:00", 15.0]]}, {"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(2)", "components": ["phenomenonTime", "result"], "dataArray": [["2024-01-01T00:00:00+00:00", 20.0], ["2024-01-02T00:00:00+00:00", 25.0]]}]}'
+        '{"value": [{"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "components": ["phenomenonTime", "result"], "dataArray": [["2024-01-01T00:00:00+00:00", 10], ["2024-01-02T00:00:00+00:00", 15]]}, {"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(2)", "components": ["phenomenonTime", "result"], "dataArray": [["2024-01-01T00:00:00+00:00", 20], ["2024-01-02T00:00:00+00:00", 25]]}]}'
     ),
     (  # Test Observations data array collection endpoint with pagination.
         'Observations',
         {'$resultFormat': 'dataArray', '$skip': 1, '$top': 1},
-        '{"value": [{"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "components": ["phenomenonTime", "result"], "dataArray": [["2024-01-02T00:00:00+00:00", 15.0]]}], "@iot.nextLink": "http://testserver/sensorthings/v1.1/Observations?$skip=2&$top=1"}'
+        '{"value": [{"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "components": ["phenomenonTime", "result"], "dataArray": [["2024-01-02T00:00:00+00:00", 15]]}], "@iot.nextLink": "http://testserver/sensorthings/v1.1/Observations?$skip=2&$top=1"}'
     ),
     (  # Test Observations data array collection endpoint with select parameter.
         'Observations',
         {'$resultFormat': 'dataArray', '$select': 'result,phenomenonTime,resultTime'},
-        '{"value": [{"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "components": ["phenomenonTime", "result", "resultTime"], "dataArray": [["2024-01-01T00:00:00+00:00", 10.0, "2024-01-01T00:00:00+00:00"], ["2024-01-02T00:00:00+00:00", 15.0, "2024-01-02T00:00:00+00:00"]]}, {"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(2)", "components": ["phenomenonTime", "result", "resultTime"], "dataArray": [["2024-01-01T00:00:00+00:00", 20.0, "2024-01-01T00:00:00+00:00"], ["2024-01-02T00:00:00+00:00", 25.0, "2024-01-02T00:00:00+00:00"]]}]}'
+        '{"value": [{"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "components": ["phenomenonTime", "result", "resultTime"], "dataArray": [["2024-01-01T00:00:00+00:00", 10, "2024-01-01T00:00:00+00:00"], ["2024-01-02T00:00:00+00:00", 15, "2024-01-02T00:00:00+00:00"]]}, {"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(2)", "components": ["phenomenonTime", "result", "resultTime"], "dataArray": [["2024-01-01T00:00:00+00:00", 20, "2024-01-01T00:00:00+00:00"], ["2024-01-02T00:00:00+00:00", 25, "2024-01-02T00:00:00+00:00"]]}]}'
     ),
     (  # Test Things endpoint select parameter (ID).
         'Observations',
@@ -27,7 +27,7 @@ from django.test import Client
     (  # Test Datastream's Observations data array collection endpoint.
         'Datastreams(1)/Observations',
         {'$resultFormat': 'dataArray'},
-        '{"value": [{"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "components": ["phenomenonTime", "result"], "dataArray": [["2024-01-01T00:00:00+00:00", 10.0]]}]}'
+        '{"value": [{"Datastream@iot.navigationLink": "http://testserver/sensorthings/v1.1/Datastreams(1)", "components": ["phenomenonTime", "result"], "dataArray": [["2024-01-01T00:00:00+00:00", 10]]}]}'
     ),
 ])
 @pytest.mark.django_db()
