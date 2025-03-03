@@ -97,10 +97,13 @@ class DataArrayBaseEngine(metaclass=ABCMeta):
                     for field in selected_fields
                 ],
                 'data_array': [
-                    [
-                        value for field, value in ObservationDataArrayFields(**observation).dict().items()
-                        if field in selected_fields
+                    [  # TODO Validate Result Quality Fields
+                        observation[field] for field in selected_fields
                     ] for observation in observations
+                    # [
+                    #     value for field, value in ObservationDataArrayFields(**observation).dict().items()
+                    #     if field in selected_fields
+                    # ] for observation in observations
                 ]
             } for datastream_id, observations in groupby(response['value'], key=lambda x: x['datastream_id'])
         ]
